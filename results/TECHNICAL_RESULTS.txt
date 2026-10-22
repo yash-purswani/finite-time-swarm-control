@@ -1,0 +1,153 @@
+ECC FINITE-TIME SWARM EXPERIMENTS
+All quantities use the report's normalized coordinates and time.
+
+Controller and validation
+The plant is integrated in physical x coordinates with analytic qdot, local
+-delta-sig^beta(delta), and -(L_w kron M)delta. There is no centroid feedback,
+1/n normalization, extra coupling gain, state reset, or feedback smoothing.
+The theoretical LaTeX report is unchanged. The source hash is recorded in every
+run, along with configuration, libraries and solver settings.
+
+Parameter map adaptive-node audit: 16 cases, all passed = True.
+Maximum station-bound node excess = 8.06533e-06;
+maximum disagreement-bound node excess = 7.95206e-06.
+
+Closest observed B/C boundary cases retain their classifications with tighter
+tolerances, half the maximum step and finer distance refinement.
+
+case_0007: minimum-distance change 1.00862e-06;
+classification C -> C.
+
+Experiment 1: arbitrary moving formations
+Centered ring, wedge, star and arrow templates are joined by quintic blends
+with analytic derivatives and fixed agent identifiers. Stations move with the
+common smooth reference. This validates station tracking and inherited centroid
+tracking, not universal collision avoidance for interpolated templates.
+Numerical 1e-6 settling = 0.717454, universal deadline
+= 1.83989. Offset-centering residual = 2.28609e-15;
+maximum centroid error after the deadline = 1.18472e-09.
+Minimum observed separation = 0.251188; no safety certificate is claimed.
+
+Experiment 2: local feedback, graph dissipation and full command
+All gains share the same station model, initial physical positions, beta and
+graph rule used in Experiment 3. Every run passes the universal station
+envelope, disagreement bound, Lyapunov and pairwise-tube checks within the
+reported numerical residual allowance. The integrated lambda2 envelope uses
+numerical cumulative trapezoidal quadrature, not an exact spectral integral.
+M adds disagreement dissipation while leaving the universal deadline unchanged.
+No general ordering theorem for different M is inferred. Physical effort includes qdot.
+
+The star maneuver uses a(t)=a_inf+(1-a_inf)exp(-0.90t) with kappa=3,
+and r(t)=(0.9t, 1.1 sin(0.35t)). Ten alternating outer/inner star vertices
+have template radii 2.8 and 1.22. The safety threshold is 0.95 and R_c=6.6.
+
+m=0: 1e-6 settling 0.768333;
+peak ||u|| 3.50984; feedback energy J_u 0.32748;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+m=0.5: 1e-6 settling 0.628333;
+peak ||u|| 3.82752; feedback energy J_u 0.438974;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+m=2: 1e-6 settling 0.43;
+peak ||u|| 5.10868; feedback energy J_u 0.772248;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+m=2.5: 1e-6 settling 0.39;
+peak ||u|| 5.60358; feedback energy J_u 0.883193;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+m=5: 1e-6 settling 0.28;
+peak ||u|| 8.30945; feedback energy J_u 1.43756;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+m=10: 1e-6 settling 0.188333;
+peak ||u|| 14.1435; feedback energy J_u 2.54577;
+station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
+
+Experiment 3: analytical compression, then ten-agent safety
+The separate 1D constant-weight two-agent case reproduces Section 7 before
+the distance-weighted ten-agent comparison. The uncoupled signed separation
+at t=0.05 is 0.313308, matching the report.
+Maximum analytic-error discrepancies are 3.53002e-09
+(m=0) and 4.86326e-09 (m=2). The
+uncoupled agents pass through one another; m=2 remains separated above 1.
+
+Experiment 3: controlled star compression/expansion cases
+The centered asymmetric ten-agent star uses q_i=r+a(t)p_i^0, a_inf=1.65-0.25 kappa, a=a_inf+(1-a_inf)exp(-0.9t), and r=(0.9t,1.1sin(0.35t)); station velocities are analytic. All cases share initial stations and positions, beta=0.5, d_safe=0.95 and R_c=6.60; only m and kappa vary. Follows test.py setup.
+
+Case A: m=2.5, kappa=3; geometry feasible=True; minimum separation=1.1942 (clearance 0.244196); maximum backbone length=5.74438 (connectivity margin 0.855619); safe=True, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.39, T_bar=0.576439, peak command=5.60358, certified=True.
+
+Case B: m=0, kappa=4.5; geometry feasible=True; minimum separation=0.752965 (clearance -0.197035); maximum backbone length=5.74438 (connectivity margin 0.855619); safe=False, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.768333, T_bar=0.951538, peak command=4.80476, certified=False.
+
+Case C: m=0, kappa=1; geometry feasible=True; minimum separation=1.1942 (clearance 0.244196); maximum backbone length=7.45624 (connectivity margin -0.856241); safe=True, backbone preserved=False, range-limited graph connected on output grid=True; settling at 1e-6=0.768333, T_bar=0.951538, peak command=3.80684, certified=False.
+
+The 3-by-3 comparison is `experiment_3/swarm_star_3x3_comparison.png` (PDF also provided). Rows show Cases A, B, and C; columns show minimum separation, maximum pairwise distance, and geometric margin against the distortion envelope.
+
+Experiment 4: 4 by 4 pilot star parameter map
+The station template, larger reference, initial physical state, geometry and
+12-unit horizon are shared with Experiments 2/3. Initial integration settings
+match their accepted accuracy; only physical parameters m and kappa vary.
+Only m and kappa vary. Initial stations and physical positions are fixed.
+Counts: {'A': 4, 'C': 12}. Certified-with-violation validation failures: 0.
+Cases requiring tighter integration to pass the fixed residual budget: 0.
+The gain supremum is obtained from analytic affine-exponential margins and an
+exhaustive monotone-derivative/root calculation, including endpoint limits.
+A 1e-8 strict rate slack guards floating-point optimization. This is justified
+global-extremum computation, not an interval-arithmetic formal proof.
+The separation branch has at most one maximizing critical point; the increasing
+connectivity branch attains its supremum at the deadline limit.
+B cases demonstrate conservatism of the selected sufficient gain condition.
+Geometry is feasible for all m,kappa; category D is implemented/tested but absent.
+The backbone is a complete ten-node graph with 45 eligible links. This dense
+backbone is explicit; no sparse communication result is inferred. Connectivity
+also follows from the graph-independent upper tube, whose maximum is below
+R_c at t=0 and decreases. The map primarily explores separation violations.
+This is a coarse pilot grid: colors classify the sampled configurations,
+not every parameter inside the displayed cells. The design curve is evaluated
+at 401 speeds using the continuous-time gain calculation, without simulations.
+
+Numerical interpretation and limitations
+All apparent envelope excesses are saved, including near-zero solver residuals.
+The acceptance budget is an absolute 1e-8 norm error; retry integration uses
+tenfold tighter tolerances and half the maximum step, never a larger budget.
+Observed distance extrema use dense scanning, crossing events, and pair-specific
+local optimization. They do not establish rigorous all-time observed safety; the
+analytic tube certificate does. Planned feasibility is checked beyond the horizon.
+Settling is the final crossing of an explicit tolerance over a finite horizon,
+checked at output samples and adaptive nodes, not proof of exact floating-point zero.
+Use 1e-6 for quantitative comparisons; 1e-8 is diagnostic if solver-sensitive.
+Physical
+relative tolerance scales with absolute x, whereas the independent error solver
+scales with delta; the equivalence diagnostic therefore uses tighter tolerances.
+Radau is checked on a short high-gain diagnostic before zero singularities.
+Full nominal trajectories use DOP853; nonsmooth near-zero step reduction remains
+expensive and is not treated by changing the controller. Energy uses numerical
+quadrature; peaks are evaluated at saved dense-output samples. No actuator cap
+or physical robot dimensions are included. No Monte Carlo experiments were run.
+
+Discrepancies found in the original implementation
+1. Signed power was applied to the centroid error instead of each delta_i.
+2. Coupling was divided by n, absent from the supplied report's controller.
+3. The old integrator latched/projected centroid components at a threshold.
+4. Old theoretical helpers used exponential station convergence and separate
+   centroid/ISS claims from an earlier mathematical draft.
+5. Range-limited graph/backbone certificates and full physical command reporting
+   were missing. The true-distance denominator and analytic quintic formation
+   derivatives were reusable and retained.
+The current implementation matches the supplied report; the report is untouched.
+
+Items for the author
+- ACC_paper/main.tex still states the earlier shared centroid corrector and
+  M/n coupling (model around lines 175-186). It must be aligned with the
+  finite-time_report.tex model before these figures support that manuscript.
+  Both LaTeX sources were left untouched.
+- Treat nominal 1e-8 settling as diagnostic when sensitivity flags it; use 1e-6
+  or the explicitly saved tighter run for numerical comparisons.
+- Experiment 4 uses a dense complete backbone and its parameter-map cases retain
+  connectivity. Experiment 3 Case C separately shows complete-backbone link loss
+  while the range-limited graph remains connected in the sampled history.
+- Coordinates/time are normalized. Hardware scaling, control saturation, robot
+  dimensions and disturbances require assumptions outside this nominal study.
+- Legacy root figure scripts target the earlier draft; reproduce with the new
+  runner and plot_results.py. No claims of novelty are established by these runs.

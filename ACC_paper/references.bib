@@ -1,0 +1,540 @@
+% IEEEtran.bst controls (activated by \bstctlcite in main.tex): write
+% repeated author lists in full instead of a dash, and use "et al." after the
+% first author when there are more than six authors (IEEE Reference Guide).
+@IEEEtranBSTCTL{IEEEexample:BSTcontrol,
+  CTLdash_repeated_names   = "no",
+  CTLuse_forced_etal       = "yes",
+  CTLmax_names_forced_etal = "6",
+  CTLnames_show_etal       = "1"
+}
+
+% DOIs are printed through note (IEEEtran.bst ignores the doi field), as in
+% the L-CSS template: "..., Mon. year, doi: 10.xxxx/yyyy." \nolinkurl lets a
+% long DOI break across lines in the narrow column.
+@preamble{"\providecommand{\bibdoi}[1]{doi: \href{https://doi.org/#1}{\nolinkurl{#1}}}"}
+
+% ---------------------------------------------------------------
+% Primary prior work (Fedele / D'Alfonso / Gazi group)
+% ---------------------------------------------------------------
+
+@article{fedele2019kinematic,
+  author  = {Fedele, Giuseppe and D'Alfonso, Luigi},
+  title   = {A Kinematic Model for Swarm Finite-Time Trajectory Tracking},
+  journal = {IEEE Trans. Cybern.},
+  year    = {2019},
+  month   = oct,
+  volume  = {49},
+  number  = {10},
+  pages   = {3806--3815},
+  note    = {\bibdoi{10.1109/TCYB.2018.2856269}}
+}
+
+@article{fedele2021mixing,
+  author  = {Fedele, Giuseppe and D'Alfonso, Luigi},
+  title   = {A coordinates mixing matrix-based model for swarm formation},
+  journal = {Int. J. Control},
+  year    = {2021},
+  month   = mar,
+  volume  = {94},
+  number  = {3},
+  pages   = {711--721},
+  note    = {\bibdoi{10.1080/00207179.2019.1613561}}
+}
+
+@article{fedele2022gazipassino,
+  author  = {Fedele, Giuseppe and D'Alfonso, Luigi and Gazi, Veysel},
+  title   = {A Generalized {Gazi--Passino} Model With Coordinate-Coupling Matrices for Swarm Formation With Rotation Behavior},
+  journal = {IEEE Trans. Control Netw. Syst.},
+  year    = {2022},
+  month   = sep,
+  volume  = {9},
+  number  = {3},
+  pages   = {1227--1237},
+  note    = {\bibdoi{10.1109/TCNS.2022.3141012}}
+}
+
+@article{fedele2023fixedtime,
+  author  = {Fedele, Giuseppe and D'Alfonso, Luigi and Bono, Antonio},
+  title   = {Swarm fixed-time reference tracking: {A} discrete model},
+  journal = {Int. J. Control},
+  year    = {2023},
+  month   = jan,
+  volume  = {96},
+  number  = {1},
+  pages   = {238--250},
+  note    = {\bibdoi{10.1080/00207179.2021.1987525}}
+}
+
+@article{fedele2020discrete,
+  author  = {Fedele, Giuseppe and D'Alfonso, Luigi and Bono, Antonio},
+  title   = {A Discrete-Time Model for Swarm Formation With Coordinates Coupling Matrix},
+  journal = {IEEE Control Syst. Lett.},
+  year    = {2020},
+  month   = oct,
+  volume  = {4},
+  number  = {4},
+  pages   = {1012--1017},
+  note    = {\bibdoi{10.1109/LCSYS.2020.2998669}}
+}
+
+@article{gazi2003stability,
+  author  = {Gazi, Veysel and Passino, Kevin M.},
+  title   = {Stability analysis of swarms},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2003},
+  month   = apr,
+  volume  = {48},
+  number  = {4},
+  pages   = {692--697},
+  note    = {\bibdoi{10.1109/TAC.2003.809765}}
+}
+
+@article{gazi2004class,
+  author  = {Gazi, Veysel and Passino, Kevin M.},
+  title   = {A class of attractions/repulsion functions for stable swarm aggregations},
+  journal = {Int. J. Control},
+  year    = {2004},
+  month   = dec,
+  volume  = {77},
+  number  = {18},
+  pages   = {1567--1579},
+  note    = {\bibdoi{10.1080/00207170412331330021}}
+}
+
+@book{gazi2011swarm,
+  author    = {Gazi, Veysel and Passino, Kevin M.},
+  title     = {Swarm Stability and Optimization},
+  publisher = {Springer},
+  address   = {Berlin, Germany},
+  year      = {2011}
+}
+
+@article{yao2007swarm,
+  author  = {Yao, Jingyi and Ordonez, Raul and Gazi, Veysel},
+  title   = {Swarm Tracking Using Artificial Potentials and Sliding Mode Control},
+  journal = {J. Dyn. Syst., Meas., Control},
+  year    = {2007},
+  volume  = {129},
+  number  = {5},
+  pages   = {749--754},
+  note    = {\bibdoi{10.1115/1.2764511}}
+}
+
+% ---------------------------------------------------------------
+% Finite-time / fixed-time stability
+% ---------------------------------------------------------------
+
+@article{bhat2000finite,
+  author  = {Bhat, Sanjay P. and Bernstein, Dennis S.},
+  title   = {Finite-Time Stability of Continuous Autonomous Systems},
+  journal = {SIAM J. Control Optim.},
+  year    = {2000},
+  month   = jan,
+  volume  = {38},
+  number  = {3},
+  pages   = {751--766},
+  note    = {\bibdoi{10.1137/S0363012997321358}}
+}
+
+@article{bhat1998continuous,
+  author  = {Bhat, Sanjay P. and Bernstein, Dennis S.},
+  title   = {Continuous finite-time stabilization of the translational and rotational double integrators},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {1998},
+  volume  = {43},
+  number  = {5},
+  pages   = {678--682},
+  note    = {\bibdoi{10.1109/9.668834}}
+}
+
+@article{polyakov2012nonlinear,
+  author  = {Polyakov, Andrey},
+  title   = {Nonlinear Feedback Design for Fixed-Time Stabilization of Linear Control Systems},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2012},
+  month   = aug,
+  volume  = {57},
+  number  = {8},
+  pages   = {2106--2110},
+  note    = {\bibdoi{10.1109/TAC.2011.2179869}}
+}
+
+@article{wang2010finite,
+  author  = {Wang, Long and Xiao, Feng},
+  title   = {Finite-Time Consensus Problems for Networks of Dynamic Agents},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2010},
+  month   = apr,
+  volume  = {55},
+  number  = {4},
+  pages   = {950--955},
+  note    = {\bibdoi{10.1109/TAC.2010.2041610}}
+}
+
+@article{xiao2009finite,
+  author  = {Xiao, Feng and Wang, Long and Chen, Jie and Gao, Yanping},
+  title   = {Finite-time formation control for multi-agent systems},
+  journal = {Automatica},
+  year    = {2009},
+  month   = nov,
+  volume  = {45},
+  number  = {11},
+  pages   = {2605--2611},
+  note    = {\bibdoi{10.1016/j.automatica.2009.07.012}}
+}
+
+% ---------------------------------------------------------------
+% ISS and nonlinear systems
+% ---------------------------------------------------------------
+
+@article{sontag1989smooth,
+  author  = {Sontag, Eduardo D.},
+  title   = {Smooth stabilization implies coprime factorization},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {1989},
+  volume  = {34},
+  number  = {4},
+  pages   = {435--443}
+}
+
+@article{sontag1995characterizations,
+  author  = {Sontag, Eduardo D. and Wang, Yuan},
+  title   = {On characterizations of the input-to-state stability property},
+  journal = {Syst. Control Lett.},
+  year    = {1995},
+  volume  = {24},
+  number  = {5},
+  pages   = {351--359}
+}
+
+@book{khalil2002nonlinear,
+  author    = {Khalil, Hassan K.},
+  title     = {Nonlinear Systems},
+  edition   = {3rd},
+  publisher = {Prentice Hall},
+  address   = {Upper Saddle River, NJ, USA},
+  year      = {2002}
+}
+
+% ---------------------------------------------------------------
+% Multi-agent / formation control background
+% ---------------------------------------------------------------
+
+@article{olfatisaber2006flocking,
+  author  = {Olfati-Saber, Reza},
+  title   = {Flocking for Multi-Agent Dynamic Systems: Algorithms and Theory},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2006},
+  volume  = {51},
+  number  = {3},
+  pages   = {401--420},
+  note    = {\bibdoi{10.1109/TAC.2005.864190}}
+}
+
+@article{ren2005consensus,
+  author  = {Ren, Wei and Beard, Randal W.},
+  title   = {Consensus seeking in multiagent systems under dynamically changing interaction topologies},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2005},
+  volume  = {50},
+  number  = {5},
+  pages   = {655--661},
+  note    = {\bibdoi{10.1109/TAC.2005.846556}}
+}
+
+@article{oh2015survey,
+  author  = {Oh, Kwang-Kyo and Park, Myoung-Chul and Ahn, Hyo-Sung},
+  title   = {A survey of multi-agent formation control},
+  journal = {Automatica},
+  year    = {2015},
+  month   = mar,
+  volume  = {53},
+  pages   = {424--440},
+  note    = {\bibdoi{10.1016/j.automatica.2014.10.022}}
+}
+
+@article{lewis1997high,
+  author  = {Lewis, M. Anthony and Tan, Kar-Han},
+  title   = {High Precision Formation Control of Mobile Robots Using Virtual Structures},
+  journal = {Auton. Robots},
+  year    = {1997},
+  month   = oct,
+  volume  = {4},
+  number  = {4},
+  pages   = {387--403},
+  note    = {\bibdoi{10.1023/A:1008814708459}}
+}
+
+@article{egerstedt2001formation,
+  author  = {Egerstedt, Magnus and Hu, Xiaoming},
+  title   = {Formation constrained multi-agent control},
+  journal = {IEEE Trans. Robot. Autom.},
+  year    = {2001},
+  volume  = {17},
+  number  = {6},
+  pages   = {947--951},
+  note    = {\bibdoi{10.1109/70.976029}}
+}
+
+@article{fax2004information,
+  author  = {Fax, J. Alexander and Murray, Richard M.},
+  title   = {Information Flow and Cooperative Control of Vehicle Formations},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2004},
+  volume  = {49},
+  number  = {9},
+  pages   = {1465--1476},
+  note    = {\bibdoi{10.1109/TAC.2004.834433}}
+}
+
+@article{reynolds1987flocks,
+  author  = {Reynolds, Craig W.},
+  title   = {Flocks, herds and schools: A distributed behavioral model},
+  journal = {ACM SIGGRAPH Comput. Graph.},
+  year    = {1987},
+  volume  = {21},
+  number  = {4},
+  pages   = {25--34}
+}
+
+@article{kia2019tutorial,
+  author  = {Kia, Solmaz S. and Van Scoy, Bryan and Cort{\'e}s, Jorge and Freeman, Randy A. and Lynch, Kevin M. and Mart{\'i}nez, Sonia},
+  title   = {Tutorial on Dynamic Average Consensus: The Problem, Its Applications, and the Algorithms},
+  journal = {IEEE Control Syst. Mag.},
+  year    = {2019},
+  month   = jun,
+  volume  = {39},
+  number  = {3},
+  pages   = {40--72},
+  note    = {\bibdoi{10.1109/MCS.2019.2900783}}
+}
+@inproceedings{fedele2017model,
+  author    = {Fedele, Giuseppe and D'Alfonso, Luigi},
+  title     = {A model for swarm formation with reference tracking},
+  booktitle = {Proc. 56th IEEE Conf. Decis. Control (CDC)},
+  address   = {Melbourne, VIC, Australia},
+  pages     = {381--386},
+  year      = {2017},
+  month     = dec,
+  note      = {\bibdoi{10.1109/CDC.2017.8263694}}
+}
+
+% Verified via Crossref / arXiv full text (formation-control agent).
+@article{su2026bearing,
+  author  = {Su, H. and Yang, Z. and Zhu, S. and Chen, C. and Guan, X. and Xie, L.},
+  title   = {Bearing-based multi-agent formation control: A survey and taxonomy},
+  journal = {Annu. Rev. Control},
+  year    = {2026},
+  volume  = {61, Art. no.~101043},
+  note    = {\bibdoi{10.1016/j.arcontrol.2025.101043}}
+}
+
+@article{anderson2008rigid,
+  author  = {Anderson, B. D. O. and Yu, C. and Fidan, B. and Hendrickx, J. M.},
+  title   = {Rigid graph control architectures for autonomous formations},
+  journal = {IEEE Control Syst. Mag.},
+  year    = {2008},
+  month   = dec,
+  volume  = {28},
+  number  = {6},
+  pages   = {48--63},
+  note    = {\bibdoi{10.1109/MCS.2008.929280}}
+}
+
+@article{dong2017time,
+  author  = {Dong, X. and Hu, G.},
+  title   = {Time-varying formation tracking for linear multiagent systems with multiple leaders},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2017},
+  month   = jul,
+  volume  = {62},
+  number  = {7},
+  pages   = {3658--3664},
+  note    = {\bibdoi{10.1109/TAC.2017.2673411}}
+}
+
+@article{garciademarina2021distributed,
+  author  = {{Garcia de Marina}, H.},
+  title   = {Distributed formation maneuver control by manipulating the complex {L}aplacian},
+  journal = {Automatica},
+  year    = {2021},
+  month   = oct,
+  volume  = {132, Art. no.~109813},
+  note    = {\bibdoi{10.1016/j.automatica.2021.109813}}
+}
+
+@article{fang2024distributed,
+  author  = {Fang, X. and Xie, L.},
+  title   = {Distributed formation maneuver control using complex {L}aplacian},
+  journal = {IEEE Trans. Autom. Control},
+  year    = {2024},
+  month   = mar,
+  volume  = {69},
+  number  = {3},
+  pages   = {1850--1857},
+  note    = {\bibdoi{10.1109/TAC.2023.3327932}}
+}
+
+% Verified via Crossref / AAAI OJS (deployment agent).
+@article{chung2018survey,
+  author  = {Chung, Soon-Jo and Paranjape, Aditya Avinash and Dames, Philip and Shen, Shaojie and Kumar, Vijay},
+  title   = {A survey on aerial swarm robotics},
+  journal = {IEEE Trans. Robot.},
+  year    = {2018},
+  month   = aug,
+  volume  = {34},
+  number  = {4},
+  pages   = {837--855},
+  note    = {\bibdoi{10.1109/TRO.2018.2857475}}
+}
+
+@article{wurman2008coordinating,
+  author  = {Wurman, Peter R. and D'Andrea, Raffaello and Mountz, Mick},
+  title   = {Coordinating hundreds of cooperative, autonomous vehicles in warehouses},
+  journal = {AI Mag.},
+  year    = {2008},
+  month   = {Spring},
+  volume  = {29},
+  number  = {1},
+  pages   = {9--20},
+  note    = {\bibdoi{10.1609/aimag.v29i1.2082}}
+}
+
+@article{michael2011cooperative,
+  author  = {Michael, Nathan and Fink, Jonathan and Kumar, Vijay},
+  title   = {Cooperative manipulation and transportation with aerial robots},
+  journal = {Auton. Robots},
+  year    = {2011},
+  month   = jan,
+  volume  = {30},
+  number  = {1},
+  pages   = {73--86},
+  note    = {\bibdoi{10.1007/s10514-010-9205-0}}
+}
+
+@article{krieger2007tandem,
+  author  = {Krieger, Gerhard and Moreira, Alberto and Fiedler, Hauke and Hajnsek, Irena and Werner, Marian and Younis, Marwan and Zink, Manfred},
+  title   = {{TanDEM-X}: A satellite formation for high-resolution {SAR} interferometry},
+  journal = {IEEE Trans. Geosci. Remote Sens.},
+  year    = {2007},
+  month   = nov,
+  volume  = {45},
+  number  = {11},
+  pages   = {3317--3341},
+  note    = {\bibdoi{10.1109/TGRS.2007.900693}}
+}
+
+% Verified via Crossref / full text (finite-time agent).
+@article{haimo1986finite,
+  author  = {Haimo, V. T.},
+  title   = {Finite time controllers},
+  journal = {SIAM J. Control Optim.},
+  year    = {1986},
+  month   = jul,
+  volume  = {24},
+  number  = {4},
+  pages   = {760--770},
+  note    = {\bibdoi{10.1137/0324047}}
+}
+
+@article{parsegov2013fixed,
+  author  = {Parsegov, S. E. and Polyakov, A. E. and Shcherbakov, P. S.},
+  title   = {Fixed-time consensus algorithm for multi-agent systems with integrator dynamics},
+  journal = {IFAC Proc. Vol.},
+  year    = {2013},
+  volume  = {46},
+  number  = {27},
+  pages   = {110--115},
+  note    = {\bibdoi{10.3182/20130925-2-DE-4044.00055}}
+}
+
+@article{zhou2022fixed,
+  author  = {Zhou, Ning and Cheng, Xiaodong and Sun, Zhongqi and Xia, Yuanqing},
+  title   = {Fixed-time cooperative behavioral control for networked autonomous agents with second-order nonlinear dynamics},
+  journal = {IEEE Trans. Cybern.},
+  year    = {2022},
+  month   = sep,
+  volume  = {52},
+  number  = {9},
+  pages   = {9504--9518},
+  note    = {\bibdoi{10.1109/TCYB.2021.3057219}}
+}
+
+@article{trinh2022finite,
+  author  = {Trinh, Minh Hoang and Ahn, Hyo-Sung},
+  title   = {Finite-time bearing-based maneuver of acyclic leader-follower formations},
+  journal = {IEEE Control Syst. Lett.},
+  year    = {2022},
+  volume  = {6},
+  pages   = {1004--1009},
+  note    = {\bibdoi{10.1109/LCSYS.2021.3088299}}
+}
+
+@article{song2017time,
+  author  = {Song, Yongduan and Wang, Yujuan and Holloway, John and Krstic, Miroslav},
+  title   = {Time-varying feedback for regulation of normal-form nonlinear systems in prescribed finite time},
+  journal = {Automatica},
+  year    = {2017},
+  month   = sep,
+  volume  = {83},
+  pages   = {243--251},
+  note    = {\bibdoi{10.1016/j.automatica.2017.06.008}}
+}
+
+@article{song2023prescribed,
+  author  = {Song, Yongduan and Ye, Hefu and Lewis, Frank L.},
+  title   = {Prescribed-time control and its latest developments},
+  journal = {IEEE Trans. Syst., Man, Cybern., Syst.},
+  year    = {2023},
+  month   = jul,
+  volume  = {53},
+  number  = {7},
+  pages   = {4102--4116},
+  note    = {\bibdoi{10.1109/TSMC.2023.3240751}}
+}
+
+@article{bono2023plugplay,
+  author  = {Bono, Antonio and D'Alfonso, Luigi and Fedele, Giuseppe and Gazi, Veysel},
+  title   = {A Plug \& Play Command Generator for Swarm Formation on Multiple Arbitrary Shaped Orbits: A Diffeomorphism-Based Approach},
+  journal = {IEEE Control Syst. Lett.},
+  year    = {2023},
+  volume  = {7},
+  pages   = {2407--2412},
+  note    = {\bibdoi{10.1109/LCSYS.2023.3286806}}
+}
+
+% Verified via Crossref (10.3390/robotics15050092); content from the Crossref abstract.
+@article{dalfonso2026time,
+  author  = {D'Alfonso, Luigi and Merzi, Alp and Fedele, Giuseppe},
+  title   = {Time-scaled coordination and diffeomorphic mapping for fixed-position convergence in smart transportation systems},
+  journal = {Robotics},
+  year    = {2026},
+  volume  = {15, Art. no.~92},
+  number  = {5},
+  note    = {\bibdoi{10.3390/robotics15050092}}
+}
+
+% Verified via Crossref (slot assignment during reconfiguration).
+@article{kuhn1955hungarian,
+  author  = {Kuhn, Harold W.},
+  title   = {The {H}ungarian method for the assignment problem},
+  journal = {Naval Res. Logist. Quart.},
+  year    = {1955},
+  month   = mar,
+  volume  = {2},
+  number  = {1--2},
+  pages   = {83--97},
+  note    = {\bibdoi{10.1002/nav.3800020109}}
+}
+
+@article{turpin2014capt,
+  author  = {Turpin, Matthew and Michael, Nathan and Kumar, Vijay},
+  title   = {{CAPT}: Concurrent assignment and planning of trajectories for multiple robots},
+  journal = {Int. J. Robot. Res.},
+  year    = {2014},
+  month   = jan,
+  volume  = {33},
+  number  = {1},
+  pages   = {98--112},
+  note    = {\bibdoi{10.1177/0278364913515307}}
+}

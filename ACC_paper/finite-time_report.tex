@@ -1,0 +1,526 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=23mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{enumitem,booktabs,needspace}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\definecolor{accent}{HTML}{173E56}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small First-order finite-time formation tracking}
+\fancyhead[R]{\small Technical note}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\abovedisplayskip}{8pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{8pt plus 2pt minus 2pt}
+\setlist[enumerate]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\raggedbottom
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\one}{\mathbf 1}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\pos}[1]{\left[#1\right]_{+}}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\transpose}{^{\mathsf T}}
+\newcommand{\epsreg}{\varepsilon_w}
+\newcommand{\env}{\mathcal R}
+\newcommand{\Dnet}{\mathcal D}
+\hypersetup{pdftitle={First-Order Finite-Time Formation Tracking: Proofs and Separation Conditions},pdfauthor={},pdfsubject={Technical note for supervisor discussion}}
+\begin{document}
+\begin{center}
+{\LARGE\bfseries\color{accent} First-Order Finite-Time Formation Tracking}\\[5pt]
+{\large Proofs, collision-avoidance conditions, and connectivity}\\[4pt]
+{\small Technical note for supervisor discussion \enspace|\enspace 29 September 2026}
+\end{center}
+\vspace{1mm}
+
+\textbf{Purpose and scope.}
+This note retains the proposed first-order controller without modification. It proves exact finite-time station tracking, inherited centroid tracking, a graph-dependent formation-distortion bound, and sufficient conditions for simultaneous inter-agent separation and communication-connectivity preservation. The last result provides a coupling-gain design rule. All arguments are given below; finite-time Lyapunov comparison itself is established methodology \cite{bhat00}.
+
+\section{Model, assumptions, and distributed controller}
+
+For $n\ge2$ agents in $\R^d$, prescribe stations $q_i(t)=r(t)+p_i(t)$ and define
+\begin{equation}
+\dot x_i=u_i,\qquad \delta_i=x_i-q_i,\qquad
+\boldsymbol{\delta}(t) = [\delta_1^T(t), \delta_2^T(t), \dots, \delta_n^T(t)]^T \in \mathbb{R}^{nd}.
+\label{eq:plant}
+\end{equation}
+Assume $q_i\in C^1$ with locally bounded derivatives. All equations use normalized coordinates. For $0<\beta<1$, define the componentwise signed power
+\begin{equation}
+\Phi(z)_\ell=\operatorname{sign}(z_\ell)|z_\ell|^\beta,
+\qquad \Phi(0)=0.
+\label{eq:phi}
+\end{equation}
+Let $w_{ij}=w_{ji}\ge0$, $w_{ii}=0$, and
+\begin{equation}
+L_w=\operatorname{diag}\!\left(\sum_jw_{ij}\right)-[w_{ij}],
+\qquad M=M\transpose\succeq0.
+\label{eq:laplacian}
+\end{equation}
+Take the inter-agent gain $k_c=1$ and use
+\begin{equation}
+\boxed{\quad
+u_i=\dot q_i-\delta_i-\Phi(\delta_i)
+-\sum_{j\in\mathcal N_i(t)}w_{ij}M(\delta_i-\delta_j).
+\quad}
+\label{eq:controller}
+\end{equation}
+The resulting closed-loop error dynamics are exactly
+\begin{equation}
+\boxed{\quad
+\dot\delta=-\delta-\Phi(\delta)-(L_w(x,t)\otimes M)\delta.
+\quad}
+\label{eq:closed}
+\end{equation}
+An admissible weighting between topology switches is
+\begin{equation}
+w_{ij}(x,t)=\frac{a_{ij}(t)}{\norm{x_i-x_j}^{\nu}+\epsreg},
+\quad a_{ij}=a_{ji}\in\{0,1\},\quad \nu\ge1,\quad\epsreg>0.
+\label{eq:weights}
+\end{equation}
+Weights are locally bounded and locally Lipschitz in the continuous states within each graph mode. The topology rule is assumed well-posed, with locally finite switches and no state resets. Solutions are absolutely continuous, and differential inequalities hold almost everywhere. No graph connectivity or uniform positive dwell time is required for the station theorem. A range-dependent switching implementation must satisfy these regularity assumptions, for example through a suitable hysteresis rule.
+
+Each agent knows its own $x_i,q_i,\dot q_i$ and the required neighbor data. The interaction error can be implemented as
+$\delta_i-\delta_j=(x_i-x_j)-(q_i-q_j)$. No centroid or average estimator is used. Exact feedforward, a common coordinate frame, and absence of disturbances and actuator saturation are assumed.
+
+\section{Global finite-time station tracking}
+
+Write $\delta_0=\delta(t_0)$. Define
+\begin{align}
+\env(t)&=\pos{\bigl(1+\norm{\delta_0}^{1-\beta}\bigr)
+ e^{-(1-\beta)(t-t_0)}-1}^{1/(1-\beta)},
+\label{eq:envelope}\\
+\overline T&=t_0+\frac{\ln\!\bigl(1+\norm{\delta_0}^{1-\beta}\bigr)}{1-\beta}.
+\label{eq:deadline}
+\end{align}
+
+\begin{theorem}[Finite-time assigned-station tracking]
+Under Section~1's assumptions, the zero station error is globally finite-time stable and every solution satisfies
+\begin{equation}
+\norm{\delta(t)}\le\env(t),\qquad
+x_i(t)=q_i(t)\quad\text{for every }i\text{ and }t\ge\overline T.
+\label{eq:station-result}
+\end{equation}
+The certificate holds for disconnected or switching graphs, including $L_w\equiv0$.
+\end{theorem}
+\begin{proof}
+Take $V=\tfrac12\norm{\delta}^2$. Symmetry gives the edge-energy identity
+\begin{equation}
+\Dnet:=\delta\transpose(L_w\otimes M)\delta
+=\frac12\sum_{i,j}w_{ij}(\delta_i-\delta_j)\transpose
+ M(\delta_i-\delta_j)\ge0.
+\label{eq:energy}
+\end{equation}
+Since $1+\beta<2$, norm monotonicity implies
+$\sum_{\ell=1}^{nd}|\delta_\ell|^{1+\beta}\ge\norm{\delta}_2^{1+\beta}$.
+Consequently,
+\begin{equation}
+\dot V=-\norm{\delta}^2-\sum_\ell|\delta_\ell|^{1+\beta}-\Dnet
+\le-2V-(2V)^{(1+\beta)/2}.
+\label{eq:station-dissipation}
+\end{equation}
+While $z:=\sqrt{2V}>0$, division by $z$ gives $\dot z\le-z-z^\beta$.
+Set $y=z^{1-\beta}$. Then
+\[
+\dot y\le-(1-\beta)(y+1),\qquad
+y(t)\le\bigl(1+y(t_0)\bigr)e^{-(1-\beta)(t-t_0)}-1
+\]
+until first arrival. A positive $z$ cannot persist beyond the zero of this bound, proving \eqref{eq:envelope}--\eqref{eq:station-result}. Nonincreasing $V$ prevents departure from zero.
+
+$V(t)\le V(t_0)$ proves Lyapunov stability and, with the stated local regularity, precludes finite escape. Within each mode, monotonicity of $\Phi$ and local Lipschitz continuity of the remaining drift give forward uniqueness by Gronwall. The well-posed switching rule preserves state and $V$ continuity.
+\end{proof}
+
+\textbf{Interpretation.}
+The deadline is a finite-time upper bound, not an exact or fixed settling time. It is independent of $M$ and graph/weight parameters. There is no explicit $n$, but $\norm{\delta_0}$ aggregates the agents and can grow with swarm size.
+
+\section{Graph-dependent contraction of formation distortion}
+
+Define the orthogonal projection and disagreement error
+\begin{equation}
+\Pi=I_n-\frac1n\one\one\transpose,
+\qquad \eta=(\Pi \otimes I_d)\delta,
+\qquad \mu=\lambda_{\min}(M)\ge0.
+\label{eq:eta}
+\end{equation}
+Here $\eta_i=\delta_i-\bar\delta$ and $\delta_i-\delta_j=\eta_i-\eta_j$; common translation error does not distort the relative formation.
+
+\begin{proposition}[Disagreement contraction]
+Let $\eta_0=\eta(t_0)$. Then
+\begin{equation}
+\boxed{\quad
+\norm{\eta(t)}\le\norm{\eta_0}
+\exp\!\left[-(t-t_0)-\mu\int_{t_0}^{t}\lambda_2(L_w(s))\,\dd s\right].
+\quad}
+\label{eq:disagreement}
+\end{equation}
+Strictly positive spectral improvement requires $M\succ0$ and positive graph connectivity over a set of times of positive measure.
+\end{proposition}
+\begin{proof}
+Since $(\Pi \otimes I_d) (L_w\otimes M)=(L_w\otimes M)$ and $L_w\one=0$,
+\[
+\dot\eta=-\eta-\Pi\Phi(\delta)-(L_w\otimes M)\eta.
+\]
+For $W=\tfrac12\norm{\eta}^2$, $\eta\transpose\Pi=\eta\transpose$ gives
+\begin{equation}
+\dot W=-\norm{\eta}^2-\eta\transpose\Phi(\delta)
+-\eta\transpose(L_w\otimes M)\eta.
+\label{eq:Wdot}
+\end{equation}
+The nonlinear term is nonnegative because
+\begin{equation}
+\eta\transpose\Phi(\delta)=\frac1{2n}\sum_{i,j}
+(\delta_i-\delta_j)\transpose\bigl(\Phi(\delta_i)-\Phi(\delta_j)\bigr)\ge0.
+\label{eq:monotonicity}
+\end{equation}
+The equality follows by expanding both sums. The inequality follows componentwise from the monotonicity of $a\mapsto\operatorname{sign}(a)|a|^\beta$.
+On the disagreement subspace, the spectral bound gives
+\[
+\eta\transpose(L_w\otimes M)\eta
+\ge\mu\lambda_2(L_w)\norm{\eta}^2.
+\]
+Hence $\dot W\le-2[1+\mu\lambda_2(L_w)]W$. Integration proves \eqref{eq:disagreement}, also when $\eta_0=0$. For a disconnected graph $\lambda_2=0$, so the estimate remains valid. No derivative of $L_w$ is needed.
+\end{proof}
+
+This result improves a \emph{guaranteed distortion envelope}; it does not order actual trajectories for different $M$. If every $\delta_i$ is the same, the Laplacian term is zero irrespective of $M$. Therefore interaction alone cannot provide a uniformly faster station deadline for all initial conditions. Also, \eqref{eq:disagreement} does not capture possible benefits from switching among graphs that are disconnected at every instant.
+
+\section{Formation and Global Centroid Convergence}
+
+In this section, assume that the prescribed station offsets are centered:
+\begin{equation}
+\bar p(t):=\frac{1}{n}\sum_{i=1}^{n} p_i(t)=0,
+\qquad \forall t\ge t_0.
+\label{eq:centered-offsets}
+\end{equation}
+Hence, the centroid of the desired stations coincides with the reference trajectory,
+\begin{equation}
+\frac{1}{n}\sum_{i=1}^{n} q_i(t)
+=
+r(t),
+\end{equation}
+where $q_i=r+p_i$.
+
+\begin{corollary}[Inherited formation and centroid tracking]
+For every $t\ge t_0$,
+\begin{equation}
+\norm{c(t)-r(t)}
+\le
+\frac{\env(t)}{\sqrt n},
+\label{eq:centroid-bound}
+\end{equation}
+and, for every pair $i,j$,
+\begin{equation}
+\norm{(x_i-x_j)-(p_i-p_j)}
+\le
+\sqrt{2}\,\env(t).
+\label{eq:formation-bound}
+\end{equation}
+Consequently, for all $t\ge\overline T$,
+\begin{equation}
+c(t)=r(t)
+\end{equation}
+and
+\begin{equation}
+x_i(t)-x_j(t)
+=
+p_i(t)-p_j(t),
+\qquad \forall i,j.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Since
+\begin{equation}
+\delta_i=x_i-r-p_i,
+\end{equation}
+summing over all agents and using \eqref{eq:centered-offsets} gives
+\begin{equation}
+\sum_{i=1}^{n}\delta_i
+=
+\sum_{i=1}^{n}x_i
+-
+nr
+-
+\sum_{i=1}^{n}p_i
+=
+n(c-r).
+\end{equation}
+Therefore,
+\begin{equation}
+c-r
+=
+\frac1n\sum_{i=1}^{n}\delta_i.
+\end{equation}
+By the Cauchy--Schwarz inequality,
+\begin{equation}
+\norm{c-r}
+=
+\frac1n
+\norm{\sum_{i=1}^{n}\delta_i}
+\le
+\frac1n
+\sqrt{n}
+\left(
+\sum_{i=1}^{n}\norm{\delta_i}^2
+\right)^{1/2},
+\end{equation}
+which yields
+\begin{equation}
+\norm{c-r}
+\le
+\frac{1}{\sqrt n}\norm{\delta}.
+\end{equation}
+Using the station-error envelope
+\begin{equation}
+\norm{\delta(t)}\le\env(t)
+\end{equation}
+gives \eqref{eq:centroid-bound}.
+
+For the relative formation error,
+\begin{align}
+(x_i-x_j)-(p_i-p_j)
+&=
+(x_i-r-p_i)-(x_j-r-p_j)\\
+&=
+\delta_i-\delta_j.
+\end{align}
+Hence,
+\begin{equation}
+\norm{\delta_i-\delta_j}
+\le
+\norm{\delta_i}+\norm{\delta_j}.
+\end{equation}
+More tightly,
+\begin{equation}
+\norm{\delta_i-\delta_j}^2
+\le
+2\norm{\delta_i}^2
++
+2\norm{\delta_j}^2
+\le
+2\norm{\delta}^2,
+\end{equation}
+and therefore
+\begin{equation}
+\norm{(x_i-x_j)-(p_i-p_j)}
+\le
+\sqrt2\,\norm{\delta}
+\le
+\sqrt2\,\env(t),
+\end{equation}
+which proves \eqref{eq:formation-bound}.
+
+Since $\env(t)=0$ for all $t\ge\overline T$, it follows that
+\begin{equation}
+c(t)=r(t)
+\end{equation}
+and
+\begin{equation}
+x_i(t)-x_j(t)=p_i(t)-p_j(t)
+\end{equation}
+for every pair $i,j$ and all $t\ge\overline T$.
+\end{proof}
+
+The centroid tracking property is inherited from finite-time station convergence rather than imposed through an independent centroid feedback law. 
+Thus, unlike the station-error dynamics, the centroid does not satisfy an independent scalar finite-time law of the form
+\begin{equation}
+\dot\sigma_c=-\sigma_c-\Phi(\sigma_c).
+\end{equation}
+Its finite-time convergence to $r(t)$ instead follows directly from the finite-time convergence of the full station-error vector $\delta$.
+
+\section{Separation and communication-connectivity certificates}
+
+\begin{lemma}[From disagreement to actual distances]
+If $\sqrt{2}\norm{\eta(t)}\le \rho_{\mathcal H}(t)$, then for every pair
+\begin{equation}
+\norm{q_i-q_j}-\rho_{\mathcal H}(t)
+\le\norm{x_i-x_j}
+\le\norm{q_i-q_j}+\rho_{\mathcal H}(t).
+\label{eq:distance-tube}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Write $x_i-x_j=q_i-q_j+\eta_i-\eta_j$. Since
+$\norm{\eta_i-\eta_j}^2 \le (\norm{\eta_i}+\norm{\eta_j})^2 \le2(\norm{\eta_i}^2+\norm{\eta_j}^2)
+\le2\norm{\eta}^2$ this implies $\norm{\eta_i-\eta_j} \le \rho_{\mathcal H}(t)$, both bounds follow from the triangle inequality.
+\end{proof}
+
+\subsection*{A priori envelope from a connected backbone}
+Choose a fixed, connected, spanning backbone graph $\mathcal H$, with unweighted Laplacian $L_{\mathcal H}$. Let $R_c>d_{\rm safe}>0$ be the communication range and required center-to-center separation. The latter must include robot radii and the chosen clearance. Assume every backbone link is available whenever its actual length is below $R_c$; arbitrary non-geometric deletion of these links is excluded.
+
+Suppose active backbone edges satisfy $w_{ij}\ge\underline w>0$ while within range. For \eqref{eq:weights}, one can take
+\begin{equation}
+\underline w=(R_c^\nu+\epsreg)^{-1}.
+\label{eq:wlower}
+\end{equation}
+While the backbone is present, edge quadratic forms give
+$L_w\succeq\underline wL_{\mathcal H}$ and therefore
+$\lambda_2(L_w)\ge\underline w\lambda_2(L_{\mathcal H})$.
+Define
+\begin{equation}
+\gamma=1+\mu\underline w\lambda_2(L_{\mathcal H}),\qquad
+\rho_0=\sqrt2\norm{\eta_0},
+\label{eq:gamma}
+\end{equation}
+and combine Theorem~1 with Proposition~1 to obtain the certified relative-distortion envelope
+\begin{equation}
+\boxed{
+\rho_{\mathcal H}(t)
+=
+\min\!\left\{
+\sqrt{2}\,\env(t),
+\;
+\rho_0 e^{-\gamma(t-t_0)}
+\right\}.
+}
+\label{eq:rhoH}
+\end{equation}
+The first term follows from the graph-independent station-error
+bound, since
+\[
+\sqrt{2}\norm{\eta(t)}
+\le
+\sqrt{2}\norm{\delta(t)}
+\le
+\sqrt{2}\env(t).
+\]
+The second term exploits the additional disagreement contraction
+provided by the connected backbone. Thus, \eqref{eq:rhoH} takes
+the tighter of the network-independent and network-enhanced
+bounds. In particular, since $\env(t)=0$ for
+$t\ge\overline T$, the certified relative distortion also becomes
+exactly zero after the finite station-settling time.
+
+Let
+\begin{equation}
+d_q(t)=\min_{i<j}\norm{q_i(t)-q_j(t)},\qquad
+\ell_{\mathcal H}(t)=\max_{(i,j)\in\mathcal E_{\mathcal H}}
+\norm{q_i(t)-q_j(t)}.
+\label{eq:geometry}
+\end{equation}
+
+\begin{theorem}[Joint separation and backbone preservation]
+If the planned stations satisfy, for every $t\ge t_0$,
+\begin{equation}
+\boxed{
+\begin{aligned}
+d_q(t)&>d_{\rm safe}+\rho_{\mathcal H}(t),\\
+\ell_{\mathcal H}(t)&<R_c-\rho_{\mathcal H}(t),
+\end{aligned}}
+\label{eq:safety}
+\end{equation}
+then all agent pairs remain strictly farther apart than $d_{\rm safe}$, every backbone edge remains within communication range, and the communication graph stays connected. The finite-time station deadline \eqref{eq:deadline} is unchanged.
+\end{theorem}
+\begin{proof}
+At $t_0$, $\rho_{\mathcal H}(t_0)=\rho_0$, because $\norm{\eta_0}\le\norm{\delta_0}$. Lemma~1 and \eqref{eq:safety} therefore place all backbone edges strictly within range and all agents safely apart.
+
+Suppose a backbone edge first reaches length $R_c$ at a finite time $t_e>t_0$. On $[t_0,t_e)$ the backbone remains available, so its spectral lower bound, Proposition~1, and Theorem~1 establish \eqref{eq:rhoH}. By continuity of the states, station trajectories, and envelope, the same bound holds at $t_e$. Lemma~1 then gives, for every backbone edge,
+\[
+\norm{x_i(t_e)-x_j(t_e)}
+\le\ell_{\mathcal H}(t_e)+\rho_{\mathcal H}(t_e)<R_c,
+\]
+a contradiction. Hence the backbone persists, so \eqref{eq:rhoH} is valid for all time. The lower bound in Lemma~1 gives
+$\norm{x_i-x_j}\ge d_q-\rho_{\mathcal H}>d_{\rm safe}$ for every pair. This proves both claims without assuming perpetual connectivity in advance. The controller is unchanged, so Theorem~1 still applies.
+\end{proof}
+
+For $t\ge\overline T$, \eqref{eq:safety} reduces to the geometric conditions $d_q>d_{\rm safe}$ and $\ell_{\mathcal H}<R_c$. The inequalities must be checked along the full station maneuver, not just at its endpoints. They constrain initial \emph{relative distortion}, not common centroid displacement. They are sufficient conditions, not global collision avoidance for every initially collision-free configuration.
+
+\section{A sufficient design condition on the coupling matrix}
+
+Set
+\begin{equation}
+s(t)=\min\{d_q(t)-d_{\rm safe},\;R_c-\ell_{\mathcal H}(t)\}.
+\label{eq:margin}
+\end{equation}
+Assume $s(t)>0$ for all $t\ge t_0$ and $0<\rho_0<s(t_0)$. Define
+\begin{equation}
+\gamma_{\rm req}
+=\sup_{t_0<t<\overline T}
+\frac{\ln\!\bigl(\rho_0/s(t)\bigr)}{t-t_0}.
+\label{eq:req}
+\end{equation}
+For a continuous strictly positive margin on $[t_0,\overline T]$ and a strict initial margin, this supremum is finite.
+
+\begin{corollary}[Coupling-gain selection]
+A sufficient condition for Theorem~2 is
+\begin{equation}
+\boxed{\quad
+1+\lambda_{\min}(M)\underline w\lambda_2(L_{\mathcal H})
+>\gamma_{\rm req}.
+\quad}
+\label{eq:design}
+\end{equation}
+In particular, for $M=mI_d$, choose $m\ge0$ satisfying \eqref{eq:design}.
+\end{corollary}
+\begin{proof}
+For $t_0<t<\overline T$, \eqref{eq:design} implies
+$\gamma(t-t_0)>\ln(\rho_0/s(t))$, or
+$\rho_0e^{-\gamma(t-t_0)}<s(t)$.
+Since $\rho_{\mathcal H}\le\rho_0e^{-\gamma(t-t_0)}$, both inequalities in \eqref{eq:safety} hold. The initial strict margin handles $t=t_0$; for $t\ge\overline T$, $\rho_{\mathcal H}=0<s(t)$. Theorem~2 applies.
+\end{proof}
+If $\rho_0=0$, Proposition~1 gives $\eta\equiv0$ and only station geometry is needed; logarithmic gain selection is unnecessary. If $\gamma_{\rm req}<1$, $M=0$ already satisfies the sufficient condition. A larger graph eigenvalue or larger $\lambda_{\min}(M)$ permits a faster decay of the available geometric margin. The condition is conservative, not a necessary or optimal gain bound, and increasing $M$ cannot repair a failed initial-margin test.
+
+\newpage
+\section{Analytical example: interaction prevents an unsafe compression}
+
+Take $n=2$, $d=1$, $t_0=0$, $\beta=1/2$, a unit-weight edge, and $M=m\ge0$. Prescribe
+\begin{equation}
+q_1(t)=-\tfrac12a(t),\quad q_2(t)=\tfrac12a(t),\quad
+a(t)=1.1+8.1e^{-4t},\quad d_{\rm safe}=1,
+\label{eq:example-stations}
+\end{equation}
+with $\delta_1(0)=4$, $\delta_2(0)=-4$. The actual initial separation is $9.2-8=1.2>1$. Symmetry gives $\delta_1=e$, $\delta_2=-e$, where
+\begin{equation}
+\dot e=-(1+2m)e-\sqrt e,\qquad e(0)=4,
+\qquad x_2-x_1=a(t)-2e(t).
+\label{eq:example-error}
+\end{equation}
+The nonnegative solution remains at zero after arrival.
+
+\textbf{No coupling ($m=0$).}
+Solving with $y=\sqrt e$ gives
+$e(t)=\pos{3e^{-t/2}-1}^{2}$.
+At $t=0.05$,
+\[
+x_2-x_1=1.1+8.1e^{-0.2}-2(3e^{-0.025}-1)^2\approx0.313<1.
+\]
+Thus finite-time station convergence does not prevent violation of the separation requirement for this maneuver.
+
+\textbf{With coupling ($m=2$).}
+Now $\dot e=-5e-\sqrt e\le-5e$, so $2e(t)\le8e^{-5t}$ and
+\begin{equation}
+x_2-x_1\ge1.1+8.1e^{-4t}-8e^{-5t}\ge1.1>1.
+\label{eq:example-safe}
+\end{equation}
+Here $\lambda_2(L_{\mathcal H})=2$, $\underline w=1$, $\gamma=5$, and $\rho_0=8$, exactly matching the exponential envelope. Choosing $R_c=20$ also gives
+$a(t)+8e^{-5t}\le17.2<R_c$, so both conditions of Theorem~2 hold. This example uses constant weights, an admissible special case of the model; distance-dependent weights use \eqref{eq:wlower} instead.
+
+\section{Scope of the proved claims}
+
+The same unmodified controller gives a graph-independent nominal finite-time arrival certificate and a graph-dependent certificate for admissible safe, connected station maneuvers. The Laplacian is a relative-error coordination term, not an intrinsically repulsive force. Stronger coupling improves the stated \emph{bound}; it need not monotonically improve every actual trajectory or settling time.
+
+Safety requires the initial-error and station-plan conditions above. External obstacles, non-geometric backbone failures, measurement errors, sampled implementation, disturbances, and input constraints are not covered. Online feedback is local with assigned-reference access; checking the global envelope and selecting gains may require offline knowledge of the graph and initial errors. Error-envelope methods for separation and connectivity have prior art \cite{mehdifar}; these proofs support technical claims, not an established novelty or priority claim.
+
+\begin{thebibliography}{9}
+\small
+\bibitem{bhat00}
+S.~P. Bhat and D.~S. Bernstein, ``Finite-time stability of continuous autonomous systems,'' \emph{SIAM Journal on Control and Optimization}, vol.~38, no.~3, pp.~751--766, 2000.
+\href{https://doi.org/10.1137/S0363012997321358}{doi:10.1137/S0363012997321358}.
+
+\bibitem{mehdifar}
+F.~Mehdifar, C.~P. Bechlioulis, F.~Hashemzadeh, and M.~Baradarannia,
+``Prescribed performance distance-based formation control of multi-agent systems (extended version),'' arXiv:1911.07266v2, 2020.
+\href{https://arxiv.org/abs/1911.07266}{arXiv:1911.07266}; related journal article:
+\href{https://doi.org/10.1016/j.automatica.2020.109086}{doi:10.1016/j.automatica.2020.109086}.
+\end{thebibliography}
+\end{document}

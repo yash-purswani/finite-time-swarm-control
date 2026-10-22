@@ -1,0 +1,9 @@
+{
+  "runs": [
+    "two_agent_m_0",
+    "two_agent_m_2",
+    "star_case_A_m_2.5_kappa_3",
+    "star_case_B_m_0_kappa_4.5",
+    "star_case_C_m_0_kappa_1"
+  ]
+}

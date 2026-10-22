@@ -1,0 +1,34 @@
+{
+  "comparisons": [
+    {
+      "case": "case_0007",
+      "m": 1.0,
+      "kappa": 4.5,
+      "nominal_classification": "C",
+      "tighter_classification": "C",
+      "nominal_clearance": -0.19703420341556077,
+      "tighter_clearance": -0.1970331947922488,
+      "minimum_distance_difference": 1.0086233119821486e-06,
+      "tighter_solver": {
+        "rtol": 1e-07,
+        "atol": 1e-09,
+        "max_step": 0.01,
+        "method": "DOP853"
+      },
+      "nominal_horizon": 12.0,
+      "refined_horizon": 3.0,
+      "post_settling_geometry": {
+        "interval": [
+          3.0,
+          12.0
+        ],
+        "separation_minimum": 0.7529668052077512,
+        "backbone_maximum": 2.966123358494526,
+        "justification": "exact similarity geometry after the universal station deadline; full nominal nodes audited independently"
+      },
+      "refined_transient_minimum": 0.7987361857778437,
+      "refined_full_interval_minimum": 0.7529668052077512
+    }
+  ],
+  "all_classifications_stable": true
+}

@@ -1,0 +1,9 @@
+{
+  "signature": "ddabd682e2d5513210e50f466b2c68c5f301adbcb34d8e3d2f8beb9680562b13",
+  "outputs": {
+    "adaptive_node_audit.json": "748555e2a30ed58f934d96acd0aacd6d55f2d35e0b07f09c1cb47d98c02c869d",
+    "map_boundary_summary.json": "0a2bab71c0137ae280c5776979a1c411c7656d3d95c5826f4cb41dc7587fb2fb",
+    "map_boundary/C_case_0007.json": "089b1137704effb8c2cc5cc8ef40df814326b31ac1ee416a5960deb48715d932",
+    "map_boundary/C_case_0007.npz": "1799560f0d349025245aa365584d1020b2a1033839e065cf9f4d94cbdbecb706"
+  }
+}
