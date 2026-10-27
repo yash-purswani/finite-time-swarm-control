@@ -195,6 +195,89 @@ def _component_count(adjacency):
     return np.asarray(counts)
 
 
+def _plot_star_2x3_comparison(cases, labels, out_paths, transient_end=2.5, d_safe=1.0, r_c=6.0):
+    """Plot 2x3 grid: Row 1 = Certified Safe, Row 2 = Unsafe Mid-Transient Collision."""
+    use_paper_style()
+    fig, axes = plt.subplots(2, 3, figsize=(COL2_W, 4.3), sharex=True, layout='none')
+    
+    row_colors = ['#009E73', '#e74c3c']
+    row_titles = [r'Row 1: Safe ($m=2.5$)', r'Row 2: Collision ($m=0.0$)']
+    
+    for row, case in enumerate(cases):
+        t = case['t']
+        mask = t <= transient_end
+        tz = t[mask]
+        dx = case['d_x'][mask]
+        ellx = case['ell_x'][mask]
+        dq = case['dq'][mask] if 'dq' in case else (case['d_q'][mask] if 'd_q' in case else None)
+        ellq = case['ell_q'][mask] if 'ell_q' in case else (case['ell_H'][mask] if 'ell_H' in case else None)
+        s = case['s'][mask]
+        rho = case['rho_H'][mask]
+        color = row_colors[row % len(row_colors)]
+        certified = bool(case.get('certified', False))
+        
+        # Col 0: Minimum pair separation dx(t)
+        ax0 = axes[row, 0]
+        ax0.plot(tz, dx, color=color, lw=1.6, label=r'$d_x(t)$ (observed)')
+        if dq is not None:
+            ax0.plot(tz, dq - rho, color='k', ls='--', lw=1.1, label=r'$d_q(t) - \rho_{\mathcal{H}}(t)$')
+        ax0.axhline(d_safe, color='#cc0000', ls=':', lw=1.4, label=f'$d_{{\\mathrm{{safe}}}} = {d_safe:g}$ m')
+        if row == 1:
+            ax0.fill_between(tz, dx, d_safe, where=(dx < d_safe), color='#ff4d4d', alpha=0.40,
+                             label='collision ($d_x < d_{\\mathrm{safe}}$)', zorder=2)
+        ax0.set_ylabel(f"{row_titles[row]}\nDistance [m]")
+        ax0.set_ylim(0.85, 1.65)
+        ax0.legend(loc='upper right', fontsize=5.8)
+        
+        # Col 1: Maximum pair separation ell_x(t)
+        ax1 = axes[row, 1]
+        ax1.plot(tz, ellx, color=color, lw=1.6, label=r'$\ell_x(t)$ (observed)')
+        if ellq is not None:
+            ax1.plot(tz, ellq + rho, color='k', ls='--', lw=1.1, label=r'$\ell_q(t) + \rho_{\mathcal{H}}(t)$')
+        ax1.axhline(r_c, color='#cc0000', ls=':', lw=1.4, label=f'$R_c = {r_c:g}$ m')
+        ax1.set_ylabel("Length [m]")
+        ax1.set_ylim(3.5, 6.3)
+        ax1.legend(loc='upper right', fontsize=5.8)
+        
+        # Col 2: Margin s(t) vs Distortion rho_H(t)
+        ax2 = axes[row, 2]
+        ax2.plot(tz, s, color='#0072B2', lw=1.8, label=r'$s(t) = d_q - d_{\mathrm{safe}}$')
+        ax2.plot(tz, rho, color=color, ls='--', lw=1.4, label=r'$\rho_{\mathcal{H}}(t)$')
+        if certified or np.all(s >= rho):
+            ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.25,
+                             label=r'certified ($s \geq \rho_{\mathcal{H}}$)')
+        else:
+            ax2.fill_between(tz, s, rho, where=(rho > s), color='#f39c12', alpha=0.35,
+                             label=r'uncertified ($s < \rho_{\mathcal{H}}$)')
+            ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.15)
+        ax2.set_ylabel("Margin [m]")
+        ax2.set_ylim(-0.05, 0.65)
+        ax2.legend(loc='upper right', fontsize=5.8)
+        
+        for ax in axes[row]:
+            ax.set_xlim(0, transient_end)
+            t_bar = case.get('T_bar_univ', case.get('T_bar', None))
+            if t_bar is not None and t_bar <= transient_end:
+                ax.axvline(t_bar, color='#888888', ls=':', lw=0.7)
+    
+    axes[0, 0].set_title(r'(a) Minimum pairwise distance $d_x(t)$')
+    axes[0, 1].set_title(r'(b) Maximum pairwise distance $\ell_x(t)$')
+    axes[0, 2].set_title(r'(c) Geometric margin $s(t)$ vs. tube $\rho_{\mathcal{H}}(t)$')
+    
+    for ax in axes[1]:
+        ax.set_xlabel(r'Time $t$ [s]')
+        
+    fig.subplots_adjust(left=0.09, right=0.99, bottom=0.11, top=0.92, hspace=0.25, wspace=0.28)
+    for p in out_paths:
+        p = Path(p)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(p, bbox_inches='tight', dpi=300)
+    plt.close(fig)
+
+
+_plot_star_3x3_comparison = _plot_star_2x3_comparison
+
+
 def plot_experiment3_three_cases(cases,folder):
     """Compare safety/connectivity tubes and margins for three scenarios."""
     use_paper_style()
@@ -239,8 +322,8 @@ def plot_experiment3_three_cases(cases,folder):
 
 def plot_map(kappas,ms,classes,rows,folder,boundary=None):
     use_paper_style()
-    labels=['A: certified by gain rule, safe','B: gain rule fails, observed safe',
-            'C: observed violation','D: infeasible geometry','VALIDATION FAILURE']
+    labels=['Category A: Certified safe by Corollary 2','Category B: Uncertified, observed safe',
+            'Category C: Observed transient collision','Category D: Infeasible geometry','VALIDATION FAILURE']
     mapping={key:i for i,key in enumerate(['A','B','C','D','VALIDATION_FAILURE'])}
     z=np.vectorize(mapping.get)(classes)
     colors=['#009E73','#56B4E9','#D55E00','#BDBDBD','#CC00CC']
@@ -251,25 +334,24 @@ def plot_map(kappas,ms,classes,rows,folder,boundary=None):
         boundary=(kappas,np.array([r['m_required'] if r['gamma_req'] is not None and r['gamma_req']>=1 else np.nan
                                  for r in rows[:len(kappas)]],dtype=float))
     boundary_k,boundary_m=boundary
-    ax.plot(boundary_k,boundary_m,'k--',lw=1,label='sufficient design boundary')
-    ax.scatter(np.tile(kappas,len(ms)),np.repeat(ms,len(kappas)),s=5,c='k',alpha=.55)
+    ax.plot(boundary_k,boundary_m,'k--',lw=1.2,label=r'Design boundary $m_{\mathrm{req}}(\kappa)$')
+    ax.scatter(np.tile(kappas,len(ms)),np.repeat(ms,len(kappas)),s=6,c='k',alpha=.65)
     ax.set_title(f'{len(ms)} x {len(kappas)} sampled configurations',fontsize=7)
     ax.set_ylim(ms[0],ms[-1]);ax.set_xlim(kappas[0],kappas[-1])
-    ax.set_xlabel(r'Maneuver speed $\kappa$ (normalized)');ax.set_ylabel('Coupling $m$ (normalized)')
+    ax.set_xlabel(r'Maneuver compression rate $\kappa$');ax.set_ylabel(r'Coupling gain $m$')
     handles=[Line2D([],[],marker='s',ls='',color=colors[i],label=labels[i])
              for i,key in enumerate(['A','B','C','D','VALIDATION_FAILURE']) if np.any(classes==key)]
     if np.any(np.isfinite(boundary_m)):
-        handles += [Line2D([],[],ls='--',color='k',label='sufficient design boundary')]
+        handles += [Line2D([],[],ls='--',color='k',label=r'Design boundary $m_{\mathrm{req}}(\kappa)$')]
     ax.legend(handles=handles,loc='upper center',bbox_to_anchor=(.5,-.25),
               fontsize=5.8,frameon=False)
     ax.grid(False)
     save(fig,folder,'parameter_map')
     peak=np.array([r['peak_control'] for r in rows]).reshape(len(ms),len(kappas))
     fig,ax=plt.subplots(figsize=(COL_W,2.6))
-    # Keep the small grid vector-based: mixed raster/vector PDF export can
-    # corrupt mesh colors even when the Agg PNG renders correctly.
     image=ax.pcolormesh(kappas,ms,peak,cmap='viridis',shading='nearest',rasterized=False)
-    ax.plot(boundary_k,boundary_m,'w--',lw=.8)
-    ax.set_xlabel(r'Maneuver speed $\kappa$ (normalized)');ax.set_ylabel('Coupling $m$ (normalized)')
-    fig.colorbar(image,ax=ax,label=r'Peak $\|u\|_2$ (normalized)')
+    ax.plot(boundary_k,boundary_m,'w--',lw=.9)
+    ax.scatter(np.tile(kappas,len(ms)),np.repeat(ms,len(kappas)),s=5,c='w',alpha=.6)
+    ax.set_xlabel(r'Maneuver compression rate $\kappa$');ax.set_ylabel(r'Coupling gain $m$')
+    fig.colorbar(image,ax=ax,label=r'Peak $\|u\|_2$')
     ax.grid(False);save(fig,folder,'parameter_control')

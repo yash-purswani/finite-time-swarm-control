@@ -16,8 +16,8 @@ def star_tables(root,e2,e3):
     for m,run in sorted(e2):
         if 'reference' not in run['metadata']['configuration']['shared']:continue
         me=run['metrics'];ce=run['certificate'];c=run['metadata']['configuration']['shared']
-        gains.append(f"{m:g} & {fmt(me['settling_times']['1e-06'])} & {fmt(me['T_bar'])} & "
-                     f"{fmt(me['peak_control'])} & {fmt(me['J_u'])} \\\\")
+        gains.append(f"{float(m):4.1f} & {me['settling_times']['1e-06']:.4f} & {me['T_bar']:.4f} & "
+                     f"{me['peak_control']:.4f} & {me['J_u']:.2f} \\\\")
         rec = dict(experiment=2,case=f'm_{m:g}',m=m,kappa=c.get('kappa',me.get('kappa',3.0)))
         rec.update(me)
         rec['certified'] = ce.get('certified',False) if ce else False
@@ -38,7 +38,7 @@ def star_tables(root,e2,e3):
     if gains:
         (root/'star_gain_table.tex').write_text(
             r'\begin{tabular}{rrrrr}\toprule'+'\n'+
-            r'$m$ & $t_{10^{-6}}$ & $\overline T$ & $\max\|u\|_2$ & $J_u$\\\midrule'+'\n'+
+            r'$m$ & $t_{10^{-6}}$ [s] & $\overline T$ [s] & Peak $\|u\|_2$ & $J_u$\\\midrule'+'\n'+
             '\n'.join(gains)+'\n'+r'\bottomrule\end{tabular}'+'\n')
     (root/'star_safety_table.tex').write_text(
         r'\begin{tabular}{lrrrrcc}\toprule'+'\n'+

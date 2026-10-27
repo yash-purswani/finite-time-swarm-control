@@ -3,119 +3,119 @@
   "checks": [
     {
       "case": "case_0000",
-      "station_node_excess": 7.718024577856876e-06,
-      "eta_node_excess": 2.8589923814130394e-06,
+      "station_node_excess": 6.28084596151374e-06,
+      "eta_node_excess": -1.1102230246251565e-16,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0001",
-      "station_node_excess": 6.266892023405811e-06,
-      "eta_node_excess": 0.0,
+      "station_node_excess": 8.147484656588495e-06,
+      "eta_node_excess": -1.1102230246251565e-16,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0002",
-      "station_node_excess": 4.03268290232492e-06,
-      "eta_node_excess": 0.0,
+      "station_node_excess": 5.554134797694969e-06,
+      "eta_node_excess": -1.1102230246251565e-16,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0003",
-      "station_node_excess": 3.62355778429129e-06,
-      "eta_node_excess": 1.1000073524180786e-06,
+      "station_node_excess": 6.8911431710065425e-06,
+      "eta_node_excess": -1.1102230246251565e-16,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0004",
-      "station_node_excess": 8.065331635986903e-06,
-      "eta_node_excess": 7.952061274365623e-06,
+      "station_node_excess": 5.469187790381343e-06,
+      "eta_node_excess": 5.389427546573474e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0005",
-      "station_node_excess": 6.058570648480582e-06,
-      "eta_node_excess": 5.8063046687941385e-06,
+      "station_node_excess": 5.471633260509873e-06,
+      "eta_node_excess": 4.844812564029031e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0006",
-      "station_node_excess": 4.5919825186345706e-06,
-      "eta_node_excess": 4.457730333528739e-06,
+      "station_node_excess": 5.7707880456686745e-06,
+      "eta_node_excess": 5.613926161638145e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0007",
-      "station_node_excess": 3.6681965502705485e-06,
-      "eta_node_excess": 3.3040921397194887e-06,
+      "station_node_excess": 5.282107868383807e-06,
+      "eta_node_excess": 5.193645215343074e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0008",
-      "station_node_excess": 7.400104016820231e-06,
-      "eta_node_excess": 7.314957506069816e-06,
+      "station_node_excess": 5.846483812518466e-06,
+      "eta_node_excess": 5.486766897885265e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0009",
-      "station_node_excess": 6.3906741336221395e-06,
-      "eta_node_excess": 6.195425457226856e-06,
+      "station_node_excess": 7.486549856040088e-06,
+      "eta_node_excess": 7.263432903180022e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0010",
-      "station_node_excess": 4.212919249273588e-06,
-      "eta_node_excess": 4.189352538531338e-06,
+      "station_node_excess": 5.437051478422527e-06,
+      "eta_node_excess": 5.083176558727461e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0011",
-      "station_node_excess": 3.444096242043011e-06,
-      "eta_node_excess": 3.2582626309493816e-06,
+      "station_node_excess": 5.727747436922637e-06,
+      "eta_node_excess": 5.701878441484279e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0012",
-      "station_node_excess": 7.284125849621077e-06,
-      "eta_node_excess": 7.143224544714655e-06,
+      "station_node_excess": 5.927624199941991e-06,
+      "eta_node_excess": 5.661962448979918e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0013",
-      "station_node_excess": 5.673628576795688e-06,
-      "eta_node_excess": 5.6060992275945e-06,
+      "station_node_excess": 6.52575571002376e-06,
+      "eta_node_excess": 6.427350662874877e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0014",
-      "station_node_excess": 4.513179492825874e-06,
-      "eta_node_excess": 3.965781009457303e-06,
+      "station_node_excess": 5.92844609710967e-06,
+      "eta_node_excess": 5.730210086149561e-06,
       "initial_state_difference": 0.0,
       "passed": true
     },
     {
       "case": "case_0015",
-      "station_node_excess": 3.337922253462456e-06,
-      "eta_node_excess": 2.9468845681327208e-06,
+      "station_node_excess": 4.9150365301472775e-06,
+      "eta_node_excess": 4.772491307556188e-06,
       "initial_state_difference": 0.0,
       "passed": true
     }
   ],
-  "maximum_station_node_excess": 8.065331635986903e-06,
-  "maximum_eta_node_excess": 7.952061274365623e-06,
+  "maximum_station_node_excess": 8.147484656588495e-06,
+  "maximum_eta_node_excess": 7.263432903180022e-06,
   "all_passed": true,
   "spectral_integral": "linear interpolation of saved cumulative trapezoidal quadrature"
 }

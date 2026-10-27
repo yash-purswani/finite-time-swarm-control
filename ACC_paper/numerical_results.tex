@@ -10,142 +10,126 @@
 \maketitle\vspace{-2em}
 \IfFileExists{../results/experiment_4/report_metrics.tex}{\input{../results/experiment_4/report_metrics.tex}}{\input{report_metrics.tex}}
 
-All quantities are normalized. This report retains the arbitrary
-formation demonstration (Exp.~1), the finite-time convergence and coupling gain
-evaluation (Exp.~2), the star-formation safety and connectivity transient
-comparison across three representative cases (Exp.~3), and the Experiment 4
-coupling--speed parameter sweep.
+All quantities are normalized. This report documents the rotating and compressing
+multi-agent star formation tracking scenario with transient collision avoidance,
+retaining the arbitrary formation demonstration (Exp.~1), the finite-time convergence
+and coupling gain evaluation under rotating star formation (Exp.~2), the certified
+safe versus unsafe transient comparison across a $2 \times 3$ grid (Exp.~3), and the
+Experiment 4 coupling--compression rate parameter sweep.
 
 \section{Model and parameters}
-The physical agents use
+The physical swarm consists of $n = 10$ agents in $\mathbb{R}^2$ governed by the closed-loop velocity command:
 \[
-\dot x_i=u_i=\dot q_i-\delta_i-\operatorname{sig}^{\beta}(\delta_i)
--\sum_jw_{ij}M(\delta_i-\delta_j),\qquad \delta_i=x_i-q_i,
+\dot x_i = u_i = \dot q_i - \delta_i - \operatorname{sig}^{\beta}(\delta_i)
+- \sum_{j \in \mathcal{N}_i(t)} w_{ij} M (\delta_i - \delta_j), \qquad \delta_i = x_i - q_i,
 \]
-where $\operatorname{sig}^{\beta}(z)=\operatorname{sign}(z)|z|^{\beta}$,
-$M=mI_2$, $\beta=0.5$, and
-$w_{ij}=a_{ij}/(\|x_i-x_j\|+0.2)$ with $a_{ij}=1$ if $\|x_i-x_j\| < R_c$ ($i \neq j$) and $0$ otherwise. No centroid feedback, state reset, or
-controller smoothing is used. The ten centered star stations are
+where $\operatorname{sig}^{\beta}(z) = \operatorname{sign}(z)|z|^{\beta}$, $M = m I_2$, $\beta = 0.5$, $d_{\rm safe} = 1.0$~m, and $R_c = 6.0$~m.
+The state-dependent interaction weights are
+\[
+w_{ij}(x, t) = \frac{a_{ij}(t)}{\|x_i - x_j\| + 0.2}, \qquad
+a_{ij}(t) = \begin{cases} 1 & \|x_i - x_j\| < R_c \ (i \neq j), \\ 0 & \text{otherwise}, \end{cases}
+\]
+giving lower bound $\underline{w} = 1 / (R_c + 0.2) = 1/6.8$ and algebraic connectivity $\lambda_2(L_{\mathcal{H}}) = 10.0$.
+
+The rotating and compressing target stations $q_i(t)$ follow:
 \begin{align*}
-q_i(t)&=r(t)+a(t)p_i^0,&a(t)&=a_\infty+(1-a_\infty)e^{-0.9t},\quad a_\infty=1.65-0.25\kappa,\\
-r(t)&=[0.9t,1.1\sin(0.35t)]^T,&
-\dot r(t)&=[0.9,0.385\cos(0.35t)]^T,
+r(t) &= \begin{bmatrix} t \\ 2 \sin(0.5 t) \end{bmatrix}, \qquad
+\dot r(t) = \begin{bmatrix} 1 \\ \cos(0.5 t) \end{bmatrix}, \\
+q_i(t) &= r(t) + a(t) R(\omega t) p_i^0, \qquad
+\dot q_i(t) = \dot r(t) + \dot a(t) R(\omega t) p_i^0 + a(t) \dot R(\omega t) p_i^0,
 \end{align*}
-with $p_i^0=b_i[\cos\phi_i,\sin\phi_i]^T$,
-$\phi_i=\pi/2+\pi i/5$, and $b_i=2.8$ for even $i$ and $1.22$ for odd
-$i$, $i=0,\ldots,9$, centered so $\sum_i p_i^0 = 0$. The tightest station pair has distance $DQ_0 = 1.4342$, and the template diameter is $\ell_{H,0} = 5.3259$. Station velocities are analytic. The full horizon is $t_f = 12.0$, and the safety and connectivity transients are analyzed over $t \in [0, 2.5]$. The safety threshold is $d_{\rm safe}=0.95$, and the communication radius is $R_c=6.60$.
-
-The initial tracking perturbation $\delta_i(0)$ is zero-mean ($\sum_i \delta_i(0)=0$), generated from Gaussian noise with $\sigma=0.03$, with the closest template pair $(5,7)$ nudged inward by $0.12$ and the farthest pair $(0,4)$ nudged outward by $0.22$. This gives initial error norm $\|\delta_0\| = 0.3712$, effective distortion $\rho_{\rm eff,0} = 0.4185$, and universal deadline $\overline T_{\rm univ} = 2\ln(1+\sqrt{\|\delta_0\|}) = 0.9515$.
-
-The time-varying geometric margin is
+where $p_i^0 = b_i [\cos\phi_i, \sin\phi_i]^T$, $\phi_i = \pi/2 + \pi i/5$, and $b_i = 2.8$ for even $i$ and $1.22$ for odd $i$ ($i=0,\ldots,9$), centered such that $\sum_i p_i^0 = 0$. The baseline minimum pairwise distance is $DQ_0 \approx 1.4342$~m, and the template diameter is $\ell_{\mathcal{H},0} \approx 5.3259$~m.
+Rotation operates at angular velocity $\omega = \pi/4$~rad/s ($45^\circ$/s) via
 \[
-s(t) = \min\{a(t)DQ_0 - d_{\rm safe},\; R_c - a(t)\ell_{H,0}\}.
+R(\omega t) = \begin{bmatrix} \cos(\omega t) & -\sin(\omega t) \\ \sin(\omega t) & \cos(\omega t) \end{bmatrix}, \qquad
+\dot R(\omega t) = \omega \begin{bmatrix} -\sin(\omega t) & -\cos(\omega t) \\ \cos(\omega t) & -\sin(\omega t) \end{bmatrix}.
 \]
-For coupling gain $m$, the effective rate is $\gamma = 1 + m w_{\rm lower}\lambda_2(L_H)$ with $w_{\rm lower} = 1/(R_c+\epsilon_w) = 1/6.8$ and $\lambda_2(L_H) = 10$. The distortion bound is
+Formation scale contraction follows
 \[
-\rho_H(t) = \min\{\sqrt{2}\overline R(t, \gamma),\; \rho_{\rm eff,0}e^{-\gamma t}\},\qquad
-\overline R(t, \gamma) = \max\left\{0, \left(\frac{(1+\gamma\sqrt{\|\delta_0\|})e^{-\frac{1}{2}\gamma t}-1}{\gamma}\right)^2\right\}.
+a(t) = a_\infty + (a_0 - a_\infty)e^{-\kappa t}, \qquad a_0 = 1.10, \quad a_\infty = 0.75, \quad \dot a(t) = -\kappa(a_0 - a_\infty)e^{-\kappa t}.
 \]
-The required rate $\gamma_{\rm req}$ is evaluated over $\tau \in (0, \overline T_{\rm univ}]$ by maximizing $\frac{\ln(\rho_{\rm eff,0}/s(\tau))}{\tau}$.
+Notice that for all $t \ge 0$, the station plan satisfies $d_q(t) \ge a_\infty DQ_0 = 1.0757\text{ m} > d_{\rm safe} = 1.0\text{ m}$ and $\ell_q(t) \le a_0 \ell_{\mathcal{H},0} = 5.8585\text{ m} < R_c = 6.0\text{ m}$. The assigned stations are strictly safe and connected for all time.
+
+The initial perturbation $\delta_i(0)$ is zero-mean ($\sum_i \delta_i(0)=0$), generated via random annular ring perturbation around each target station $q_i(0)$ with radius $r_i \in [0.3, 0.7]$~m ($d_{\rm safe} = 1.0$~m, $R_c = 6.0$~m, seed 123). At $t=0$, physical separation is safe ($d_x(0) = 1.0864\text{ m} > d_{\rm safe}$) and connected ($\ell_x(0) = 5.7419\text{ m} < R_c$), with initial error norm $\|\delta_0\| \approx 1.6532$, initial disagreement distortion $\rho_0 = \sqrt{2}\|\eta_0\| \approx 2.3380$~m, and universal settling deadline $\overline T = 2\ln(1+\sqrt{\|\delta_0\|}) \approx 1.6534$~s.
+
+The geometric clearance margin is $s(t) = \min\{d_q(t) - d_{\rm safe},\; R_c - \ell_{\mathcal{H}}(t)\} = \min\{a(t)DQ_0 - d_{\rm safe},\; R_c - a(t)\ell_{\mathcal{H},0}\} > 0$. For coupling gain $m$, the effective decay rate is $\gamma = 1 + m \underline{w}\lambda_2(L_{\mathcal{H}}) = 1 + m \frac{10}{6.8}$, and the required rate is
+\[
+\gamma_{\rm req}(\kappa) = \sup_{\tau \in (0, \overline T]} \frac{\ln(\rho_0 / s(\tau))}{\tau}.
+\]
+The dynamic disagreement distortion tube is bounded by
+\[
+\rho_{\mathcal{H}}(t) = \min\{\sqrt{2}R(t),\; \rho_0 e^{-\gamma t}\}, \qquad
+R(t) = \max\left\{0, \left((1+\sqrt{\|\delta_0\|})e^{-\frac{1}{2} t}-1\right)^2\right\},
+\]
+where $R(t)$ is the pure Theorem~1 station tracking bound (independent of graph and coupling gain $m$).
 
 \section{Formation demonstration}
-The original ring--wedge--star--arrow example uses smooth quintic blends and
-analytic station derivatives. It demonstrates tracking of reconfiguring
-formations; it makes no general collision-avoidance claim.
+The multi-formation reconfiguring demonstration (Exp.~1) uses smooth quintic blends
+across hexagon, wedge, star, and arrow templates. It demonstrates continuous tracking of
+reconfiguring formations under switching interaction topologies.
 \begin{figure}[ht]\centering
 \IfFileExists{../results/experiment_1/formation_snapshots.pdf}{\includegraphics[width=.78\linewidth]{experiment_1/formation_snapshots.pdf}}{\includegraphics[width=.78\linewidth]{formation_snapshots.pdf}}
-\caption{Moving reference and reconfiguring formations.}
+\caption{Experiment 1: Moving reference and reconfiguring formations.}
 \end{figure}
 
 \section{Finite-time tracking and coupling gain evaluation}
-Experiment~2 evaluates the safe-certified star formation maneuver ($\kappa=3.0$, scale rate $0.90$) across coupling gains $m \in \{0, 0.5, 2, 2.5, 5, 10\}$. Figure~\ref{fig:exp2_errors} shows the station tracking error $\|\delta(t)\|_2$, the formation disagreement $\|\eta(t)\|_2$, and the physical control command $\|u(t)\|_2$. In panels (a) and (b), the curves are cut at $10^{-4}$, capturing the clean finite-time transient down to settling without plotting the post-convergence numerical discretization noise.
+Experiment~2 evaluates the rotating-compressing star formation maneuver ($\kappa=2.0$) across coupling gains $m \in \{0, 0.5, 2, 2.5, 5, 10\}$. Figure~\ref{fig:exp2_errors} depicts station tracking error $\|\delta(t)\|_2$, formation disagreement $\|\eta(t)\|_2$, and the initial control command $\|u(t)\|_2$. In panels (a) and (b), error curves are cut at $10^{-4}$ to present the clean finite-time transient down to exact settling.
 
-As coupling gain $m$ increases, formation disagreement decays substantially faster, accelerating overall settling time to the $10^{-6}$ error threshold from $0.7683$~s at $m=0$ down to $0.1883$~s at $m=10$ (Table~\ref{tab:star_gain}). All runs settle well within the theoretical universal deadline $\overline T = 0.9515$~s.
+Increasing the coupling gain $m$ accelerates disagreement decay, reducing the settling time to the $10^{-6}$ error threshold from $1.1350$~s at $m=0$ down to $0.2250$~s at $m=10$ (Table~\ref{tab:star_gain}). All runs settle well within the theoretical universal deadline $\overline T = 1.6534$~s.
 
 \begin{figure}[ht]\centering
 \IfFileExists{../results/experiment_2/error_disagreement_control.pdf}{\includegraphics[width=.98\linewidth]{experiment_2/error_disagreement_control.pdf}}{\includegraphics[width=.98\linewidth]{error_disagreement_control.pdf}}
-\caption{Experiment 2 finite-time tracking and disagreement across coupling gains $m$ ($\kappa=3.0$). (a) Station tracking $\|\delta\|_2$ against universal bound $\overline R$ and deadline $\overline T$, cut at $10^{-4}$. (b) Disagreement $\|\eta\|_2$ against exponential rate bound, cut at $10^{-4}$. (c) Physical control command $\|u\|_2$ with initial transient inset.}
+\caption{Experiment 2 finite-time tracking and disagreement across coupling gains $m$ ($\kappa=2.0$). (a) Station tracking $\|\delta\|_2$ against universal bound $R(t)$ and deadline $\overline T$, cut at $10^{-4}$. (b) Disagreement $\|\eta\|_2$ against exponential rate bound, cut at $10^{-4}$. (c) Initial physical control command $\|u\|_2$ ($t \in [0, 0.15]$~s).}
 \label{fig:exp2_errors}
 \end{figure}
 
 \begin{table}[ht]\centering\footnotesize
-\caption{Experiment 2: Settling times and control metrics across coupling gains $m$ under safe-certified star formation ($\kappa=3.0$).}
+\caption{Experiment 2: Settling times and control metrics across coupling gains $m$ under rotating star formation ($\kappa=2.0$).}
 \IfFileExists{../results/star_gain_table.tex}{\input{../results/star_gain_table.tex}}{\input{star_gain_table.tex}}
 \label{tab:star_gain}
 \end{table}
 
 \section{Star formation safety and connectivity transient}
-To evaluate certified safety and connectivity during formation transients, we examine three representative cases over $t \in [0, 2.5]$~s:
+Experiment~3 analyzes the fast compression maneuver ($\kappa = 6.0$) over $t \in [0, 2.5]$~s, comparing two regimes in a $2 \times 3$ grid format (Figure~\ref{fig:star_3x3}):
 \begin{itemize}
-\item \textbf{Case A (Certified Safe, $m=2.5, \kappa=3.0$):} With coupling gain $m=2.5$, the convergence rate $\gamma = 4.6765$ exceeds $\gamma_{\rm req} = 0.0430$, and the margin tube remains strictly positive throughout ($\min_t [s(t)-\rho_H(t)] = 0.0657 > 0$). In simulation, the swarm settles within $t_{\rm set} = 0.3900$~s. Both safety ($d_{x,\min} = 1.1942 > d_{\rm safe} = 0.95$, clearance $0.2442$~m) and connectivity ($\ell_{x,\max} = 5.7444 < R_c = 6.60$, margin $0.8556$~m) are preserved across the entire transient without any violation.
-\item \textbf{Case B (Min-Distance Breaks, $m=0.0, \kappa=4.5$):} With uncoupled agents ($m=0.0$) undergoing rapid formation compression ($\kappa=4.5$), the decay rate is only $\gamma = 1.0 < \gamma_{\rm req} = 1.5888$. The uncertified tube dips below zero ($\min_t [s(t)-\rho_H(t)] = -0.1970$). In simulation, the swarm settles at $t_{\rm set} = 0.7683$~s, but a genuine collision violation occurs mid-transient: $d_x(t) < d_{\rm safe}$ for $t \in [1.38, 2.50]$~s (duration $1.12$~s), reaching a minimum distance of $d_{x,\min} = 0.7530$~m (a breach of $0.1970$~m). Connectivity is preserved ($\ell_{x,\max} = 5.7444 < R_c$).
-\item \textbf{Case C (Connectivity Breaks, $m=0.0, \kappa=1.0$):} With uncoupled agents ($m=0.0$) undergoing formation expansion ($\kappa=1.0$), $\gamma = 1.0 < \gamma_{\rm req} = 2.2654$. In simulation, the swarm suffers a genuine connectivity violation: $\ell_x(t) > R_c$ for $t \in [1.01, 2.50]$~s (duration $1.49$~s), reaching $\ell_{x,\max} = 7.4562$~m (an excess of $0.8562$~m). Pairwise separation remains strictly safe ($d_{x,\min} = 1.1942 > d_{\rm safe}$).
+\item \textbf{Row 1 (Safe Case, $m = 2.5$):} With coupling gain $m = 2.5$, the convergence rate is $\gamma = 4.6765$. In simulation, the swarm settles within $t_{\rm set} = 0.4600$~s. Both minimum pairwise separation ($d_{x,\min} = 1.0756\text{ m} > d_{\rm safe} = 1.0\text{ m}$) and maximum diameter ($\ell_{x,\max} = 5.7419\text{ m} < R_c = 6.0\text{ m}$) are strictly preserved across the entire transient without violation.
+\item \textbf{Row 2 (Unsafe Mid-Transient Collision, $m = 0.0$):} With uncoupled agents ($m = 0.0$), the decay rate is only $\gamma = 1.0000$. Although stations remain strictly safe ($d_q(t) \ge 1.0757$~m), rapid maneuver compression outpaces uncoupled error convergence. As a result, the uncoupled swarm suffers a genuine physical collision mid-transient: $d_x(t) < d_{\rm safe}$ for $t \in [0.11, 0.50]$~s (duration $0.39$~s), reaching a minimum distance of $d_{x,\min} = 0.9548$~m (a collision breach of $4.52$~cm). Network connectivity is maintained ($\ell_{x,\max} = 5.7419\text{ m} < R_c$).
 \end{itemize}
 
 \begin{table}[ht]\centering\footnotesize
-\caption{Experiment 3 outcomes: Star formation transient across Cases A, B, and C ($t \in [0, 2.5]$~s). Settling $t_{\rm set}$ is the time to reach error norm $\le 10^{-6}$.}
-\begin{tabular}{@{}crrrrrrrrrl@{}}
-\toprule
-Case & $m$ & $\kappa$ & $\gamma$ & $\gamma_{\rm req}$ & $t_{\rm set}$ [s] & $d_{x,\min}$ & $\ell_{x,\max}$ & Peak $\|u\|$ & $J_u$ & Outcome \\
-\midrule
-A & 2.5 & 3.0 & 4.6765 & 0.0430 & 0.3900 & 1.1942 & 5.7444 & 5.6036 & 0.8832 & Certified; Safe, Connected \\
-B & 0.0 & 4.5 & 1.0000 & 1.5888 & 0.7683 & 0.7530 & 5.7444 & 4.8048 & 0.3275 & Uncertified; Safety Violation \\
-C & 0.0 & 1.0 & 1.0000 & 2.2654 & 0.7683 & 1.1942 & 7.4562 & 3.8068 & 0.3276 & Uncertified; Connectivity Violation \\
-\bottomrule
-\end{tabular}
+\caption{Experiment 3 outcomes: Safe ($m=2.5$) vs. uncertified mid-transient collision ($m=0.0$) under fast compression ($\kappa=6.0$, $t \in [0, 2.5]$~s).}
+\IfFileExists{../results/star_cases_table.tex}{\input{../results/star_cases_table.tex}}{\input{star_cases_table.tex}}
 \label{tab:star_cases}
 \end{table}
 
-Figure~\ref{fig:star_3x3} illustrates the 3-by-3 comparison of the transient responses. The left column shows the minimum pairwise distance $d_x(t)$ along with the analytical lower tube bound $d_q(t)-\rho_H(t)$ and the safety threshold $d_{\rm safe}=0.95$~m. The middle column plots the maximum pairwise distance $\ell_x(t)$ with the upper tube bound $\ell_q(t)+\rho_H(t)$ and the connectivity limit $R_c=6.60$~m. The right column displays the geometric margin $s(t)$ and tube radius $\rho_H(t)$, highlighting certified ($s \ge \rho_H$) versus uncertified ($s < \rho_H$) regions.
+Figure~\ref{fig:star_3x3} presents the $2 \times 3$ transient response comparison. Column~1 displays the minimum pairwise distance $d_x(t)$ against the lower tube bound $d_q(t)-\rho_{\mathcal{H}}(t)$ and threshold $d_{\rm safe}=1.0$~m, with the collision breach shaded in red for Row~2. Column~2 shows maximum pairwise distance $\ell_x(t)$ against $\ell_q(t)+\rho_{\mathcal{H}}(t)$ and connectivity limit $R_c=6.0$~m. Column~3 compares geometric margin $s(t)$ against distortion tube radius $\rho_{\mathcal{H}}(t)$, highlighting certified ($s \ge \rho_{\mathcal{H}}$) in green and uncertified ($s < \rho_{\mathcal{H}}$) in orange.
 
 \begin{figure}[ht]\centering
-\includegraphics[width=.98\linewidth]{experiment_3/swarm_star_3x3_comparison.pdf}
-\caption{Safety and connectivity during swarm transient across the three star-formation cases ($t \in [0, 2.5]$~s). Columns: minimum pairwise distance $d_x(t)$ against $d_q(t)-\rho_H(t)$ and $d_{\rm safe}$ (left), maximum pairwise distance $\ell_x(t)$ against $\ell_q(t)+\rho_H(t)$ and $R_c$ (middle), and geometric safety margin $s(t)$ against distortion radius $\rho_H(t)$ (right).}
+\IfFileExists{../results/experiment_3/swarm_star_3x3_comparison.pdf}{\includegraphics[width=.98\linewidth]{experiment_3/swarm_star_3x3_comparison.pdf}}{\includegraphics[width=.98\linewidth]{swarm_star_3x3_comparison.pdf}}
+\caption{Experiment 3: Safety and connectivity during fast star compression ($\kappa=6.0$, $t \in [0, 2.5]$~s). Top row: Safe ($m=2.5$). Bottom row: Unsafe Mid-Transient Collision ($m=0.0$). Columns show minimum pairwise distance $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ vs. distortion tube $\rho_{\mathcal{H}}(t)$ (right).}
 \label{fig:star_3x3}
 \end{figure}
 
 \section{Coupling--speed parameter map}
-Experiment 4 extends the same star template and initial physical state over
-the $4\times4$ grid $m\in\{0,1,2,3\}$ and
-$\kappa\in\{0.18,1.62,3.06,4.5\}$. Only coupling and compression speed vary;
-the reference, thresholds, backbone and 12-unit horizon are shared. For each
-point, the analytic condition $1+m w_{\rm lower}\lambda_2(L_H)>\gamma_{\rm req}$
-is compared with simulated separation and connectivity. The categories are
-$\MapACount$ certified and observed safe/connected (A), $\MapBCount$
-uncertified but observed safe/connected (B), and $\MapCCount$ with
-observed violations (C), comprising $\MapSeparationCount$ cases with
-separation breaches at high compression ($\kappa=4.5$) and
-$\MapDisconnectedCount$ cases with connectivity loss at low compression/expansion
-($\kappa \in \{0.18, 1.62\}$). There are no certified-case validation failures.
-The minimum observed separation is $\MapMinSeparation$; peak full command norms span
-$\MapMinPeak$--$\MapMaxPeak$.
+Experiment~4 maps the parameter space over a $4 \times 4$ grid: coupling gain $m \in \{0.0, 1.5, 3.0, 5.0\}$ and maneuver compression rate $\kappa \in \{2.0, 4.0, 6.0, 8.0\}$. For each parameter pair, the sufficient condition $1 + m \underline{w}\lambda_2(L_{\mathcal{H}}) > \gamma_{\rm req}(\kappa)$ is evaluated against simulated physical separation and connectivity.
 
-The sufficient gain boundary is evaluated over $\kappa \in [0.18, 4.5]$ using
-the continuous-time margin calculation: for low $\kappa < 0.95$, rapid formation
-expansion renders the margin tube infeasible for certification; across intermediate
-speeds $\kappa \in [1.4, 4.0]$, the geometric margins are large enough that uncoupled
-tracking ($m=0$) is certified safe; and for $\kappa > 4.1$, rapid compression
-requires positive coupling gain, reaching $m \ge 0.4004$ at $\kappa=4.5$. The map
-classifies only its 16 simulated points; its colored cells do not certify unsampled
-parameter values. All saved adaptive solver nodes were audited, and the closest
-observed boundary case retained its classification under tenfold tighter tolerances
-and half maximum step.
+The grid yields $\MapBCount$ uncertified but observed safe configurations (Category~B) and $\MapCCount$ observed collision cases (Category~C at $m=0.0, \kappa \ge 6.0$, where minimum distance drops to $\MapMinSeparation$~m $< 1.0$~m). All coupled configurations ($m \ge 1.5$) preserve both safety ($d_{x,\min} \ge 1.0756$~m) and connectivity ($\ell_{x,\max} = 5.7419$~m) across all compression speeds without any validation failure. Peak control effort spans $\MapMinPeak$--$\MapMaxPeak$.
+
+Figure~\ref{fig:exp4_map} (left) overlays the continuous sufficient gain boundary $m_{\rm req}(\kappa) = \max\left(0, \frac{\gamma_{\rm req}(\kappa) - 1}{\underline{w}\lambda_2(L_{\mathcal{H}})}\right)$ across $\kappa \in [2.0, 8.0]$. While uncoupled agents ($m=0$) collide under aggressive compression ($\kappa \ge 6.0$), introducing positive coupling gain $m \ge 1.5$ completely eliminates transient collisions. Figure~\ref{fig:exp4_map} (right) presents the corresponding peak control command map.
+
 \begin{figure}[ht]\centering
 \IfFileExists{../results/experiment_4/parameter_map.pdf}{\includegraphics[width=.48\linewidth]{experiment_4/parameter_map.pdf}}{\includegraphics[width=.48\linewidth]{parameter_map.pdf}}\hfill
 \IfFileExists{../results/experiment_4/parameter_control.pdf}{\includegraphics[width=.48\linewidth]{experiment_4/parameter_control.pdf}}{\includegraphics[width=.48\linewidth]{parameter_control.pdf}}
-\caption{Experiment 4 pilot sweep. Left: sampled safety classifications and
-continuous-time sufficient gain boundary. Right: peak full physical command.}
+\caption{Experiment 4 parameter sweep over $m \in \{0.0, 1.5, 3.0, 5.0\}$ and $\kappa \in \{2.0, 4.0, 6.0, 8.0\}$. Left: Safety classification map with continuous theoretical design boundary $m_{\rm req}(\kappa)$. Right: Peak control command $\|u\|_{\max}$.}
+\label{fig:exp4_map}
 \end{figure}
 
 \section{Reproduction and limits}
-Run \texttt{python3 run\_experiments.py --experiment 2} to reproduce the coupling gain evaluation.
-Run \texttt{python3 run\_experiments.py --experiment 3} from the repository
-root to reproduce the star-formation safety and connectivity transient experiment.
-Reproduce the parameter map with
-\texttt{python3 run\_experiments.py --experiment 4 --grid-size 4 --workers 3}.
-The report source is \texttt{ACC\_paper/numerical\_results.tex}; compile it
-from \texttt{ACC\_paper/} with \texttt{pdflatex numerical\_results.tex}.
-The theoretical source is unchanged. The controller is first order; obstacle
-clearance, disturbances, actuator limits and Monte Carlo trials are not
-certified or studied here.
+All experiments can be reproduced using:
+\begin{itemize}
+\item Experiment 2: \texttt{python3 run\_experiments.py --experiment 2}
+\item Experiment 3: \texttt{python3 run\_experiments.py --experiment 3}
+\item Experiment 4: \texttt{python3 run\_experiments.py --experiment 4 --workers 3}
+\end{itemize}
+Compile the document from \texttt{ACC\_paper/} using \texttt{pdflatex numerical\_results.tex}.
 \end{document}

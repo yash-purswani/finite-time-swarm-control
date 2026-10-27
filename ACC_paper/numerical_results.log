@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.5)  21 OCT 2026 03:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.5)  27 OCT 2026 12:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -231,67 +231,62 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
  (../results/experiment_4/report_metrics.tex)
-LaTeX Font Info:    Trying to load font information for U+msa on input line 21.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 17.
  (/home/yash/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 21.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 17.
  (/home/yash/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-<../results/experiment_1/formation_snapshots.pdf, id=1, 516.00781pt x 198.40875pt>
-File: ../results/experiment_1/formation_snapshots.pdf Graphic file (type pdf)
-<use ../results/experiment_1/formation_snapshots.pdf>
-Package pdftex.def Info: ../results/experiment_1/formation_snapshots.pdf  used on input line 56.
-(pdftex.def)             Requested size: 388.95619pt x 149.55699pt.
- [1
+) [1
 
 {/home/yash/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<../results/experiment_2/error_disagreement_control.pdf, id=18, 516.00781pt x 182.84311pt>
+<../results/experiment_1/formation_snapshots.pdf, id=17, 434.2239pt x 190.33276pt>
+File: ../results/experiment_1/formation_snapshots.pdf Graphic file (type pdf)
+<use ../results/experiment_1/formation_snapshots.pdf>
+Package pdftex.def Info: ../results/experiment_1/formation_snapshots.pdf  used on input line 71.
+(pdftex.def)             Requested size: 388.95619pt x 170.49051pt.
+<../results/experiment_2/error_disagreement_control.pdf, id=18, 448.31396pt x 184.70769pt>
 File: ../results/experiment_2/error_disagreement_control.pdf Graphic file (type pdf)
 <use ../results/experiment_2/error_disagreement_control.pdf>
-Package pdftex.def Info: ../results/experiment_2/error_disagreement_control.pdf  used on input line 66.
-(pdftex.def)             Requested size: 488.6872pt x 173.16428pt.
- (../results/star_gain_table.tex) [2 <../results/experiment_1/formation_snapshots.pdf> <../results/experiment_2/error_disagreement_control.pdf>]
-<../results/experiment_3/swarm_star_3x3_comparison.pdf, id=59, 902.11125pt x 680.39719pt>
+Package pdftex.def Info: ../results/experiment_2/error_disagreement_control.pdf  used on input line 81.
+(pdftex.def)             Requested size: 488.6872pt x 201.34148pt.
+ (../results/star_gain_table.tex) [2 <../results/experiment_1/formation_snapshots.pdf>] (../results/star_cases_table.tex)
+<../results/experiment_3/swarm_star_3x3_comparison.pdf, id=46, 512.41634pt x 294.52196pt>
 File: ../results/experiment_3/swarm_star_3x3_comparison.pdf Graphic file (type pdf)
 <use ../results/experiment_3/swarm_star_3x3_comparison.pdf>
-Package pdftex.def Info: ../results/experiment_3/swarm_star_3x3_comparison.pdf  used on input line 102.
-(pdftex.def)             Requested size: 488.6872pt x 368.58217pt.
-<../results/experiment_4/parameter_map.pdf, id=60, 251.4996pt x 206.69632pt>
+Package pdftex.def Info: ../results/experiment_3/swarm_star_3x3_comparison.pdf  used on input line 108.
+(pdftex.def)             Requested size: 488.6872pt x 280.88632pt.
+ [3 <../results/experiment_2/error_disagreement_control.pdf>]
+<../results/experiment_4/parameter_map.pdf, id=76, 222.90245pt x 234.23134pt>
 File: ../results/experiment_4/parameter_map.pdf Graphic file (type pdf)
 <use ../results/experiment_4/parameter_map.pdf>
-Package pdftex.def Info: ../results/experiment_4/parameter_map.pdf  used on input line 134.
-(pdftex.def)             Requested size: 239.3559pt x 196.72623pt.
-<../results/experiment_4/parameter_control.pdf, id=61, 251.03618pt x 186.45659pt>
+Package pdftex.def Info: ../results/experiment_4/parameter_map.pdf  used on input line 121.
+(pdftex.def)             Requested size: 239.3559pt x 251.53287pt.
+<../results/experiment_4/parameter_control.pdf, id=77, 227.93163pt x 177.10754pt>
 File: ../results/experiment_4/parameter_control.pdf Graphic file (type pdf)
 <use ../results/experiment_4/parameter_control.pdf>
-Package pdftex.def Info: ../results/experiment_4/parameter_control.pdf  used on input line 135.
-(pdftex.def)             Requested size: 239.3559pt x 177.78143pt.
-
-Overfull \hbox (9.75797pt too wide) in paragraph at lines 141--151
-\OT1/cmtt/m/n/10 --grid-size 4 --workers 3\OT1/cmr/m/n/10 . The re-port source is \OT1/cmtt/m/n/10 ACC[]paper/numerical[]results.tex\OT1/cmr/m/n/10 ; com-pile it from \OT1/cmtt/m/n/10 ACC[]paper/
- []
-
-[3] [4 <../results/experiment_3/swarm_star_3x3_comparison.pdf>] [5 <../results/experiment_4/parameter_map.pdf> <../results/experiment_4/parameter_control.pdf>] (./numerical_results.aux)
+Package pdftex.def Info: ../results/experiment_4/parameter_control.pdf  used on input line 122.
+(pdftex.def)             Requested size: 239.3559pt x 185.99002pt.
+ [4 <../results/experiment_3/swarm_star_3x3_comparison.pdf>] [5 <../results/experiment_4/parameter_map.pdf> <../results/experiment_4/parameter_control.pdf>] (./numerical_results.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4329 strings out of 469157
- 71589 string characters out of 5460244
- 493656 words of memory out of 5000000
- 33307 multiletter control sequences out of 15000+600000
+ 4340 strings out of 469157
+ 71911 string characters out of 5460244
+ 491656 words of memory out of 5000000
+ 33315 multiletter control sequences out of 15000+600000
  636078 words of font info for 73 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 57i,10n,65p,678b,409s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/yash/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on numerical_results.pdf (5 pages, 517880 bytes).
+ 57i,14n,65p,699b,409s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </home/yash/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on numerical_results.pdf (5 pages, 457924 bytes).
 PDF statistics:
- 238 PDF objects out of 1000 (max. 8388607)
- 139 compressed objects within 2 object streams
+ 244 PDF objects out of 1000 (max. 8388607)
+ 142 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

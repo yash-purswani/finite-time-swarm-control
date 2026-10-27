@@ -1,0 +1,78 @@
+"""Core mathematical, physical, and simulation modules."""
+from .dynamics import (
+    sig_beta,
+    pairwise_distance_matrix,
+    proximity_weights,
+    laplacian_matrix,
+    algebraic_connectivity,
+    evaluate_control_command,
+    closed_loop_ode_rhs,
+)
+from .stations import (
+    reference_centroid_path,
+    reference_centroid_velocity,
+    build_star_template,
+    template_geometry_metrics,
+    star_scale,
+    star_scale_dot,
+    rotation_matrix_2d,
+    rotation_matrix_derivative_2d,
+    star_stations,
+    star_stations_batch,
+    build_morphing_schedule,
+)
+from .spawn import (
+    generate_random_ring_perturbation,
+    verify_initial_conditions,
+)
+from .theory import (
+    disagreement_vector,
+    disagreement_norm,
+    universal_tracking_bound,
+    universal_settling_deadline,
+    geometric_clearance_margin,
+    dynamic_distortion_tube,
+    effective_decay_rate,
+    compute_required_rate,
+    compute_required_gain,
+    classify_outcome,
+)
+from .simulation import (
+    SimulationResult,
+    simulate_star_maneuver,
+)
+
+__all__ = [
+    'sig_beta',
+    'pairwise_distance_matrix',
+    'proximity_weights',
+    'laplacian_matrix',
+    'algebraic_connectivity',
+    'evaluate_control_command',
+    'closed_loop_ode_rhs',
+    'reference_centroid_path',
+    'reference_centroid_velocity',
+    'build_star_template',
+    'template_geometry_metrics',
+    'star_scale',
+    'star_scale_dot',
+    'rotation_matrix_2d',
+    'rotation_matrix_derivative_2d',
+    'star_stations',
+    'star_stations_batch',
+    'build_morphing_schedule',
+    'generate_random_ring_perturbation',
+    'verify_initial_conditions',
+    'disagreement_vector',
+    'disagreement_norm',
+    'universal_tracking_bound',
+    'universal_settling_deadline',
+    'geometric_clearance_margin',
+    'dynamic_distortion_tube',
+    'effective_decay_rate',
+    'compute_required_rate',
+    'compute_required_gain',
+    'classify_outcome',
+    'SimulationResult',
+    'simulate_star_maneuver',
+]

@@ -1,6 +1,6 @@
 {
-  "elapsed_seconds": 42.80819869041443,
-  "experiment": "2",
+  "elapsed_seconds": 49.78413510322571,
+  "experiment": "4",
   "configuration": {
     "solver": {
       "method": "DOP853",
@@ -53,60 +53,62 @@
       ],
       "delta_initial": [
         [
-          1.3471114790620885e-17,
-          0.22
+          0.006094341595088631,
+          0.02920031787519009
         ],
         [
-          0.042863220825229933,
-          0.02401135472379401
+          0.013656196243113388,
+          0.025666280110716408
         ],
         [
-          -0.038181370708578875,
-          -0.043270971973811946
+          -0.04037353144609249,
+          -0.01918860435435423
         ],
         [
-          0.024184897046054775,
-          -0.01369286453824987
+          0.00120398039032995,
+          0.0005301339360204872
         ],
         [
-          -0.12931275550434412,
-          -0.1779837387624884
+          -0.02972528576470944,
+          -0.05751172827021897
         ],
         [
-          0.09708203932499372,
-          0.07053423027509675
+          0.09716640484912369,
+          0.3823899579442083
         ],
         [
-          0.022330605877872695,
-          0.02961164944109858
+          -3.2213721791436636e-05,
+          0.029399809922252787
         ],
         [
-          -0.09708203932499372,
-          -0.07053423027509675
+          -0.07022825850682621,
+          -0.3840199684932941
         ],
         [
-          0.03141220847351118,
-          -0.03297206479281237
+          0.00602218800863422,
+          -0.012322666233687846
         ],
         [
-          0.04670319399025439,
-          -0.005703364097529991
+          0.016216178353129693,
+          0.0058564675631670735
         ]
       ],
-      "a_initial": 1.0,
+      "a_initial": 1.1,
       "scale_rate": 0.9,
-      "kappa": 3.0,
+      "kappa": 2.0,
       "beta": 0.5,
       "nu": 1.0,
       "epsilon_w": 0.2,
-      "R_c": 6.6,
-      "d_safe": 0.95,
+      "R_c": 6.0,
+      "d_safe": 1.0,
       "t_end": 12.0,
       "reference": {
-        "speed": 0.9,
-        "amplitude": 1.1,
-        "frequency": 0.35
-      }
+        "speed": 1.0,
+        "amplitude": 2.0,
+        "frequency": 0.5
+      },
+      "a_final": 0.75,
+      "omega": 0.7853981633974483
     },
     "experiment_1": {
       "n": 10,
@@ -136,41 +138,30 @@
         5.0,
         10.0
       ],
-      "kappa": 3.0
+      "kappa": 2.0
     },
     "experiment_3": {
       "star_maneuver": {
-        "description": "Controlled three-case Experiment 3 using the centered asymmetric star template; values and equations from test.py.",
+        "description": "Rotating-compressing star formation tracking: certified safe (m=2.5) vs mid-transient collision (m=0.0).",
         "n": 10,
         "dim": 2,
         "beta": 0.5,
         "epsilon_w": 0.2,
-        "scale_rate": 0.9,
+        "omega": 0.7853981633974483,
+        "a_initial": 1.1,
+        "a_final": 0.75,
         "t_end": 12.0,
         "transient_end": 2.5,
         "transient_samples": 1501,
         "remainder_samples": 601,
-        "R_c": 6.6,
-        "d_safe": 0.95,
+        "R_c": 6.0,
+        "d_safe": 1.0,
         "reference": {
-          "speed": 0.9,
-          "amplitude": 1.1,
-          "frequency": 0.35
+          "speed": 1.0,
+          "amplitude": 2.0,
+          "frequency": 0.5
         },
         "initial_error_seed": 42,
-        "initial_error": {
-          "noise_std": 0.03,
-          "close_push": 0.12,
-          "far_push": 0.22,
-          "close_pair": [
-            5,
-            7
-          ],
-          "far_pair": [
-            0,
-            4
-          ]
-        },
         "solver": {
           "method": "DOP853",
           "rtol": 1e-06,
@@ -179,22 +170,16 @@
         },
         "cases": [
           {
-            "label": "A",
-            "title": "Case A (Certified Safe)",
+            "label": "Safe",
+            "title": "Row 1 (Certified Safe Case, m = 2.5)",
             "m": 2.5,
-            "kappa": 3.0
+            "kappa": 4.0
           },
           {
-            "label": "B",
-            "title": "Case B (Min-Distance Breaks)",
+            "label": "Unsafe",
+            "title": "Row 2 (Unsafe Mid-Transient Collision, m = 0.0)",
             "m": 0.0,
-            "kappa": 4.5
-          },
-          {
-            "label": "C",
-            "title": "Case C (Connectivity Breaks)",
-            "m": 0.0,
-            "kappa": 1.0
+            "kappa": 4.0
           }
         ]
       },
@@ -211,9 +196,21 @@
     "experiment_4": {
       "coarse_size": 4,
       "final_size": 4,
+      "kappa_values": [
+        1.0,
+        2.0,
+        3.5,
+        5.0
+      ],
+      "m_values": [
+        0.0,
+        1.0,
+        2.0,
+        3.0
+      ],
       "kappa_range": [
-        0.18,
-        4.5
+        1.0,
+        5.0
       ],
       "m_range": [
         0.0,

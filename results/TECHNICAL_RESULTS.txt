@@ -9,13 +9,16 @@ The theoretical LaTeX report is unchanged. The source hash is recorded in every
 run, along with configuration, libraries and solver settings.
 
 Parameter map adaptive-node audit: 16 cases, all passed = True.
-Maximum station-bound node excess = 8.06533e-06;
-maximum disagreement-bound node excess = 7.95206e-06.
+Maximum station-bound node excess = 8.14748e-06;
+maximum disagreement-bound node excess = 7.26343e-06.
 
 Closest observed B/C boundary cases retain their classifications with tighter
 tolerances, half the maximum step and finer distance refinement.
 
-case_0007: minimum-distance change 1.00862e-06;
+case_0002: minimum-distance change 6.66134e-16;
+classification B -> B.
+
+case_0003: minimum-distance change 3.33067e-16;
 classification C -> C.
 
 Experiment 1: arbitrary moving formations
@@ -37,32 +40,32 @@ numerical cumulative trapezoidal quadrature, not an exact spectral integral.
 M adds disagreement dissipation while leaving the universal deadline unchanged.
 No general ordering theorem for different M is inferred. Physical effort includes qdot.
 
-The star maneuver uses a(t)=a_inf+(1-a_inf)exp(-0.90t) with kappa=3,
+The star maneuver uses a(t)=a_inf+(1-a_inf)exp(-0.90t) with kappa=2,
 and r(t)=(0.9t, 1.1 sin(0.35t)). Ten alternating outer/inner star vertices
-have template radii 2.8 and 1.22. The safety threshold is 0.95 and R_c=6.6.
+have template radii 2.8 and 1.22. The safety threshold is 1 and R_c=6.
 
-m=0: 1e-6 settling 0.768333;
-peak ||u|| 3.50984; feedback energy J_u 0.32748;
+m=0: 1e-6 settling 0.963333;
+peak ||u|| 9.07373; feedback energy J_u 386.515;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
-m=0.5: 1e-6 settling 0.628333;
-peak ||u|| 3.82752; feedback energy J_u 0.438974;
+m=0.5: 1e-6 settling 0.675;
+peak ||u|| 9.37429; feedback energy J_u 386.894;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
-m=2: 1e-6 settling 0.43;
-peak ||u|| 5.10868; feedback energy J_u 0.772248;
+m=2: 1e-6 settling 0.403333;
+peak ||u|| 11.0766; feedback energy J_u 387.939;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
-m=2.5: 1e-6 settling 0.39;
-peak ||u|| 5.60358; feedback energy J_u 0.883193;
+m=2.5: 1e-6 settling 0.358333;
+peak ||u|| 11.8472; feedback energy J_u 388.281;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
-m=5: 1e-6 settling 0.28;
-peak ||u|| 8.30945; feedback energy J_u 1.43756;
+m=5: 1e-6 settling 0.243333;
+peak ||u|| 16.5568; feedback energy J_u 389.977;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
-m=10: 1e-6 settling 0.188333;
-peak ||u|| 14.1435; feedback energy J_u 2.54577;
+m=10: 1e-6 settling 0.161667;
+peak ||u|| 27.7295; feedback energy J_u 393.35;
 station-envelope excess 0; actual solver {'rtol': 1e-06, 'atol': 1e-08, 'max_step': 0.02, 'method': 'DOP853'}.
 
 Experiment 3: analytical compression, then ten-agent safety
@@ -76,11 +79,9 @@ uncoupled agents pass through one another; m=2 remains separated above 1.
 Experiment 3: controlled star compression/expansion cases
 The centered asymmetric ten-agent star uses q_i=r+a(t)p_i^0, a_inf=1.65-0.25 kappa, a=a_inf+(1-a_inf)exp(-0.9t), and r=(0.9t,1.1sin(0.35t)); station velocities are analytic. All cases share initial stations and positions, beta=0.5, d_safe=0.95 and R_c=6.60; only m and kappa vary. Follows test.py setup.
 
-Case A: m=2.5, kappa=3; geometry feasible=True; minimum separation=1.1942 (clearance 0.244196); maximum backbone length=5.74438 (connectivity margin 0.855619); safe=True, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.39, T_bar=0.576439, peak command=5.60358, certified=True.
+Case Safe: m=2.5, kappa=4; geometry feasible=True; minimum separation=1.07564 (clearance 0.0756402); maximum backbone length=5.95205 (connectivity margin 0.0479505); safe=True, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.355, T_bar=0.644197, peak command=14.3741, certified=True.
 
-Case B: m=0, kappa=4.5; geometry feasible=True; minimum separation=0.752965 (clearance -0.197035); maximum backbone length=5.74438 (connectivity margin 0.855619); safe=False, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.768333, T_bar=0.951538, peak command=4.80476, certified=False.
-
-Case C: m=0, kappa=1; geometry feasible=True; minimum separation=1.1942 (clearance 0.244196); maximum backbone length=7.45624 (connectivity margin -0.856241); safe=True, backbone preserved=False, range-limited graph connected on output grid=True; settling at 1e-6=0.768333, T_bar=0.951538, peak command=3.80684, certified=False.
+Case Unsafe: m=0, kappa=4; geometry feasible=True; minimum separation=0.98932 (clearance -0.0106796); maximum backbone length=5.95205 (connectivity margin 0.0479505); safe=False, backbone preserved=True, range-limited graph connected on output grid=True; settling at 1e-6=0.963333, T_bar=1.11986, peak command=12.3247, certified=False.
 
 The 3-by-3 comparison is `experiment_3/swarm_star_3x3_comparison.png` (PDF also provided). Rows show Cases A, B, and C; columns show minimum separation, maximum pairwise distance, and geometric margin against the distortion envelope.
 
@@ -89,7 +90,7 @@ The station template, larger reference, initial physical state, geometry and
 12-unit horizon are shared with Experiments 2/3. Initial integration settings
 match their accepted accuracy; only physical parameters m and kappa vary.
 Only m and kappa vary. Initial stations and physical positions are fixed.
-Counts: {'A': 4, 'C': 12}. Certified-with-violation validation failures: 0.
+Counts: {'A': 12, 'B': 3, 'C': 1}. Certified-with-violation validation failures: 0.
 Cases requiring tighter integration to pass the fixed residual budget: 0.
 The gain supremum is obtained from analytic affine-exponential margins and an
 exhaustive monotone-derivative/root calculation, including endpoint limits.

@@ -1,11 +1,23 @@
 {
   "metadata": {
+    "M": [
+      [
+        3.0,
+        0.0
+      ],
+      [
+        0.0,
+        3.0
+      ]
+    ],
+    "d_safe": 1.0,
+    "R_c": 6.0,
     "configuration": {
       "solver": {
         "method": "DOP853",
-        "rtol": 1e-06,
-        "atol": 1e-08,
-        "max_step": 0.02
+        "rtol": 1e-09,
+        "atol": 1e-11,
+        "max_step": 0.01
       },
       "shared": {
         "template": [
@@ -52,60 +64,62 @@
         ],
         "delta_initial": [
           [
-            1.3471114790620885e-17,
-            0.22
+            0.006094341595088631,
+            0.02920031787519009
           ],
           [
-            0.042863220825229933,
-            0.02401135472379401
+            0.013656196243113388,
+            0.025666280110716408
           ],
           [
-            -0.038181370708578875,
-            -0.043270971973811946
+            -0.04037353144609249,
+            -0.01918860435435423
           ],
           [
-            0.024184897046054775,
-            -0.01369286453824987
+            0.00120398039032995,
+            0.0005301339360204872
           ],
           [
-            -0.12931275550434412,
-            -0.1779837387624884
+            -0.02972528576470944,
+            -0.05751172827021897
           ],
           [
-            0.09708203932499372,
-            0.07053423027509675
+            0.09716640484912369,
+            0.3823899579442083
           ],
           [
-            0.022330605877872695,
-            0.02961164944109858
+            -3.2213721791436636e-05,
+            0.029399809922252787
           ],
           [
-            -0.09708203932499372,
-            -0.07053423027509675
+            -0.07022825850682621,
+            -0.3840199684932941
           ],
           [
-            0.03141220847351118,
-            -0.03297206479281237
+            0.00602218800863422,
+            -0.012322666233687846
           ],
           [
-            0.04670319399025439,
-            -0.005703364097529991
+            0.016216178353129693,
+            0.0058564675631670735
           ]
         ],
-        "a_initial": 1.0,
+        "a_initial": 1.1,
         "scale_rate": 0.9,
-        "kappa": 3.0,
+        "kappa": 2.0,
         "beta": 0.5,
         "nu": 1.0,
         "epsilon_w": 0.2,
-        "R_c": 6.6,
-        "d_safe": 0.95,
+        "R_c": 6.0,
+        "d_safe": 1.0,
         "t_end": 12.0,
         "reference": {
-          "speed": 0.9,
-          "amplitude": 1.1,
-          "frequency": 0.35
-        }
+          "speed": 1.0,
+          "amplitude": 2.0,
+          "frequency": 0.5
+        },
+        "a_final": 0.75,
+        "omega": 0.7853981633974483
       },
       "experiment_1": {
         "n": 10,
@@ -135,41 +149,30 @@
           5.0,
           10.0
         ],
-        "kappa": 3.0
+        "kappa": 2.0
       },
       "experiment_3": {
         "star_maneuver": {
-          "description": "Controlled three-case Experiment 3 using the centered asymmetric star template; values and equations from test.py.",
+          "description": "Rotating-compressing star formation tracking: certified safe (m=2.5) vs mid-transient collision (m=0.0).",
           "n": 10,
           "dim": 2,
           "beta": 0.5,
           "epsilon_w": 0.2,
-          "scale_rate": 0.9,
+          "omega": 0.7853981633974483,
+          "a_initial": 1.1,
+          "a_final": 0.75,
           "t_end": 12.0,
           "transient_end": 2.5,
           "transient_samples": 1501,
           "remainder_samples": 601,
-          "R_c": 6.6,
-          "d_safe": 0.95,
+          "R_c": 6.0,
+          "d_safe": 1.0,
           "reference": {
-            "speed": 0.9,
-            "amplitude": 1.1,
-            "frequency": 0.35
+            "speed": 1.0,
+            "amplitude": 2.0,
+            "frequency": 0.5
           },
           "initial_error_seed": 42,
-          "initial_error": {
-            "noise_std": 0.03,
-            "close_push": 0.12,
-            "far_push": 0.22,
-            "close_pair": [
-              5,
-              7
-            ],
-            "far_pair": [
-              0,
-              4
-            ]
-          },
           "solver": {
             "method": "DOP853",
             "rtol": 1e-06,
@@ -178,22 +181,16 @@
           },
           "cases": [
             {
-              "label": "A",
-              "title": "Case A (Certified Safe)",
+              "label": "Safe",
+              "title": "Row 1 (Certified Safe Case, m = 2.5)",
               "m": 2.5,
-              "kappa": 3.0
+              "kappa": 4.0
             },
             {
-              "label": "B",
-              "title": "Case B (Min-Distance Breaks)",
+              "label": "Unsafe",
+              "title": "Row 2 (Unsafe Mid-Transient Collision, m = 0.0)",
               "m": 0.0,
-              "kappa": 4.5
-            },
-            {
-              "label": "C",
-              "title": "Case C (Connectivity Breaks)",
-              "m": 0.0,
-              "kappa": 1.0
+              "kappa": 4.0
             }
           ]
         },
@@ -210,13 +207,25 @@
       "experiment_4": {
         "coarse_size": 4,
         "final_size": 4,
+        "kappa_values": [
+          2.0,
+          4.0,
+          6.0,
+          8.0
+        ],
+        "m_values": [
+          0.0,
+          1.5,
+          3.0,
+          5.0
+        ],
         "kappa_range": [
-          0.18,
-          4.5
+          2.0,
+          8.0
         ],
         "m_range": [
           0.0,
-          3.0
+          5.0
         ],
         "solver": {
           "method": "DOP853",
@@ -226,379 +235,10 @@
         }
       }
     },
-    "station_parameters": null,
-    "M": [
-      [
-        2.0,
-        0.0
-      ],
-      [
-        0.0,
-        2.0
-      ]
-    ],
-    "initial_positions": [
-      [
-        1.8492166667125032e-16,
-        3.02
-      ],
-      [
-        -0.6742347869715871,
-        1.0110120878612299
-      ],
-      [
-        -2.7011396163350083,
-        0.8219766122760411
-      ],
-      [
-        -1.1361040528340327,
-        -0.3906935976756854
-      ],
-      [
-        -1.775111461923269,
-        -2.443231323012341
-      ],
-      [
-        0.0970820393249935,
-        -1.149465769724903
-      ],
-      [
-        1.6681293122967968,
-        -2.235635934808754
-      ],
-      [
-        1.0632069105550934,
-        -0.4475349634125327
-      ],
-      [
-        2.6943704540999414,
-        0.8322755194570398
-      ],
-      [
-        0.7638012017870718,
-        0.9812973690399057
-      ]
-    ],
-    "initial_stations": [
-      [
-        1.7145055188062944e-16,
-        2.8
-      ],
-      [
-        -0.7170980077968171,
-        0.987000733137436
-      ],
-      [
-        -2.6629582456264296,
-        0.865247584249853
-      ],
-      [
-        -1.1602889498800875,
-        -0.37700073313743554
-      ],
-      [
-        -1.645798706418925,
-        -2.2652475842498525
-      ],
-      [
-        -2.241103642439656e-16,
-        -1.2199999999999998
-      ],
-      [
-        1.6457987064189241,
-        -2.265247584249853
-      ],
-      [
-        1.1602889498800872,
-        -0.37700073313743593
-      ],
-      [
-        2.66295824562643,
-        0.8652475842498522
-      ],
-      [
-        0.7170980077968174,
-        0.9870007331374357
-      ]
-    ],
-    "H": [
-      [
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0
-      ]
-    ],
-    "adjacency": [
-      [
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0
-      ],
-      [
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        0.0
-      ]
-    ],
-    "beta": 0.5,
-    "nu": 1.0,
-    "epsilon_w": 0.2,
-    "R_c": 6.6,
-    "d_safe": 0.95,
-    "weight_mode": "distance",
-    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
-    "numpy": "1.26.4",
-    "scipy": "1.16.0",
-    "matplotlib": "3.6.3",
-    "numba": "0.61.2",
-    "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
-    "implementation_sha256": {
-      "verify.py": "5f1c05fcdaa40c985c0342b76c1f7c608498cd9edc133e3f29af298d92948c23",
-      "experiments.py": "cbfb3a47e8d3ebef2ed7ca89add21d5b6b8f7e415bc3b6c876dd3e7f6b2e0dc0",
-      "style.py": "c4d33334f42775a7b2476d9c7832d77897f9d995de14208d1e010d25f49a5a92",
-      "test_workflow.py": "1d275ba2d154fed7b26b38d9558784feb5d2d3c193da58b087f2d236a077a5d5",
-      "__init__.py": "a0641685545fe17ced6a17a1b3d041b6fad816b97050544a40561069244af574",
-      "model.py": "a995f67601069c594ac299bb54075a7d241ffd07eab1d46b709ed2dabe7fccfb",
-      "formations.py": "779a858570a07911cb66819260b7bd1cc11c45325a7534d01974d4a514681720",
-      "cache.py": "1771490cdeed4b0bfd71172b942e0345d5cf73346da464d73afbafbc14846b14",
-      "plotting.py": "956fe8802fd947d99f294bcfec08b65c3ec2a87035b13aacb52790353f7eef83",
-      "metrics.py": "3a6682c199c90dd9110fc9a1c581bc08be2e9053f147048373f91d712da831ab",
-      "sampling.py": "7ed971cd54d3c8080b20f16d4742d8860f56b7b361e2674466ab9dd1d2983fc3",
-      "accelerate.py": "12ff855715ab28e8bf138c9c69fd1eef5e3ef62291cd1f67e7a11743b94738d5",
-      "reporting.py": "7d50aedfe659490b07df65ce314236394807322218c57e81a11bd5452fb98ab6",
-      "common.py": "8dd85d6a1fed49b567ddf063c9a9b3915273e4a9938b9af135e4de14ed2050c2",
-      "theory.py": "e810a2a7ba454659bbc49c0708ff5caa9991cc582f5788a935e683eb4eddd9ae",
-      "integrate.py": "e9be87841474e12c3b1f8b566ebb6e4e9cc3b8969d0920cf0162ca09411b15da"
-    },
-    "mathematical_source": "ACC_paper/finite-time_report.tex",
-    "report_sha256": "931a0961a24a4b0bba70d5556f9169e5175ae26fc3e1eb9c9c1f32fb956da90b"
+    "grid_m": 3.0,
+    "grid_kappa": 6.0
   },
-  "data_sha256": "3f8a014948f5fa6d54c029e310ee3bfe01fd60a837460d3546321c8846e1e77b",
+  "data_sha256": "950d66da8c733f8a4e0e08478d50b1232e391c19205d9c7cfbb671007aa2b4a8",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
@@ -606,96 +246,88 @@
     "method": "DOP853"
   },
   "metrics": {
-    "kappa": 3.0600000000000005,
-    "geometry_feasible": true,
-    "min_separation": 1.1941960155936342,
-    "minimum_clearance": 0.24419601559363424,
-    "max_backbone_edge": 5.744381358422728,
-    "minimum_connectivity_margin": 0.855618641577272,
+    "kappa": 6.0,
+    "min_separation": 1.075641732465025,
+    "minimum_clearance": 0.07564173246502492,
+    "max_backbone_edge": 5.74185266476636,
+    "minimum_connectivity_margin": 0.2581473352336401,
     "observed_safe": true,
-    "observed_backbone_preserved": true,
     "observed_connected": true,
+    "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.41000000000000003,
-      "1e-06": 0.4316666666666667,
+      "0.0001": 0.4033333333333334,
+      "1e-06": 0.4216666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 0.62119424554407,
-    "peak_control": 5.144627285014053,
-    "peak_individual_control": 5.144627285014053,
-    "J_u": 0.7724843476713649,
-    "gamma": 3.9411764705882355,
-    "gamma_req": 0.07589636418689275,
-    "m_required": 0.0,
-    "certified": true,
-    "classification": "A",
+    "T_bar": 1.6534113806190147,
+    "peak_control": 25.65597291349633,
+    "peak_individual_control": 25.65597291349633,
+    "J_u": 405.1407537942916,
+    "gamma": 5.411764705882353,
+    "gamma_req": null,
+    "m_required": null,
+    "certified": false,
+    "classification": "B",
     "safe_viol_start": null,
     "safe_viol_end": null,
-    "conn_viol_start": null,
-    "conn_viol_end": null,
     "dur_safe_viol": 0.0,
     "dur_conn_viol": 0.0,
-    "checks": {
-      "station_envelope": true,
-      "disagreement_envelope": true,
-      "distance_tube": true
+    "solver_settings": {
+      "rtol": 1e-06,
+      "atol": 1e-08,
+      "max_step": 0.02,
+      "method": "DOP853"
     },
-    "geometric_margin_floor": 0.31926683834231495,
-    "station_envelope_excess": 0.0
+    "m": 3.0
   },
   "certificate": {
-    "certified": true,
-    "gamma": 3.9411764705882355,
-    "gamma_req": 0.07589636418689275,
-    "m_required": 0.0,
-    "min_tube_margin": 0.0657311484237667,
-    "geometric_margin_floor": 0.31926683834231495,
-    "T_bar": 0.62119424554407,
-    "feasible": true
+    "certified": false,
+    "gamma": 5.411764705882353,
+    "gamma_req": null,
+    "m_required": null,
+    "T_bar": 1.6534113806190147
   },
-  "grid_m": 2.0,
-  "grid_kappa": 3.0600000000000005,
+  "grid_m": 3.0,
+  "grid_kappa": 6.0,
   "grid_row": {
     "name": "case_0010",
-    "m": 2.0,
-    "kappa": 3.0600000000000005,
-    "geometry_feasible": true,
-    "min_separation": 1.1941960155936342,
-    "minimum_clearance": 0.24419601559363424,
-    "max_backbone_edge": 5.744381358422728,
-    "minimum_connectivity_margin": 0.855618641577272,
+    "m": 3.0,
+    "kappa": 6.0,
+    "min_separation": 1.075641732465025,
+    "minimum_clearance": 0.07564173246502492,
+    "max_backbone_edge": 5.74185266476636,
+    "minimum_connectivity_margin": 0.2581473352336401,
     "observed_safe": true,
-    "observed_backbone_preserved": true,
     "observed_connected": true,
+    "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.41000000000000003,
-      "1e-06": 0.4316666666666667,
+      "0.0001": 0.4033333333333334,
+      "1e-06": 0.4216666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 0.62119424554407,
-    "peak_control": 5.144627285014053,
-    "peak_individual_control": 5.144627285014053,
-    "J_u": 0.7724843476713649,
-    "gamma": 3.9411764705882355,
-    "gamma_req": 0.07589636418689275,
-    "m_required": 0.0,
-    "certified": true,
-    "classification": "A",
+    "T_bar": 1.6534113806190147,
+    "peak_control": 25.65597291349633,
+    "peak_individual_control": 25.65597291349633,
+    "J_u": 405.1407537942916,
+    "gamma": 5.411764705882353,
+    "gamma_req": null,
+    "m_required": null,
+    "certified": false,
+    "classification": "B",
     "safe_viol_start": null,
     "safe_viol_end": null,
-    "conn_viol_start": null,
-    "conn_viol_end": null,
     "dur_safe_viol": 0.0,
     "dur_conn_viol": 0.0,
-    "checks": {
-      "station_envelope": true,
-      "disagreement_envelope": true,
-      "distance_tube": true
+    "solver_settings": {
+      "rtol": 1e-06,
+      "atol": 1e-08,
+      "max_step": 0.02,
+      "method": "DOP853"
     },
-    "geometric_margin_floor": 0.31926683834231495,
-    "station_envelope_excess": 0.0,
-    "index": 10
+    "index": 10,
+    "grid_m": 3.0,
+    "grid_kappa": 6.0
   }
 }
