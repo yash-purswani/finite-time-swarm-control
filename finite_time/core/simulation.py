@@ -21,9 +21,13 @@ from .dynamics import (
 from .stations import (
     build_star_template,
     template_geometry_metrics,
+    backbone_geometry_metrics,
     star_stations,
     star_stations_batch,
     star_scale,
+    _BACKBONE_ELL_H0,
+    _BACKBONE_LAMBDA2,
+    BACKBONE_EDGES,
 )
 from .spawn import (
     generate_random_ring_perturbation,
@@ -120,9 +124,9 @@ def simulate_star_maneuver(
     d_safe: float = 1.0,
     r_c: float = 6.0,
     beta: float = 0.5,
-    eps_w: float = 0.2,
-    a0: float = 1.10,
-    a_inf: float = 0.75,
+    eps_w: float = 0.05,
+    a0: float = 1.70,
+    a_inf: float = 0.72,
     omega: float = np.pi / 4.0,
     rtol: float = 1e-6,
     atol: float = 1e-8,
@@ -139,13 +143,13 @@ def simulate_star_maneuver(
         kappa: Maneuver scale compression rate
         t_span: Integration interval (t0, tf)
         p0: Template vertices (default: 10-agent star)
-        delta0: Initial perturbation (default: tuned zero-mean star perturbation)
+        delta0: Initial perturbation (default: random ring r∈[0.05,0.35] around stations)
         d_safe: Minimum safety separation threshold
         r_c: Maximum communication range
         beta: Fractional exponent
-        eps_w: Interaction weight regularizer
-        a0: Initial formation scale
-        a_inf: Asymptotic formation scale
+        eps_w: Interaction weight regularizer (w̲ = 1/(R_c + eps_w) = 1/6.05)
+        a0: Initial formation scale (default 1.70; gives s(0)≈1.44 m > rho_0_max≈1.26 m)
+        a_inf: Asymptotic formation scale (default 0.72; ensures a_inf*DQ0=1.033>d_safe)
         omega: Angular velocity of rotation
         rtol, atol, max_step: Solver numerical tolerances
         transient_samples: Sample resolution over transient interval [0, 2.5]
@@ -160,7 +164,9 @@ def simulate_star_maneuver(
     n = len(p0)
     dim = p0.shape[1]
 
-    dq0, ell_h0, _, _ = template_geometry_metrics(p0)
+    dq0, _, _, _ = template_geometry_metrics(p0)
+    # Use backbone spanning tree metrics for certificates (not full-graph diameter)
+    ell_h0_backbone, lambda2_lh = backbone_geometry_metrics(p0)
     q0, _ = star_stations(t0, kappa, p0, a0=a0, a_inf=a_inf, omega=omega)
 
     if delta0 is None:
@@ -205,13 +211,17 @@ def simulate_star_maneuver(
     q_values, qdot_values = star_stations_batch(t_eval, kappa, p0, a0=a0, a_inf=a_inf, omega=omega)
     delta_values = x_values - q_values
 
-    # Pairwise distances
+    # Pairwise distances and backbone edge lengths
     iu = np.triu_indices(n, k=1)
     diffs = x_values[:, :, None, :] - x_values[:, None, :, :]
     dist_values = np.linalg.norm(diffs, axis=-1)
     pair_distances = dist_values[:, iu[0], iu[1]]
     d_x = np.min(pair_distances, axis=1)
-    ell_x = np.max(pair_distances, axis=1)
+
+    bb_u = [e[0] for e in BACKBONE_EDGES]
+    bb_v = [e[1] for e in BACKBONE_EDGES]
+    bb_distances = np.linalg.norm(x_values[:, bb_u, :] - x_values[:, bb_v, :], axis=-1)
+    ell_x = np.max(bb_distances, axis=1)  # max backbone edge length over time
 
     # Weights and Laplacians
     diag_mask = np.eye(n, dtype=bool)[None, :, :]
@@ -252,13 +262,13 @@ def simulate_star_maneuver(
 
     max_ell = float(np.max(ell_x))
 
-    # Theoretical certificates
-    gamma = effective_decay_rate(m, r_c=r_c, eps_w=eps_w, lambda2_lh=10.0)
+    # Theoretical certificates — 15-edge backbone algebraic connectivity lambda2(L_H)
+    gamma = effective_decay_rate(m, r_c=r_c, eps_w=eps_w, lambda2_lh=lambda2_lh)
     gamma_req = compute_required_rate(
-        kappa, rho0, dq0, ell_h0=ell_h0, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf, t_bar=t_bar_univ
+        kappa, rho0, dq0, ell_h0=ell_h0_backbone, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf, t_bar=t_bar_univ
     )
     rho_t = dynamic_distortion_tube(t_eval, delta0_norm, rho0, gamma)
-    s_t = geometric_clearance_margin(t_eval, kappa, dq0, ell_h0=ell_h0, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf)
+    s_t = geometric_clearance_margin(t_eval, kappa, dq0, ell_h0=ell_h0_backbone, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf)
 
     # Settling times
     settled_4 = delta_norm <= 1e-4
@@ -273,7 +283,7 @@ def simulate_star_maneuver(
     obs_safe = bool(min_dx >= d_safe)
     obs_conn = bool(max_ell <= r_c)
     classification = classify_outcome(certified, obs_safe, obs_conn)
-    m_req = compute_required_gain(gamma_req, r_c=r_c, eps_w=eps_w, lambda2_lh=10.0)
+    m_req = compute_required_gain(gamma_req, r_c=r_c, eps_w=eps_w, lambda2_lh=lambda2_lh)
 
     # Collision window during transient
     mask_tr = t_eval <= 2.5
@@ -334,7 +344,7 @@ def simulate_star_maneuver(
         rho_h=rho_t,
         r_bar=universal_tracking_bound(t_eval, delta0_norm, gamma=1.0),
         d_q=star_scale(t_eval, kappa, a0, a_inf) * dq0,
-        ell_q=star_scale(t_eval, kappa, a0, a_inf) * ell_h0,
+        ell_q=star_scale(t_eval, kappa, a0, a_inf) * ell_h0_backbone,
         sol=sol,
         metrics=metrics,
     )

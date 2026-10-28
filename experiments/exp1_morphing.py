@@ -21,7 +21,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from finite_time.core.dynamics import closed_loop_ode_rhs
 from finite_time.core.stations import build_morphing_schedule
-from finite_time.formations import hexagon, wedge, star, arrow
+from finite_time.core.formations import hexagon, wedge, star, arrow
 from finite_time.plotting import plot_morphing_snapshots
 from finite_time.utils import write_json, save_simulation_run
 
@@ -29,22 +29,25 @@ from finite_time.utils import write_json, save_simulation_run
 # DEFAULT PARAMETERS (Easily modified for custom runs)
 # =============================================================================
 DEFAULT_N = 10
-DEFAULT_RADIUS = 2.0
+DEFAULT_RADIUS = 1.6
 DEFAULT_M = 2.0
-DEFAULT_T_END = 10.0
-DEFAULT_SWITCH_TIMES = [2.0, 4.5, 7.0]
-DEFAULT_MORPH_DURATION = 1.5
-DEFAULT_SNAPSHOT_TIMES = [1.8, 4.0, 6.5, 9.0]
+DEFAULT_T_END = 12.0
+DEFAULT_SWITCH_TIMES = [2.5, 5.5, 8.5]
+DEFAULT_MORPH_DURATION = 1.2
+DEFAULT_SNAPSHOT_TIMES = [1.5, 4.3, 7.3, 10.5]
 DEFAULT_INITIAL_SEED = 42
+DEFAULT_SPEED = 1.6
 DEFAULT_SOLVER = dict(method='DOP853', rtol=1e-6, atol=1e-8, max_step=0.02)
 
 
-def reference_path(t: float) -> np.ndarray:
-    return np.array([0.9 * t, 1.1 * np.sin(0.35 * t)], dtype=float)
+def reference_path(t: float, speed: float = DEFAULT_SPEED) -> np.ndarray:
+    """Straight-line reference trajectory along x-axis."""
+    return np.array([speed * float(t), 0.0], dtype=float)
 
 
-def reference_velocity(t: float) -> np.ndarray:
-    return np.array([0.9, 0.385 * np.cos(0.35 * t)], dtype=float)
+def reference_velocity(t: float, speed: float = DEFAULT_SPEED) -> np.ndarray:
+    """Constant velocity for straight-line trajectory."""
+    return np.array([float(speed), 0.0], dtype=float)
 
 
 def run_experiment_1(
@@ -57,6 +60,7 @@ def run_experiment_1(
     morph_duration: float = DEFAULT_MORPH_DURATION,
     snapshot_times: Optional[list] = None,
     seed: int = DEFAULT_INITIAL_SEED,
+    speed: float = DEFAULT_SPEED,
     solver_settings: Optional[Dict[str, Any]] = None,
     rerun: bool = False
 ) -> Dict[str, Any]:
@@ -73,6 +77,31 @@ def run_experiment_1(
     if solver_settings is None:
         solver_settings = DEFAULT_SOLVER
 
+    formation_names = ['Hexagon', 'Wedge', 'Star', 'Arrow']
+
+    # Template definitions
+    raw_shapes = [
+        hexagon(n, radius),
+        wedge(n, 0.65 * radius),
+        star(n, 1.05 * radius),
+        arrow(n, radius),
+    ]
+
+    # Hungarian assignment (linear_sum_assignment) slot-to-slot matching across transitions
+    from finite_time.core.formations import reassign
+    shapes = [raw_shapes[0]]
+    for k in range(1, len(raw_shapes)):
+        shapes.append(reassign(shapes[k - 1], raw_shapes[k]))
+
+    P_fn, Pdot_fn = build_morphing_schedule(shapes, switch_times, morph_duration)
+
+    def station_fn(t_val: float):
+        r = reference_path(t_val, speed=speed)
+        rdot = reference_velocity(t_val, speed=speed)
+        q = r[None, :] + P_fn(t_val)
+        qdot = rdot[None, :] + Pdot_fn(t_val)
+        return q, qdot
+
     config = {
         'n': n,
         'radius': radius,
@@ -82,39 +111,26 @@ def run_experiment_1(
         'morph_duration': morph_duration,
         'snapshot_times': snapshot_times,
         'initial_error_seed': seed,
+        'speed': speed,
+        'raw_shapes': raw_shapes,
+        'formation_names': formation_names,
     }
-
-    # Template definitions
-    shapes = [
-        hexagon(n, radius),
-        wedge(n, 0.6 * radius),
-        star(n, 1.1 * radius),
-        arrow(n, radius),
-    ]
-    P_fn, Pdot_fn = build_morphing_schedule(shapes, switch_times, morph_duration)
-
-    def station_fn(t_val: float):
-        r = reference_path(t_val)
-        rdot = reference_velocity(t_val)
-        q = r[None, :] + P_fn(t_val)
-        qdot = rdot[None, :] + Pdot_fn(t_val)
-        return q, qdot
 
     # Initial state with random Gaussian error
     rng = np.random.default_rng(seed)
     q0, _ = station_fn(0.0)
-    delta0 = 0.6 * rng.standard_normal((n, 2))
+    delta0 = 0.35 * rng.standard_normal((n, 2))
     x0 = q0 + delta0
     y0 = np.concatenate([x0.ravel(), [0.0]])
 
     def rhs(t_val: float, y_val: np.ndarray):
         return closed_loop_ode_rhs(
-            t_val, y_val, station_fn, m=m, r_c=3.0, beta=0.5, eps_w=0.2, n=n, dim=2
+            t_val, y_val, station_fn, m=m, r_c=3.5, beta=0.5, eps_w=0.05, n=n, dim=2
         )
 
     sol = solve_ivp(
         rhs, (0.0, t_end), y0,
-        t_eval=np.linspace(0.0, t_end, 5001),
+        t_eval=np.linspace(0.0, t_end, 3001),
         dense_output=True,
         **solver_settings
     )
@@ -134,7 +150,7 @@ def run_experiment_1(
         'm': m,
         't_end': t_end,
         'min_separation': float(np.min(np.linalg.norm(x_eval[:, :, None, :] - x_eval[:, None, :, :], axis=-1)[:, np.triu_indices(n, 1)[0], np.triu_indices(n, 1)[1]])),
-        'configuration': config,
+        'configuration': {k: v for k, v in config.items() if k != 'raw_shapes'},
     }
     write_json(folder / 'morphing.json', summary)
     print(f"Experiment 1 complete. Saved figure to {folder / 'formation_snapshots.pdf'}")

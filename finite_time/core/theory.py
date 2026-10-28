@@ -10,7 +10,7 @@ Implements the finite-time convergence bounds and transient certification rules:
 from typing import Optional
 import numpy as np
 from scipy.optimize import minimize_scalar
-from .stations import star_scale
+from .stations import star_scale, _BACKBONE_LAMBDA2
 
 
 def disagreement_vector(delta: np.ndarray) -> np.ndarray:
@@ -73,16 +73,17 @@ def dynamic_distortion_tube(
 def effective_decay_rate(
     m: float,
     r_c: float = 6.0,
-    eps_w: float = 0.2,
-    lambda2_lh: float = 10.0,
+    eps_w: float = 0.05,
+    lambda2_lh: float = _BACKBONE_LAMBDA2,
     w_lower: Optional[float] = None
 ) -> float:
-    r"""Effective disagreement exponential decay rate \gamma = 1 + m * \underline{w} * \lambda_2(L_H).
+    r"""Effective disagreement exponential decay rate γ = 1 + m · w̲ · λ₂(L_H).
 
-    Defaults to \underline{w} = 1 / 6.8 as defined in prompt specifications.
+    Uses 15-edge backbone algebraic connectivity λ₂(L_H) = 0.931582 and
+    w̲ = 1/(R_c + ε_w) = 1/6.05 ≈ 0.1653 as the worst-case interaction weight.
     """
     if w_lower is None:
-        w_lower = 1.0 / 6.8 if (r_c == 6.0 and eps_w == 0.2) else 1.0 / (r_c + eps_w)
+        w_lower = 1.0 / (r_c + eps_w)
     return float(1.0 + m * w_lower * lambda2_lh)
 
 
@@ -126,15 +127,15 @@ def compute_required_rate(
 def compute_required_gain(
     gamma_req: float,
     r_c: float = 6.0,
-    eps_w: float = 0.2,
-    lambda2_lh: float = 10.0,
+    eps_w: float = 0.05,
+    lambda2_lh: float = _BACKBONE_LAMBDA2,
     w_lower: Optional[float] = None
 ) -> Optional[float]:
-    r"""Compute required coupling gain m_req = max(0, (\gamma_req - 1) / (\underline{w} * \lambda_2(L_H)))."""
+    r"""Compute required coupling gain m_req = max(0, (γ_req − 1) / (w̲ · λ₂(L_H)))."""
     if not np.isfinite(gamma_req):
         return None
     if w_lower is None:
-        w_lower = 1.0 / 6.8 if (r_c == 6.0 and eps_w == 0.2) else 1.0 / (r_c + eps_w)
+        w_lower = 1.0 / (r_c + eps_w)
     return float(max(0.0, (gamma_req - 1.0) / (w_lower * lambda2_lh)))
 
 

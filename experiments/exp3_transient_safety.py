@@ -10,7 +10,7 @@ Outputs:
 - Table 2: results/star_cases_table.tex
 
 Can be run standalone:
-    python3 experiments/exp3_transient_safety.py --m-safe 5.0 --m-unsafe 0.0 --kappa 8.0 --rerun
+    python3 experiments/exp3_transient_safety.py --m-safe 25.0 --m-unsafe 0.0 --kappa 5.0 --rerun
 """
 import argparse
 import sys
@@ -29,16 +29,16 @@ from finite_time.utils import save_simulation_run, write_star_cases_table
 # =============================================================================
 # DEFAULT PARAMETERS (Easily modified for custom runs)
 # =============================================================================
-DEFAULT_SAFE_M = 5.0
+DEFAULT_SAFE_M = 25.0
 DEFAULT_UNSAFE_M = 0.0
-DEFAULT_KAPPA = 8.0
+DEFAULT_KAPPA = 5.0
 DEFAULT_TRANSIENT_END = 2.5
 DEFAULT_TOTAL_T_END = 12.0
 DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
 DEFAULT_OMEGA = 0.7853981633974483  # pi / 4
-DEFAULT_A0 = 1.10
-DEFAULT_A_INF = 0.75
+DEFAULT_A0 = 1.70
+DEFAULT_A_INF = 0.72
 DEFAULT_SOLVER = dict(method='DOP853', rtol=1e-6, atol=1e-8, max_step=0.02)
 
 
@@ -65,9 +65,9 @@ def run_experiment_3(
     ]
 
     print(f"Running Experiment 3: Rapid star compression (kappa = {kappa:.1f}, transient t in [0, {transient_end:.1f}] s)...")
-    print("=" * 115)
-    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'min d_x':>7} | {'max ell':>7} | {'collision window':>18} | {'Outcome'}")
-    print("-" * 115)
+    print("=" * 135)
+    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'min d_x':>7} | {'max ell':>7} | {'collision window':>18} | {'Outcome'}")
+    print("-" * 135)
 
     sim_results = []
     case_rows_data = []
@@ -112,18 +112,25 @@ def run_experiment_3(
             res.metrics['peak_control'], res.metrics['J_u'], outcome
         ))
 
+        g_str = f"{res.metrics['gamma']:7.4f}"
+        g_req_str = f"{res.metrics['gamma_req']:9.4f}" if res.metrics['gamma_req'] is not None else f"{'--':>9}"
         cw = f"[{res.metrics['safe_viol_start']:.2f},{res.metrics['safe_viol_end']:.2f}]" if res.metrics['safe_viol_start'] is not None else "none"
-        print(f"{case['label']:<10} | {m_val:4.1f} | {kappa:5.1f} | {res.metrics['min_separation']:7.4f} | "
+        print(f"{case['label']:<10} | {m_val:4.1f} | {kappa:5.1f} | {g_str} | {g_req_str} | {res.metrics['min_separation']:7.4f} | "
               f"{res.metrics['max_backbone_edge']:7.4f} | {cw:>18} | {outcome}")
 
-    print("=" * 115)
+    print("=" * 135)
 
     # Generate Figure 3 (2x3 grid)
     plot_transient_2x3_grid(
         sim_results[0], sim_results[1], folder,
+        extra_paths=[REPO_ROOT / 'ECC_paper' / 'figures'],
         transient_end=transient_end,
         d_safe=d_safe,
-        r_c=r_c
+        r_c=r_c,
+        ylim_d=(0.5, 2.2),
+        ylim_ell=(1.0, 6.5),
+        ylim_margin=(-0.05, 1.60),
+        filename='swarm_star_2x3_comparison'
     )
     print(f"Saved Figure 3 to {folder / 'swarm_star_2x3_comparison.pdf'}")
 

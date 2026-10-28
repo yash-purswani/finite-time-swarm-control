@@ -595,7 +595,7 @@
       "theory.py": "e810a2a7ba454659bbc49c0708ff5caa9991cc582f5788a935e683eb4eddd9ae",
       "integrate.py": "e9be87841474e12c3b1f8b566ebb6e4e9cc3b8969d0920cf0162ca09411b15da"
     },
-    "mathematical_source": "ACC_paper/finite-time_report.tex",
+    "mathematical_source": "ECC_paper/finite-time_report.tex",
     "report_sha256": "931a0961a24a4b0bba70d5556f9169e5175ae26fc3e1eb9c9c1f32fb956da90b"
   },
   "data_sha256": "1799560f0d349025245aa365584d1020b2a1033839e065cf9f4d94cbdbecb706",

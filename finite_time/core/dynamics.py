@@ -59,7 +59,7 @@ def evaluate_control_command(
     m: float,
     r_c: float = 6.0,
     beta: float = 0.5,
-    eps_w: float = 0.2
+    eps_w: float = 0.05
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, float]:
     """Evaluate closed-loop control commands and interaction terms.
 
@@ -97,7 +97,7 @@ def closed_loop_ode_rhs(
     m: float,
     r_c: float = 6.0,
     beta: float = 0.5,
-    eps_w: float = 0.2,
+    eps_w: float = 0.05,
     n: int = 10,
     dim: int = 2
 ) -> np.ndarray:

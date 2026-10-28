@@ -42,13 +42,16 @@ from finite_time.core.simulation import simulate_star_maneuver
 DEFAULT_M = 2.5
 DEFAULT_KAPPA = 4.0
 DEFAULT_T_END = 5.0
+DEFAULT_A0 = 1.70
+DEFAULT_A_INF = 0.72
+DEFAULT_OMEGA = np.pi / 4.0
 DEFAULT_FPS = 30
 DEFAULT_DPI = 120
 DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
-DEFAULT_R_MIN = 0.3
-DEFAULT_R_MAX = 0.7
-DEFAULT_SEED = 123
+DEFAULT_R_MIN = 0.05
+DEFAULT_R_MAX = 0.25
+DEFAULT_SEED = 42
 DEFAULT_OUTPUT = REPO_ROOT / "results" / "swarm_arena_animation.mp4"
 
 
@@ -56,6 +59,9 @@ def generate_animation(
     m: float = DEFAULT_M,
     kappa: float = DEFAULT_KAPPA,
     t_end: float = DEFAULT_T_END,
+    a0: float = DEFAULT_A0,
+    a_inf: float = DEFAULT_A_INF,
+    omega: float = DEFAULT_OMEGA,
     d_safe: float = DEFAULT_D_SAFE,
     r_c: float = DEFAULT_R_C,
     r_min: float = DEFAULT_R_MIN,
@@ -73,7 +79,7 @@ def generate_animation(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     p0 = build_star_template(n=10)
-    q0, _ = star_stations(0.0, kappa=kappa, p0=p0, a0=1.10, a_inf=0.75, omega=np.pi / 4.0)
+    q0, _ = star_stations(0.0, kappa=kappa, p0=p0, a0=a0, a_inf=a_inf, omega=omega)
 
     # 1. Determine Initial Perturbation delta0
     print(f"Spawning agents randomly in annular ring r in [{r_min:.2f}, {r_max:.2f}] m around stations (seed={seed})...")
@@ -92,6 +98,9 @@ def generate_animation(
         delta0=delta0,
         d_safe=d_safe,
         r_c=r_c,
+        a0=a0,
+        a_inf=a_inf,
+        omega=omega,
         rtol=1e-6,
         atol=1e-8,
         max_step=0.02,
@@ -262,6 +271,8 @@ def main():
     parser.add_argument("--m", type=float, default=DEFAULT_M, help="Coupling gain m")
     parser.add_argument("--kappa", type=float, default=DEFAULT_KAPPA, help="Compression rate kappa")
     parser.add_argument("--t-end", type=float, default=DEFAULT_T_END, help="Simulation time horizon (seconds)")
+    parser.add_argument("--a0", type=float, default=DEFAULT_A0, help="Initial scale a0")
+    parser.add_argument("--a-inf", type=float, default=DEFAULT_A_INF, help="Asymptotic scale a_inf")
     parser.add_argument("--r-min", type=float, default=DEFAULT_R_MIN, help="Min radial offset for random spawn (m)")
     parser.add_argument("--r-max", type=float, default=DEFAULT_R_MAX, help="Max radial offset for random spawn (m)")
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Random seed for spawn reproducibility")
@@ -276,6 +287,8 @@ def main():
         m=args.m,
         kappa=args.kappa,
         t_end=args.t_end,
+        a0=args.a0,
+        a_inf=args.a_inf,
         d_safe=args.d_safe,
         r_c=args.r_c,
         r_min=args.r_min,

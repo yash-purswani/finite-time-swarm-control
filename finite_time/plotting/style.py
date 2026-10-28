@@ -3,7 +3,7 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-# Column widths in inches (ACC / IEEE double-column format)
+# Column widths in inches (ECC / IEEE double-column format)
 COL_W = 3.45     # Single column
 COL2_W = 7.15    # Full width across two columns
 
@@ -21,7 +21,7 @@ COLORS = {
 
 
 def use_paper_style() -> None:
-    """Apply uniform paper style conforming to IEEE/ACC publication requirements."""
+    """Apply uniform paper style conforming to IEEE/ECC publication requirements."""
     mpl.rcParams.update({
         "figure.dpi": 130,
         "savefig.dpi": 300,

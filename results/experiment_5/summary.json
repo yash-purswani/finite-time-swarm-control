@@ -1,0 +1,11 @@
+{
+  "size": 4,
+  "counts": {
+    "B": 13,
+    "C": 3
+  },
+  "validation_failures": 0,
+  "min_separation": 0.6539157689873564,
+  "min_peak": 16.982759107140282,
+  "max_peak": 55.40397684760881
+}

@@ -9,6 +9,8 @@ from scipy.spatial import ConvexHull
 
 from .style import use_paper_style, save_figure, COL_W, COL2_W, COLORS
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 
 def positive_masked_plot(ax, t, y, **kwargs):
     """Plot non-positive or sub-floor points safely by masking."""
@@ -18,74 +20,105 @@ def positive_masked_plot(ax, t, y, **kwargs):
 
 # =============================================================================
 # =============================================================================
-# Figure 1: Morphing Formation Snapshots
+# Figure 1: Morphing Formation Snapshots (Single Panel Clean Layout)
 # =============================================================================
 def plot_morphing_snapshots(arrays: Dict[str, Any], config: Dict[str, Any], folder: Path) -> None:
-    """Plot multi-formation reconfiguring snapshots along the reference path matching standalone quality."""
+    """Plot multi-formation reconfiguring along a straight line trajectory in a single clean panel.
+
+    Displays continuous agent tracks, Hungarian assigned stations, and highlighted
+    target formation shapes with professional publication aesthetics.
+    """
     use_paper_style()
     import matplotlib
-    from ..formations import hexagon, wedge, star, arrow
     from scipy.spatial import ConvexHull
 
-    fig, axes = plt.subplots(1, 4, figsize=(COL2_W, 2.65), sharey=True)
-    colors = plt.cm.tab10(np.arange(config['n']))
-    names = ['Ring', 'Wedge', 'Star', 'Arrow']
+    raw_shapes = config.get('raw_shapes')
+    names = config.get('formation_names', ['Hexagon', 'Wedge', 'Star', 'Arrow'])
+    n = config['n']
+    colors = plt.cm.tab10(np.linspace(0, 1, n))
+
     t = arrays['t']
     X = arrays['X']
     q = arrays['q']
     r = q.mean(axis=1)
 
-    snapshot_indices = [int(np.argmin(abs(t - tq))) for tq in config['snapshot_times']]
-    shown = np.concatenate([
-        np.concatenate([q[index], X[np.searchsorted(t, max(0, tq - 1.5)):index + 1].reshape(-1, 2)])
-        for index, tq in zip(snapshot_indices, config['snapshot_times'])
-    ])
-    y_limits = (shown[:, 1].min() - 0.4, shown[:, 1].max() + 0.4)
+    fig, ax = plt.subplots(figsize=(COL2_W, 1.95))
 
-    L = config['radius']
-    for ax, tq, name in zip(axes, config['snapshot_times'], names):
-        index = int(np.argmin(abs(t - tq)))
-        start = np.searchsorted(t, max(0, tq - 1.5))
-        template = {
-            'Ring': lambda: hexagon(config['n'], L),
-            'Wedge': lambda: wedge(config['n'], 0.6 * L),
-            'Star': lambda: star(config['n'], 1.1 * L),
-            'Arrow': lambda: arrow(config['n'], L)
-        }[name]()
-        if name == 'Wedge':
-            template = template[ConvexHull(template).vertices]
-        outline = np.vstack([template, template[0]]) + r[index]
-        ax.plot(outline[:, 0], outline[:, 1], color='#aaa', lw=0.6, alpha=0.6, zorder=0)
+    # 1. Reference path (straight line)
+    ax.plot(r[:, 0], r[:, 1], color='#444444', ls='--', lw=0.75, alpha=0.5, zorder=1)
 
-        for i, col in enumerate(colors):
-            ax.plot(X[start:index + 1, i, 0], X[start:index + 1, i, 1], color=col, lw=0.65, alpha=0.7)
-            ax.scatter(*q[index, i], s=38, facecolors='none', edgecolors=[col], lw=0.8, zorder=4)
-            ax.scatter(*X[index, i], s=12, color=col, zorder=5)
-            ax.annotate(str(i + 1), q[index, i], xytext=(3, 3), textcoords='offset points', fontsize=5, color=col)
+    # 2. Continuous agent trajectories
+    for i in range(n):
+        ax.plot(X[:, i, 0], X[:, i, 1], color=colors[i], lw=0.6, alpha=0.45, zorder=2)
 
-        ax.plot(r[start:index + 1, 0], r[start:index + 1, 1], 'k--', lw=0.8)
-        ax.plot(*r[index], '+', color='k', ms=6)
+    # 3. Highlight 4 formations at snapshot times
+    for idx, (tq, name) in enumerate(zip(config['snapshot_times'], names)):
+        t_idx = int(np.argmin(abs(t - tq)))
+        q_snap = q[t_idx]
+        x_snap = X[t_idx]
+        r_snap = r[t_idx]
 
-        local = np.concatenate([q[index], X[start:index + 1].reshape(-1, 2)])
-        ax.set_xlim(local[:, 0].min() - 0.4, local[:, 0].max() + 0.4)
-        ax.set_ylim(*y_limits)
-        ax.set_aspect('equal', adjustable='box')
-        ax.set_title(f'{name}, $t={tq:g}$')
-        ax.set_xlabel('$x$ (normalized)')
+        # Template geometry outline
+        if raw_shapes is not None and idx < len(raw_shapes):
+            s_template = raw_shapes[idx]
+            if name == 'Wedge':
+                h = ConvexHull(s_template)
+                outline = np.vstack([s_template[h.vertices], s_template[h.vertices[0]]]) + r_snap
+            else:
+                outline = np.vstack([s_template, s_template[0]]) + r_snap
+        else:
+            h = ConvexHull(q_snap)
+            outline = np.vstack([q_snap[h.vertices], q_snap[h.vertices[0]]])
 
-    axes[0].set_ylabel('$y$ (normalized)')
-    fig.legend(
-        handles=[
-            Line2D([], [], marker='o', color='k', ls='', ms=3, label='agents'),
-            Line2D([], [], marker='o', markerfacecolor='none', color='k', ls='', ms=5, label='assigned stations'),
-            Line2D([], [], color='k', ls='--', label='reference trajectory')
-        ],
-        loc='outside upper center' if matplotlib.__version__ >= '3.7' else 'upper center',
-        ncol=3,
-        bbox_to_anchor=(0.5, 1.11),
-        frameon=False
-    )
+        # Clean, thin dotted formation contour
+        ax.plot(outline[:, 0], outline[:, 1], color='#333333', ls=':', lw=0.75, alpha=0.65, zorder=3)
+
+        # Subtle centroid cross marker
+        ax.plot(r_snap[0], r_snap[1], '+', color='#111111', ms=4.0, mew=0.8, zorder=5)
+
+        # Simple discrete markers: small open circle for stations, small solid dot for agents
+        for i in range(n):
+            col = colors[i]
+            ax.plot(q_snap[i, 0], q_snap[i, 1], marker='o', ms=3.5, mfc='none', mec=col, mew=0.7, zorder=4)
+            ax.plot(x_snap[i, 0], x_snap[i, 1], marker='o', ms=2.0, mfc=col, mec='none', zorder=5)
+
+        # Professional clean annotation strictly within plot limits
+        y_max_shape = outline[:, 1].max()
+        ax.text(
+            r_snap[0], y_max_shape + 0.16, rf"{name} ($t={tq:.1f}\,$s)",
+            ha='center', va='bottom', fontsize=6.2, color='#222222',
+            bbox=dict(boxstyle='square,pad=0.15', facecolor='#ffffff', edgecolor='#dddddd', lw=0.5, alpha=0.85),
+            zorder=6
+        )
+
+    # Clean axes and bounding ensuring no labels clip the boundary
+    x_min = X[..., 0].min() - 0.5
+    x_max = X[..., 0].max() + 0.5
+    y_min = -2.1
+    y_max = 2.65
+
+    ax.set_aspect('equal', adjustable='box')
+    ax.set_xlabel('$x$ [m]')
+    ax.set_ylabel('$y$ [m]')
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+
+    handles = [
+        Line2D([], [], color='#444444', ls='--', lw=0.75, label='Reference $r(t)$'),
+        Line2D([], [], marker='+', color='#111111', ls='', ms=4.0, mew=0.8, label='Centroid $r(t_k)$'),
+        Line2D([], [], marker='o', markerfacecolor='none', markeredgecolor='#555555', ls='', ms=3.5, mew=0.7, label='Prescribed stations $q_i$'),
+        Line2D([], [], marker='o', color='#555555', ls='', ms=2.0, label='Agent states $x_i$'),
+        Line2D([], [], color='#888888', ls='-', lw=0.6, label='Trajectories'),
+        Line2D([], [], color='#333333', ls=':', lw=0.75, label='Formation contour'),
+    ]
+    ax.legend(handles=handles, loc='lower center', bbox_to_anchor=(0.5, 1.01), ncol=6, frameon=False, fontsize=6.2)
+
     save_figure(fig, folder, 'formation_snapshots')
+    # Save copy to ECC_paper/figures as well
+    acc_fig_dir = REPO_ROOT / 'ECC_paper' / 'figures'
+    if acc_fig_dir.exists():
+        save_figure(fig, acc_fig_dir, 'formation_snapshots')
+    plt.close(fig)
 
 
 # =============================================================================
@@ -98,10 +131,15 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     (c) Initial command ||u||_2 over the transient
     """
     use_paper_style()
-    fig, axes = plt.subplots(1, 3, figsize=(COL2_W, 2.55))
+    # Filter out m=2.5 if present
+    filtered_runs = [r for r in runs if not np.isclose(r[0], 2.5)]
+    if not filtered_runs:
+        filtered_runs = runs
+
+    fig, axes = plt.subplots(1, 3, figsize=(COL2_W, 2.5), constrained_layout=True)
     floor = 1e-4
 
-    for m, ar, _ in runs:
+    for m, ar, _ in filtered_runs:
         color = COLORS.get(m, '#009E73')
         t = ar['t']
         positive_masked_plot(axes[0], t, np.ma.masked_where(ar['delta_norm'] < floor, ar['delta_norm']),
@@ -115,8 +153,8 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
         axes[2].plot(t[mask], ar['u_norm'][mask], color=color, lw=1.0, label=f'$m={m:g}$')
 
     # Reference run for universal bound and deadline
-    first_ar = runs[0][1]
-    deadline = runs[0][2]['T_bar']
+    first_ar = filtered_runs[0][1]
+    deadline = filtered_runs[0][2]['T_bar']
     positive_masked_plot(axes[0], first_ar['t'], np.ma.masked_where(first_ar['R_bar'] < floor, first_ar['R_bar']),
                          color='k', ls='--', lw=1.1, label=r'$\overline{\mathcal{R}}$')
 
@@ -129,7 +167,7 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     axes[0].legend(loc='upper right', ncol=2, fontsize=6)
     axes[1].legend(handles=[
         Line2D([], [], color='k', label='measured'),
-        Line2D([], [], color='k', ls='--', label=r'bound: integrated $\lambda_2(L_w)$')
+        Line2D([], [], color='k', ls='--', label=r'bound: $\lambda_2(L_w)$')
     ], loc='upper right', fontsize=5.8)
 
     for ax in axes:
@@ -137,9 +175,9 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     for ax in axes[:2]:
         ax.set_xlim(0, min(first_ar['t'][-1], 1.15 * deadline))
 
-    axes[0].set_ylabel(r'$\|\delta\|_2$')
-    axes[1].set_ylabel(r'$\|\eta\|_2$')
-    axes[2].set_ylabel(r'$\|u\|_2$ [m/s]')
+    axes[0].set_ylabel(r'$\|\delta(t)\|_2$')
+    axes[1].set_ylabel(r'$\|\eta(t)\|_2$')
+    axes[2].set_ylabel(r'$\|u(t)\|_2$ [m/s]')
     axes[2].set_xlim(0, 0.15)
 
     axes[0].set_title('(a) Station tracking')
@@ -147,6 +185,9 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     axes[2].set_title(r'(c) Initial command $\|u\|_2$')
 
     save_figure(fig, folder, 'error_disagreement_control')
+    acc_fig_dir = REPO_ROOT / 'ECC_paper' / 'figures'
+    if acc_fig_dir.exists():
+        save_figure(fig, acc_fig_dir, 'error_disagreement_control')
 
 
 # =============================================================================
@@ -159,9 +200,13 @@ def plot_transient_2x3_grid(
     extra_paths: Optional[List[Path]] = None,
     transient_end: float = 2.5,
     d_safe: float = 1.0,
-    r_c: float = 6.0
+    r_c: float = 6.0,
+    ylim_d: Tuple[float, float] = (0.7, 1.8),
+    ylim_ell: Tuple[float, float] = (1.0, 6.5),
+    ylim_margin: Tuple[float, float] = (-0.05, 1.60),
+    filename: str = 'swarm_star_2x3_comparison'
 ) -> None:
-    """Plot 2x3 grid comparing certified safe (Row 1) vs uncertified collision (Row 2)."""
+    """Plot 2x3 grid comparing certified safe (Row 1) vs uncertified collision/breach (Row 2)."""
     use_paper_style()
     fig, axes = plt.subplots(2, 3, figsize=(COL2_W, 4.3), sharex=True, layout='none')
 
@@ -183,9 +228,9 @@ def plot_transient_2x3_grid(
 
         # Col 0: Minimum pair separation d_x(t)
         ax0 = axes[row, 0]
-        ax0.plot(tz, dx, color=color, lw=1.6, label=r'$d_x(t)$ (observed)')
-        ax0.plot(tz, dq - rho, color='k', ls='--', lw=1.1, label=r'$d_q(t) - \rho_{\mathcal{H}}(t)$')
-        ax0.axhline(d_safe, color='#cc0000', ls=':', lw=1.4, label=f'$d_{{\\mathrm{{safe}}}} = {d_safe:g}$ m')
+        ax0.plot(tz, dx, color=color, lw=1.0, label=r'$d_x(t)$ (observed)')
+        ax0.plot(tz, dq - rho, color='k', ls='--', lw=1.0, label=r'$d_q(t) - \rho_{\mathcal{H}}(t)$')
+        ax0.axhline(d_safe, color='#cc0000', ls=':', lw=1.0, label=f'$d_{{\\mathrm{{safe}}}} = {d_safe:g}$ m')
 
         # Red shading for mid-transient collision window in Row 2
         if row == 1:
@@ -195,22 +240,30 @@ def plot_transient_2x3_grid(
                                  label=r'collision breach ($d_x < d_{\mathrm{safe}}$)')
 
         ax0.set_ylabel("Distance [m]")
-        ax0.set_ylim(0.7, 1.8)
+        ax0.set_ylim(*ylim_d)
         ax0.legend(loc='upper right', fontsize=5.8)
 
         # Col 1: Maximum pair separation ell_x(t)
         ax1 = axes[row, 1]
-        ax1.plot(tz, ellx, color=color, lw=1.6, label=r'$\ell_x(t)$ (observed)')
-        ax1.plot(tz, ellq + rho, color='k', ls='--', lw=1.1, label=r'$\ell_q(t) + \rho_{\mathcal{H}}(t)$')
-        ax1.axhline(r_c, color='#cc0000', ls=':', lw=1.4, label=f'$R_c = {r_c:g}$ m')
+        ax1.plot(tz, ellx, color=color, lw=1.0, label=r'$\ell_x(t)$ (observed)')
+        ax1.plot(tz, ellq + rho, color='k', ls='--', lw=1.0, label=r'$\ell_q(t) + \rho_{\mathcal{H}}(t)$')
+        ax1.axhline(r_c, color='#cc0000', ls=':', lw=1.0, label=f'$R_c = {r_c:g}$ m')
+
+        # Red shading for mid-transient connectivity violation in Row 2
+        if row == 1:
+            conn_mask = ellx > r_c
+            if np.any(conn_mask):
+                ax1.fill_between(tz, ellx, r_c, where=conn_mask, color='#e74c3c', alpha=0.35,
+                                 label=r'connectivity breach ($\ell_x > R_c$)')
+
         ax1.set_ylabel("Length [m]")
-        ax1.set_ylim(3.5, 6.3)
+        ax1.set_ylim(*ylim_ell)
         ax1.legend(loc='upper right', fontsize=5.8)
 
         # Col 2: Margin s(t) vs Distortion rho_H(t)
         ax2 = axes[row, 2]
-        ax2.plot(tz, s, color='#0072B2', lw=1.8, label=r'$s(t) = d_q - d_{\mathrm{safe}}$')
-        ax2.plot(tz, rho, color=color, ls='--', lw=1.4, label=r'$\rho_{\mathcal{H}}(t)$')
+        ax2.plot(tz, s, color='#0072B2', lw=1.0, label=r'$s(t)$')
+        ax2.plot(tz, rho, color=color, ls='--', lw=1.0, label=r'$\rho_{\mathcal{H}}(t)$')
 
         if certified or np.all(s >= rho):
             ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.25,
@@ -221,7 +274,7 @@ def plot_transient_2x3_grid(
             ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.15)
 
         ax2.set_ylabel("Margin [m]")
-        ax2.set_ylim(-0.05, 0.65)
+        ax2.set_ylim(*ylim_margin)
         ax2.legend(loc='upper right', fontsize=5.8)
 
         for ax in axes[row]:
@@ -238,13 +291,14 @@ def plot_transient_2x3_grid(
         ax.set_xlabel(r'Time $t$ [s]')
 
     fig.subplots_adjust(left=0.09, right=0.99, bottom=0.11, top=0.92, hspace=0.25, wspace=0.28)
-    save_figure(fig, folder, 'swarm_star_3x3_comparison')
+    save_figure(fig, folder, filename)
 
     if extra_paths:
         for p in extra_paths:
             p = Path(p)
             p.parent.mkdir(parents=True, exist_ok=True)
-            fig.savefig(p, bbox_inches='tight', dpi=300)
+            fig.savefig(p / f'{filename}.pdf', bbox_inches='tight')
+            fig.savefig(p / f'{filename}.png', bbox_inches='tight', dpi=300)
 
 
 # =============================================================================

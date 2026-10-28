@@ -1,24 +1,29 @@
 r"""Deterministic agent initial state generation and perturbation setup.
 
-Generates zero-mean perturbations \sum_i \delta_i(0) = 0:
-Random annular ring spawning around target stations q_i(0)
-and verifies that the initial swarm configuration is strictly safe and connected.
+Agents are spawned randomly within an annular ring of radius r ∈ [r_min, r_max]
+around each target station q_i(0).  No zero-mean centroid constraint is imposed;
+the disagreement vector η_i(0) = δ_i(0) − mean(δ(0)) is formed internally by
+the simulation and theory modules.
+
+Initial physical safety d_x(0) > d_safe and connectivity ℓ_x(0) < R_c are
+verified for every generated sample.
 """
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List
 import numpy as np
-from .stations import template_geometry_metrics
+from .stations import template_geometry_metrics, BACKBONE_EDGES
 
 
 def verify_initial_conditions(
     x0: np.ndarray,
     d_safe: float = 1.0,
-    r_c: float = 6.0
+    r_c: float = 6.0,
+    backbone_edges: Optional[List[Tuple[int, int]]] = None
 ) -> Tuple[float, float, bool]:
-    """Verify physical separation d_x(0) > d_safe and diameter ell_x(0) < R_c.
+    """Verify physical separation d_x(0) > d_safe and backbone connectivity ell_H(0) < R_c.
 
     Returns:
         min_dx: Initial minimum pairwise separation
-        max_ell: Initial maximum pairwise separation
+        max_ell_H: Initial maximum backbone edge length
         is_valid: True if both initial conditions are strictly satisfied
     """
     n = len(x0)
@@ -26,31 +31,44 @@ def verify_initial_conditions(
     diffs = x0[:, None, :] - x0[None, :, :]
     dist = np.linalg.norm(diffs, axis=-1)
     min_dx = float(np.min(dist[iu]))
-    max_ell = float(np.max(dist[iu]))
-    is_valid = bool(min_dx > d_safe and max_ell < r_c)
-    return min_dx, max_ell, is_valid
+
+    if backbone_edges is None:
+        backbone_edges = BACKBONE_EDGES
+
+    edge_lens = [float(np.linalg.norm(x0[i] - x0[j])) for i, j in backbone_edges]
+    max_ell_H = float(max(edge_lens))
+
+    is_valid = bool(min_dx > d_safe and max_ell_H < r_c)
+    return min_dx, max_ell_H, is_valid
 
 
 def generate_random_ring_perturbation(
     q0: np.ndarray,
-    r_min: float = 0.3,
-    r_max: float = 0.7,
+    r_min: float = 0.05,
+    r_max: float = 0.25,
     d_safe: float = 1.0,
     r_c: float = 6.0,
     seed: int = 123,
-    max_attempts: int = 2000
+    max_attempts: int = 2000,
+    backbone_edges: Optional[List[Tuple[int, int]]] = None,
+    close_pair: Optional[Tuple[int, int]] = (1, 3),
+    close_push: float = 0.55
 ) -> Tuple[np.ndarray, float, float]:
-    r"""Spawn agents randomly in an annular ring r in [r_min, r_max] around each target station q_i(0).
+    r"""Spawn agents randomly in an annular ring r ∈ [r_min, r_max] around each station q_i(0).
 
-    Guarantees:
-      1. Zero-mean centroid shift: \sum_i \delta_i(0) = 0.
-      2. Initial physical separation d_x(0) > d_safe.
-      3. Initial network connectivity \ell_x(0) < R_c.
+    For benchmark transient evaluations, closest station pair `close_pair` has an
+    inward push component `close_push`, demonstrating that without inter-agent coupling
+    (m = 0), rapid compression causes transient collision, whereas sufficient coupling
+    (m >= m_req) provably guarantees safety.
+
+    Guarantees (checked on generated sample):
+      1. Initial physical separation  d_x(0) > d_safe.
+      2. Initial backbone connectivity  ℓ_{x,H}(0) < R_c.
 
     Returns:
-        delta0: (n, 2) zero-mean perturbation
-        min_dx: Verified initial minimum separation
-        max_ell: Verified initial maximum diameter
+        delta0:    (n, 2) perturbation vectors (not zero-mean enforced)
+        min_dx:    Verified minimum pairwise separation at t=0
+        max_ell_H: Verified maximum backbone edge length at t=0
     """
     rng = np.random.default_rng(seed)
     n = len(q0)
@@ -60,64 +78,21 @@ def generate_random_ring_perturbation(
         theta = rng.uniform(0.0, 2.0 * np.pi, size=n)
         delta0 = np.column_stack([r * np.cos(theta), r * np.sin(theta)])
 
-        # Conserve centroid shift: \sum_i \delta_i = 0
-        delta0 -= np.mean(delta0, axis=0, keepdims=True)
-        x0 = q0 + delta0
+        if close_pair is not None and close_push > 0.0:
+            i, j = close_pair
+            diff_ij = q0[j] - q0[i]
+            uij = diff_ij / np.linalg.norm(diff_ij)
+            delta0[i] += +close_push * uij
+            delta0[j] += -close_push * uij
 
-        min_dx, max_ell, is_valid = verify_initial_conditions(x0, d_safe=d_safe, r_c=r_c)
+        x0 = q0 + delta0
+        min_dx, max_ell_H, is_valid = verify_initial_conditions(
+            x0, d_safe=d_safe, r_c=r_c, backbone_edges=backbone_edges
+        )
         if is_valid:
-            return delta0, min_dx, max_ell
+            return delta0, min_dx, max_ell_H
 
     raise RuntimeError(
         f"Could not find valid initial configuration within {max_attempts} attempts "
         f"for r in [{r_min}, {r_max}], d_safe={d_safe}, R_c={r_c}."
     )
-
-
-def generate_star_initial_perturbation(
-    p0: np.ndarray,
-    close_pair: Tuple[int, int] = (5, 7),
-    far_pair: Tuple[int, int] = (0, 4),
-    seed: int = 42,
-    close_push: float = 0.28,
-    perp_push: float = 0.25,
-    far_push: float = 0.05,
-    noise_std: float = 0.02
-) -> np.ndarray:
-    r"""Generate zero-mean initial station error \delta_0 = x_0 - q_0 (Paper Benchmark).
-
-    Args:
-        p0: Centered template vertices (n, 2)
-        close_pair: Indices of closest pair in template (default: (5, 7))
-        far_pair: Indices of farthest pair in template (default: (0, 4))
-        seed: Deterministic RNG seed
-        close_push: Inward displacement nudge for closest pair
-        perp_push: Perpendicular lateral push for closest pair
-        far_push: Outward displacement nudge for farthest pair
-        noise_std: Standard deviation of background Gaussian perturbation
-
-    Returns:
-        delta0: (n, 2) zero-mean initial perturbation matching exact reference
-    """
-    n, dim = p0.shape
-    rng = np.random.default_rng(seed)
-    delta0 = rng.normal(0.0, noise_std, size=(n, dim))
-
-    i, j = close_pair
-    uij = (p0[j] - p0[i]) / np.linalg.norm(p0[j] - p0[i])
-    perp = np.array([-uij[1], uij[0]])
-    delta0[i] += +close_push * uij + perp_push * perp
-    delta0[j] += -close_push * uij - perp_push * perp
-
-    k, l = far_pair
-    uk = p0[k] / np.linalg.norm(p0[k])
-    ul = p0[l] / np.linalg.norm(p0[l])
-    delta0[k] += +far_push * uk
-    delta0[l] += +far_push * ul
-
-    fixed = {i, j, k, l}
-    rest = [idx for idx in range(n) if idx not in fixed]
-    mean_rest = np.sum(delta0, axis=0) / len(rest)
-    for idx in rest:
-        delta0[idx] -= mean_rest
-    return delta0

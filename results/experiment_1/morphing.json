@@ -2,25 +2,32 @@
   "name": "morphing",
   "n": 10,
   "m": 2.0,
-  "t_end": 10.0,
-  "min_separation": 0.0031551276426246017,
+  "t_end": 12.0,
+  "min_separation": 0.36975251557870104,
   "configuration": {
     "n": 10,
-    "radius": 2.0,
+    "radius": 1.6,
     "m": 2.0,
-    "t_end": 10.0,
+    "t_end": 12.0,
     "switch_times": [
-      2.0,
-      4.5,
-      7.0
+      2.5,
+      5.5,
+      8.5
     ],
-    "morph_duration": 1.5,
+    "morph_duration": 1.2,
     "snapshot_times": [
-      1.8,
-      4.0,
-      6.5,
-      9.0
+      1.5,
+      4.3,
+      7.3,
+      10.5
     ],
-    "initial_error_seed": 42
+    "initial_error_seed": 42,
+    "speed": 1.6,
+    "formation_names": [
+      "Hexagon",
+      "Wedge",
+      "Star",
+      "Arrow"
+    ]
   }
 }

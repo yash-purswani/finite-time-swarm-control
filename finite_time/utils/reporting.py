@@ -1,6 +1,7 @@
 """LaTeX table generation and metrics reporting."""
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
+import numpy as np
 
 
 def write_star_gain_table(

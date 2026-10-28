@@ -104,12 +104,12 @@
             0.0058564675631670735
           ]
         ],
-        "a_initial": 1.1,
+        "a_initial": 1.7,
         "scale_rate": 0.9,
         "kappa": 2.0,
         "beta": 0.5,
         "nu": 1.0,
-        "epsilon_w": 0.2,
+        "epsilon_w": 0.05,
         "R_c": 6.0,
         "d_safe": 1.0,
         "t_end": 12.0,
@@ -118,7 +118,7 @@
           "amplitude": 2.0,
           "frequency": 0.5
         },
-        "a_final": 0.75,
+        "a_final": 0.72,
         "omega": 0.7853981633974483
       },
       "experiment_1": {
@@ -157,10 +157,10 @@
           "n": 10,
           "dim": 2,
           "beta": 0.5,
-          "epsilon_w": 0.2,
+          "epsilon_w": 0.05,
           "omega": 0.7853981633974483,
-          "a_initial": 1.1,
-          "a_final": 0.75,
+          "a_initial": 1.7,
+          "a_final": 0.72,
           "t_end": 12.0,
           "transient_end": 2.5,
           "transient_samples": 1501,
@@ -236,7 +236,7 @@
       }
     }
   },
-  "data_sha256": "db3981e2fb3aa5310bd98848448ac2d3f1e703a9b0f64faaf6628c6e47a95f5f",
+  "data_sha256": "4db3fc2b79b2597bed395f41cb8de4827e80a420e7355ec1d042532c136663c1",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
@@ -245,28 +245,28 @@
   },
   "metrics": {
     "kappa": 2.0,
-    "min_separation": 1.0756384629997413,
-    "minimum_clearance": 0.07563846299974131,
-    "max_backbone_edge": 5.74185266476636,
-    "minimum_connectivity_margin": 0.2581473352336401,
+    "min_separation": 1.0326116077411525,
+    "minimum_clearance": 0.03261160774115246,
+    "max_backbone_edge": 4.033753131962214,
+    "minimum_connectivity_margin": 1.9662468680377856,
     "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.4666666666666667,
-      "1e-06": 0.49333333333333335,
+      "0.0001": 0.48000000000000004,
+      "1e-06": 0.4966666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 1.6534113806190147,
-    "peak_control": 21.473900727235495,
-    "peak_individual_control": 21.473900727235495,
-    "J_u": 401.6344744721386,
-    "gamma": 4.676470588235294,
-    "gamma_req": null,
-    "m_required": null,
+    "T_bar": 1.362084056031771,
+    "peak_control": 18.541735562700495,
+    "peak_individual_control": 18.541735562700495,
+    "J_u": 432.1093784598165,
+    "gamma": 1.3849512861472433,
+    "gamma_req": 1.7952635364489409,
+    "m_required": 5.164702425132005,
     "certified": false,
-    "classification": "D",
+    "classification": "B",
     "safe_viol_start": null,
     "safe_viol_end": null,
     "dur_safe_viol": 0.0,
@@ -281,9 +281,9 @@
   },
   "certificate": {
     "certified": false,
-    "gamma": 4.676470588235294,
-    "gamma_req": null,
-    "m_required": null,
-    "T_bar": 1.6534113806190147
+    "gamma": 1.3849512861472433,
+    "gamma_req": 1.7952635364489409,
+    "m_required": 5.164702425132005,
+    "T_bar": 1.362084056031771
   }
 }

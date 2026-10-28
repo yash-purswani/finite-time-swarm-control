@@ -41,8 +41,18 @@ from .simulation import (
     SimulationResult,
     simulate_star_maneuver,
 )
+from .formations import (
+    hexagon,
+    wedge,
+    star,
+    arrow,
+)
 
 __all__ = [
+    'hexagon',
+    'wedge',
+    'star',
+    'arrow',
     'sig_beta',
     'pairwise_distance_matrix',
     'proximity_weights',

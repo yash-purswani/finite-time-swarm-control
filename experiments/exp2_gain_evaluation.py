@@ -27,16 +27,16 @@ from finite_time.plotting import plot_gain_evaluation
 from finite_time.utils import save_simulation_run, write_star_gain_table
 
 # =============================================================================
-# DEFAULT PARAMETERS (Easily modified for custom runs)
+# DEFAULT PARAMETERS
 # =============================================================================
-DEFAULT_M_VALUES = [0.0, 0.5, 2.0, 2.5, 5.0, 10.0]
+DEFAULT_M_VALUES = [0.0, 0.5, 2.0, 5.0, 10.0]
 DEFAULT_KAPPA = 2.0
 DEFAULT_T_END = 12.0
 DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
 DEFAULT_OMEGA = np.pi / 4.0
-DEFAULT_A0 = 1.10
-DEFAULT_A_INF = 0.75
+DEFAULT_A0 = 1.70
+DEFAULT_A_INF = 0.72
 DEFAULT_SOLVER = dict(method='DOP853', rtol=1e-6, atol=1e-8, max_step=0.02)
 
 

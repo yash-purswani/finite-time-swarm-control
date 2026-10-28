@@ -8,8 +8,68 @@ with centroid:
 and scale contraction:
     a(t) = a_\infty + (a_0 - a_\infty) * exp(-\kappa * t)
 """
-from typing import Tuple, List, Callable
+from typing import Tuple, List, Callable, List as EdgeList
 import numpy as np
+
+
+# =============================================================================
+# Backbone Graph H (Design Parameter: 15-Edge Planar Backbone)
+# =============================================================================
+# 15-edge connected backbone graph:
+#   1. Inner pentagonal ring (odd vertices): (1,3), (3,5), (5,7), (7,9), (9,1)
+#   2. Outer tips connected to two adjacent inner valleys:
+#      0 -> (1, 9), 2 -> (1, 3), 4 -> (3, 5), 6 -> (5, 7), 8 -> (7, 9)
+#
+# Backbone Laplacian metrics (at unit scale a=1, b_even=2.8, b_odd=1.22):
+#   ell_H0        = 1.949666 m  (max backbone edge length in template)
+#   lambda_2(L_H) = 0.931582    (exact algebraic connectivity of 15-edge backbone)
+#
+# Connectivity condition uses ONLY backbone edges:
+#   s_conn(t) = R_c - a(t) * ell_H0 >= 0  =>  all backbone edges remain < R_c.
+#
+BACKBONE_EDGES: List[Tuple[int, int]] = [
+    # Inner pentagonal ring (odd vertices)
+    (1, 3), (3, 5), (5, 7), (7, 9), (9, 1),
+    # Outer tips connected to two adjacent inner valleys
+    (0, 1), (0, 9),
+    (2, 1), (2, 3),
+    (4, 3), (4, 5),
+    (6, 5), (6, 7),
+    (8, 7), (8, 9),
+]
+
+# Pre-computed backbone template metrics (at unit scale a=1, b_even=2.8, b_odd=1.22)
+_BACKBONE_ELL_H0: float = 1.949666   # max backbone edge length at a=1 [m]
+_BACKBONE_LAMBDA2: float = 0.931582  # algebraic connectivity lambda_2(L_H)
+
+
+def backbone_laplacian(n: int = 10) -> np.ndarray:
+    """Construct the unweighted Laplacian L_H for the backbone spanning tree.
+
+    Returns:
+        L_H: (n, n) backbone Laplacian matrix
+    """
+    L_H = np.zeros((n, n), dtype=float)
+    for i, j in BACKBONE_EDGES:
+        L_H[i, i] += 1.0
+        L_H[j, j] += 1.0
+        L_H[i, j] -= 1.0
+        L_H[j, i] -= 1.0
+    return L_H
+
+
+def backbone_geometry_metrics(p0: np.ndarray) -> Tuple[float, float]:
+    """Compute backbone max-edge length and algebraic connectivity for template p0.
+
+    Returns:
+        ell_H: Max backbone edge length at current scale
+        lambda2: Algebraic connectivity lambda_2(L_H) (scale-independent)
+    """
+    edge_lens = [float(np.linalg.norm(p0[i] - p0[j])) for i, j in BACKBONE_EDGES]
+    ell_H = float(max(edge_lens))
+    L_H = backbone_laplacian(len(p0))
+    lambda2 = float(np.linalg.eigvalsh(L_H)[1])
+    return ell_H, lambda2
 
 
 def reference_centroid_path(t: float) -> np.ndarray:
@@ -25,9 +85,11 @@ def reference_centroid_velocity(t: float) -> np.ndarray:
 def build_star_template(n: int = 10) -> np.ndarray:
     """Construct centered 10-agent five-tip star template p_i^0.
 
-    Radii: 2.8 m for even vertices, 1.22 m for odd vertices.
+    Radii: 2.8 m for even vertices (tips), 1.22 m for odd vertices (inner ring).
     Angles: phi_i = pi/2 + pi*i/5.
-    Baseline metrics: DQ0 ~ 1.4342 m, ELL_H0 ~ 5.3259 m.
+    Baseline metrics (at unit scale a=1):
+      DQ0    ~ 1.4342 m  (min pairwise separation)
+      ELL_H0 ~ 1.9497 m  (max backbone edge; backbone = BACKBONE_EDGES 15-edge backbone graph)
     """
     i_idx = np.arange(n)
     phi = np.pi / 2.0 + np.pi * i_idx / 5.0

@@ -104,12 +104,12 @@
             0.0058564675631670735
           ]
         ],
-        "a_initial": 1.1,
+        "a_initial": 1.7,
         "scale_rate": 0.9,
         "kappa": 2.0,
         "beta": 0.5,
         "nu": 1.0,
-        "epsilon_w": 0.2,
+        "epsilon_w": 0.05,
         "R_c": 6.0,
         "d_safe": 1.0,
         "t_end": 12.0,
@@ -118,7 +118,7 @@
           "amplitude": 2.0,
           "frequency": 0.5
         },
-        "a_final": 0.75,
+        "a_final": 0.72,
         "omega": 0.7853981633974483
       },
       "experiment_1": {
@@ -157,10 +157,10 @@
           "n": 10,
           "dim": 2,
           "beta": 0.5,
-          "epsilon_w": 0.2,
+          "epsilon_w": 0.05,
           "omega": 0.7853981633974483,
-          "a_initial": 1.1,
-          "a_final": 0.75,
+          "a_initial": 1.7,
+          "a_final": 0.72,
           "t_end": 12.0,
           "transient_end": 2.5,
           "transient_samples": 1501,
@@ -236,7 +236,7 @@
       }
     }
   },
-  "data_sha256": "ef783f015c261f96a5b7846a33b79c245e6b515c0995f7676ccc42ac600e64c0",
+  "data_sha256": "28a4eb68636cb8e7630daba305d78887b0765a2d7e22e736364ab396a7c82797",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
@@ -245,28 +245,28 @@
   },
   "metrics": {
     "kappa": 2.0,
-    "min_separation": 1.0756397684994754,
-    "minimum_clearance": 0.0756397684994754,
-    "max_backbone_edge": 5.74185266476636,
-    "minimum_connectivity_margin": 0.2581473352336401,
+    "min_separation": 1.0326146294928793,
+    "minimum_clearance": 0.0326146294928793,
+    "max_backbone_edge": 4.033753131962214,
+    "minimum_connectivity_margin": 1.9662468680377856,
     "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.3216666666666667,
-      "1e-06": 0.3466666666666667,
+      "0.0001": 0.4066666666666667,
+      "1e-06": 0.4466666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 1.6534113806190147,
-    "peak_control": 36.57575995106615,
-    "peak_individual_control": 36.57575995106615,
-    "J_u": 414.0401856882948,
-    "gamma": 8.352941176470589,
-    "gamma_req": null,
-    "m_required": null,
+    "T_bar": 1.362084056031771,
+    "peak_control": 22.218575109671026,
+    "peak_individual_control": 22.218575109671026,
+    "J_u": 434.9523689222709,
+    "gamma": 1.7699025722944868,
+    "gamma_req": 1.7952635364489409,
+    "m_required": 5.164702425132005,
     "certified": false,
-    "classification": "D",
+    "classification": "B",
     "safe_viol_start": null,
     "safe_viol_end": null,
     "dur_safe_viol": 0.0,
@@ -281,9 +281,9 @@
   },
   "certificate": {
     "certified": false,
-    "gamma": 8.352941176470589,
-    "gamma_req": null,
-    "m_required": null,
-    "T_bar": 1.6534113806190147
+    "gamma": 1.7699025722944868,
+    "gamma_req": 1.7952635364489409,
+    "m_required": 5.164702425132005,
+    "T_bar": 1.362084056031771
   }
 }
