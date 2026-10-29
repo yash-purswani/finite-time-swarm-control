@@ -24,7 +24,7 @@
     "initial_error_seed": 42,
     "speed": 1.6,
     "formation_names": [
-      "Hexagon",
+      "Circle",
       "Wedge",
       "Star",
       "Arrow"

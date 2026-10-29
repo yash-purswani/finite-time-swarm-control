@@ -33,7 +33,7 @@ def plot_morphing_snapshots(arrays: Dict[str, Any], config: Dict[str, Any], fold
     from scipy.spatial import ConvexHull
 
     raw_shapes = config.get('raw_shapes')
-    names = config.get('formation_names', ['Hexagon', 'Wedge', 'Star', 'Arrow'])
+    names = config.get('formation_names', ['Circle', 'Wedge', 'Star', 'Arrow'])
     n = config['n']
     colors = plt.cm.tab10(np.linspace(0, 1, n))
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Experiment 1: Arbitrary Reconfiguring Formation Demonstration.
 
-Simulates smooth C^2 transitions across hexagon, wedge, star, and arrow templates
+Simulates smooth C^2 transitions across circle, wedge, star, and arrow templates
 along a moving reference trajectory.
 
 Can be run standalone:
@@ -21,7 +21,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from finite_time.core.dynamics import closed_loop_ode_rhs
 from finite_time.core.stations import build_morphing_schedule
-from finite_time.core.formations import hexagon, wedge, star, arrow
+from finite_time.core.formations import circle, wedge, star, arrow
 from finite_time.plotting import plot_morphing_snapshots
 from finite_time.utils import write_json, save_simulation_run
 
@@ -77,11 +77,11 @@ def run_experiment_1(
     if solver_settings is None:
         solver_settings = DEFAULT_SOLVER
 
-    formation_names = ['Hexagon', 'Wedge', 'Star', 'Arrow']
+    formation_names = ['Circle', 'Wedge', 'Star', 'Arrow']
 
     # Template definitions
     raw_shapes = [
-        hexagon(n, radius),
+        circle(n, radius),
         wedge(n, 0.65 * radius),
         star(n, 1.05 * radius),
         arrow(n, radius),

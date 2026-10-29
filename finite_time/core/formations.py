@@ -22,7 +22,7 @@ def _centre(P: Vec) -> Vec:
 # Shapes
 # =========================================================================
 
-def hexagon(n: int, L: float = 1.0, d: int = 2) -> Vec:
+def circle(n: int, L: float = 1.0, d: int = 2) -> Vec:
     """n points equally spaced on a circle of radius L."""
     ang = 2.0 * np.pi * np.arange(n) / n
     P = np.zeros((n, d))
@@ -144,7 +144,7 @@ def sphere(n: int, L: float = 1.0) -> Vec:
     return _centre(P)
 
 
-SHAPES = {"hexagon": hexagon, "line": line, "vee": vee, "grid": grid,
+SHAPES = {"circle": circle, "line": line, "vee": vee, "grid": grid,
           "star": star, "heart": heart, "arrow": arrow, "wedge": wedge}
 
 

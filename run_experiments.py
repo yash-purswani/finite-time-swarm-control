@@ -7,6 +7,7 @@ Dispatches to dedicated experiment modules in experiments/:
 - Experiment 3: Certified Safe vs. Mid-Transient Collision (experiments/exp3_transient_safety.py)
 - Experiment 4: Certified Safe vs. Mid-Transient Disconnection (experiments/exp4_expanding_safety.py)
 - Experiment 5: Parameter sweep m vs. kappa (experiments/exp5_parameter_sweep.py)
+- Experiment 6: Corridor traversal via shape morphing (experiments/exp6_corridor.py)
 
 Usage:
     python3 run_experiments.py --experiment all --workers 4
@@ -15,6 +16,7 @@ Usage:
     python3 run_experiments.py --experiment 3
     python3 run_experiments.py --experiment 4
     python3 run_experiments.py --experiment 5 --workers 4
+    python3 run_experiments.py --experiment 6
 """
 import os
 for key in ['OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS', 'NUMBA_NUM_THREADS']:
@@ -32,11 +34,12 @@ from experiments.exp2_gain_evaluation import run_experiment_2
 from experiments.exp3_transient_safety import run_experiment_3
 from experiments.exp4_expanding_safety import run_experiment_4
 from experiments.exp5_parameter_sweep import run_experiment_5
+from experiments.exp6_corridor import run_experiment_6
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--experiment', choices=['all', '1', '2', '3', '4', '5'], default='all',
+    parser.add_argument('--experiment', choices=['all', '1', '2', '3', '4', '5', '6'], default='all',
                         help='Experiment to run (default: all)')
     parser.add_argument('--output', type=Path, default=Path(__file__).parent / 'results',
                         help='Output directory for generated results')
@@ -70,6 +73,10 @@ def main():
     if args.experiment in ['all', '5']:
         print(f"\n--- Running Experiment 5 ({args.workers} workers) ---")
         run_experiment_5(output_dir=args.output, workers=args.workers, rerun=args.rerun)
+
+    if args.experiment in ['all', '6']:
+        print("\n--- Running Experiment 6 ---")
+        run_experiment_6(output_dir=args.output, rerun=args.rerun)
 
     elapsed = time.time() - start_time
     print(f"\nAll requested tasks completed in {elapsed:.1f} s.")

@@ -42,14 +42,14 @@ from .simulation import (
     simulate_star_maneuver,
 )
 from .formations import (
-    hexagon,
+    circle,
     wedge,
     star,
     arrow,
 )
 
 __all__ = [
-    'hexagon',
+    'circle',
     'wedge',
     'star',
     'arrow',
