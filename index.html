@@ -275,9 +275,6 @@
               alt="Arbitrary formation morphing and constrained corridor traversal"
               style="border-radius: var(--border-radius); box-shadow: var(--shadow-lg); max-width: 100%; height: auto;"
             />
-            <h2 class="subtitle has-text-centered mt-4" style="color: var(--text-secondary); font-size: 1.05rem;">
-              <strong>Swarm Formation Morphing and Constrained Corridor Traversal:</strong> A 10-agent swarm converges in finite time to a circular ring, smoothly transitions into a slender chevron to navigate a narrow corridor ($y_{\rm wall} = 2.0$ m), and recovers its ring geometry upon exit while strictly certifying collision avoidance ($d_{x,\min} \ge 1.32$ m) and backbone connectivity ($\ell_{x,\max} \le 2.22$ m).
-            </h2>
           </div>
         </div>
       </section>
@@ -320,7 +317,7 @@
             </div>
 
             <p>
-              where $[\Phi_\beta(z)]_k = \operatorname{sign}(z_k)|z_k|^\beta$ ($0 < \beta < 1$) is a component-wise fractional-power feedback, $M \in \mathbb{R}^{d \times d}$ is a symmetric positive semi-definite cooperative coupling matrix ($M = m I_d$ with coupling gain $m \ge 0$), and $w_{ij}(t) \ge 0$ are symmetric, distance-dependent weights with uniform lower bound $\underline{w} = 1/(R_c + \varepsilon_w)^\nu$ on active links.
+              where $[\Phi_\beta(z)]_k = \operatorname{sign}(z_k)|z_k|^\beta$ ($0 < \beta < 1$) is a component-wise fractional-power feedback, $M \in \mathbb{R}^{d \times d}$ is a symmetric positive semi-definite cooperative coupling matrix ($M = m I_d$ with coupling gain $m \ge 0$), and $w_{ij}(t) \ge 0$ are symmetric, distance-dependent weights with uniform lower bound $\underline{w} = (R_c^\nu + \varepsilon_w)^{-1}$ on active links.
             </p>
 
             <h3 class="title is-4 mt-5" style="font-weight: 700;">Core Theoretical Claims</h3>
@@ -339,7 +336,7 @@
               <p>
                 Decomposing tracking errors into average motion $\bar{\delta}$ and relative disagreement $\eta_i = \delta_i - \bar{\delta}$, the disagreement dynamics decouple and contract exponentially:
                 $$\|\eta(t)\|_2 \le \|\eta(0)\|_2 e^{-\gamma_{\mathcal{H}} t}, \qquad \gamma_{\mathcal{H}} = 1 + \underline{w}\lambda_2(L_{\mathcal{H}})\lambda_{\min}(M)$$
-                where $L_{\mathcal{H}}$ is the graph Laplacian of a designer-selected spanning communication backbone $\mathcal{H}$. This establishes an analytical distortion envelope $\rho_{\mathcal{H}}(t) = 2 \gamma_{\mathcal{H}, \max} \|\eta(0)\|_2 e^{-\gamma_{\mathcal{H}} t}$.
+                where $L_{\mathcal{H}}$ is the graph Laplacian of a designer-selected spanning communication backbone $\mathcal{H}$.
               </p>
             </div>
 
@@ -347,7 +344,7 @@
               <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 3: A Priori Transient Safety & Connectivity Certificates</div>
               <p>
                 Given physical collision threshold $d_{\mathrm{safe}}$ and sensing/communication radius $R_c$, let the nominal geometric clearance margin be:
-                $$s(t) = \min\left\{\min_{i \ne j} \left(\|q_i(t) - q_j(t)\| - d_{\mathrm{safe}}\right), \; \min_{(i,j) \in \mathcal{E}_{\mathcal{H}}} \left(R_c - \|q_i(t) - q_j(t)\|\right)\right\}$$
+                $$s(t) = \min\left\{\min_{i \ne j} \left(\|q_i(t) - q_j(t)\|\right) - d_{\mathrm{safe}}, \; R_c - \max_{(i,j) \in \mathcal{E}_{\mathcal{H}}} \left(\|q_i(t) - q_j(t)\|\right)\right\}$$
                 If $s(t) > \rho_{\mathcal{H}}(t)$ for all $t \in [0, T]$, then pairwise collision avoidance ($d_{x,\min} > d_{\mathrm{safe}}$) and connected spanning backbone persistence ($\ell_{x,\max} < R_c$) are <em>strictly guaranteed</em> throughout the transient.
               </p>
             </div>
@@ -373,78 +370,10 @@
           <div class="content">
             <h3 class="title is-4" style="font-weight: 700;">Quantitative Verification</h3>
             <p>
-              We evaluate the framework through numerical simulations with $n=10$ agents in $\mathbb{R}^2$. The benchmark parameters are summarized in Table 1.
+              We evaluate the framework through numerical simulations with $n=10$ agents in $\mathbb{R}^2$.
             </p>
 
-            <!-- Table 1: Simulation Parameters -->
-            <div class="table-container mb-5">
-              <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.95rem;">
-                <thead>
-                  <tr>
-                    <th>Parameter</th>
-                    <th>Value</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>$n$</td>
-                    <td>$10$</td>
-                    <td>Swarm size in $\mathbb{R}^2$</td>
-                  </tr>
-                  <tr>
-                    <td>$\beta$</td>
-                    <td>$0.5$</td>
-                    <td>Fractional-power velocity exponent</td>
-                  </tr>
-                  <tr>
-                    <td>$d_{\mathrm{safe}}$</td>
-                    <td>$1.0$ m</td>
-                    <td>Minimum pairwise collision threshold</td>
-                  </tr>
-                  <tr>
-                    <td>$R_c$</td>
-                    <td>$6.0$ m</td>
-                    <td>Maximum communication radius</td>
-                  </tr>
-                  <tr>
-                    <td>$\varepsilon_w$</td>
-                    <td>$0.05$</td>
-                    <td>Proximity weight regularizer</td>
-                  </tr>
-                  <tr>
-                    <td>$\nu$</td>
-                    <td>$1$</td>
-                    <td>Distance exponent in interaction weights</td>
-                  </tr>
-                  <tr>
-                    <td>$\underline{w}$</td>
-                    <td>$0.1653$ m$^{-1}$</td>
-                    <td>Uniform lower bound $1/(R_c + \varepsilon_w)$</td>
-                  </tr>
-                  <tr>
-                    <td>$r(t)$</td>
-                    <td>$[t, \; 2\sin(0.5t)]^\top$</td>
-                    <td>Reference centroid trajectory</td>
-                  </tr>
-                  <tr>
-                    <td>$\omega$</td>
-                    <td>$\pi/4$ rad/s</td>
-                    <td>Template angular rotation rate</td>
-                  </tr>
-                  <tr>
-                    <td>$M$</td>
-                    <td>$m I_2$</td>
-                    <td>Cooperative coupling matrix ($m \ge 0$)</td>
-                  </tr>
-                </tbody>
-              </table>
-              <p class="has-text-centered is-size-7" style="color: var(--text-secondary);">
-                <strong>Table 1:</strong> Benchmark simulation parameters.
-              </p>
-            </div>
-
-            <!-- Table 2: Coupling Gain Sweep -->
+            <!-- Table 1: Coupling Gain Sweep -->
             <h4 class="title is-5 mt-4" style="font-weight: 600;">Finite-Time Tracking & Coupling-Gain Trade-offs</h4>
             <p>
               Increasing the cooperative coupling gain $m$ accelerates disagreement dissipation without altering the graph-independent deadline $T \approx 1.3621$ s, at the expense of a modest increase in peak initial control effort.
@@ -500,14 +429,14 @@
                 </tbody>
               </table>
               <p class="has-text-centered is-size-7" style="color: var(--text-secondary);">
-                <strong>Table 2:</strong> Settling times and control metrics across coupling gains $m$ under rotating star formation ($\kappa=2.0$).
+                <strong>Table 1:</strong> Settling times and control metrics across coupling gains $m$ under rotating star formation ($\kappa=2.0$).
               </p>
             </div>
 
-            <!-- Table 3: Safety & Connectivity Outcomes -->
+            <!-- Table 2: Safety & Connectivity Outcomes -->
             <h4 class="title is-5 mt-4" style="font-weight: 600;">Transient Safety and Connectivity Outcomes</h4>
             <p>
-              Stress-testing under aggressive star compression ($\kappa=5.0$) and expansion ($\kappa=8.0$) verifies that certified gains ($m=30.0$) strictly maintain positive margin clearances $\Delta_{\min} = \min_{t\in[0,T]}[s(t)-\rho_{\mathcal{H}}(t)] > 0$, guaranteeing collision avoidance and connectivity preservation.
+              Stress-testing under aggressive star compression and expansion verifies that certified gains strictly maintain positive margin clearances $\Delta_{\min} = \min_{t\in[0,T]}[s(t)-\rho_{\mathcal{H}}(t)] > 0$, guaranteeing collision avoidance and connectivity preservation.
             </p>
 
             <div class="table-container mb-5">
@@ -583,7 +512,7 @@
                 </tbody>
               </table>
               <p class="has-text-centered is-size-7" style="color: var(--text-secondary);">
-                <strong>Table 3:</strong> Certificate and observed transient-geometry outcomes for aggressive star maneuvers ($t\in[0,2.5]$ s).
+                <strong>Table 2:</strong> Certificate and observed transient-geometry outcomes for aggressive star maneuvers ($t\in[0,2.5]$ s).
               </p>
             </div>
           </div>
@@ -596,7 +525,31 @@
             </p>
 
             <div id="results-carousel" class="carousel results-carousel">
-              <!-- Item 1: Error & Control Effort -->
+              <!-- Slide 1: Swarm Formation Snapshots -->
+              <div class="item">
+                <img
+                  src="static/images/formation_snapshots.png"
+                  alt="Swarm Formation Snapshots"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Swarm Formation Snapshots:</strong> Overhead time-lapse of agents converging from perturbed initial positions into the rotating star formation.
+                </h4>
+              </div>
+
+              <!-- Slide 2: Constrained Corridor Traversal -->
+              <div class="item">
+                <img
+                  src="static/images/corridor_maneuver_1x3.png"
+                  alt="Constrained Corridor Traversal"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Constrained Corridor Traversal:</strong> Smooth formation morphing from a ring into a slender chevron to navigate the narrow corridor and subsequent ring recovery.
+                </h4>
+              </div>
+
+              <!-- Slide 3: Tracking Error & Disagreement Decay -->
               <div class="item">
                 <img
                   src="static/images/error_disagreement_control.png"
@@ -604,55 +557,31 @@
                   loading="lazy"
                 />
                 <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
-                  <strong>Tracking, Disagreement & Control Effort:</strong> (a) Station tracking error $\|\delta(t)\|_2$ converging before theoretical deadline $T \approx 1.3621$ s across all $m$; (b) Exponential decay of disagreement $\|\eta(t)\|_2$ accelerated by $m$; (c) Transient control commands $\|u(t)\|_2$ during initial response.
+                  <strong>Tracking & Disagreement:</strong> Station tracking convergence, exponential disagreement dissipation, and transient control commands across coupling gains.
                 </h4>
               </div>
 
-              <!-- Item 2: Formation Snapshots -->
+              <!-- Slide 4: Expansion (2x3 Panel) -->
               <div class="item">
                 <img
-                  src="static/images/formation_snapshots.png"
-                  alt="Swarm Formation Snapshots during Rotating Star Convergence"
+                  src="static/images/swarm_star_expansion_2x3_comparison.png"
+                  alt="Transient Connectivity Verification under Formation Expansion"
                   loading="lazy"
                 />
                 <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
-                  <strong>Swarm Formation Snapshots:</strong> Overhead temporal snapshots depicting 10 agents converging from perturbed initial states into the rotating star formation while following the sinusoidal centroid trajectory $r(t)$.
+                  <strong>Transient Connectivity (Expansion):</strong> Inter-agent distances and communication range preservation across backbone links under certified versus uncertified tracking.
                 </h4>
               </div>
 
-              <!-- Item 3: Compression 3x2 Grid -->
+              <!-- Slide 5: Compression (2x3 Panel) -->
               <div class="item">
                 <img
-                  src="static/images/swarm_star_3x2_comparison.png"
-                  alt="Transient Safety Verification under Star Compression (3x2 Grid)"
+                  src="static/images/swarm_star_2x3_comparison.png"
+                  alt="Transient Safety Verification under Formation Compression"
                   loading="lazy"
                 />
                 <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
-                  <strong>Formation Compression ($3\times 2$ Grid, $\kappa=5.0$):</strong> Left column: Certified safe design ($m=30.0$) maintains $d_x > d_{\mathrm{safe}}$ and positive margin clearance $s > \rho_{\mathcal{H}}$. Right column: Uncoupled baseline ($m=0.0$) suffers severe distortion, causing a physical collision ($d_x < d_{\mathrm{safe}}$).
-                </h4>
-              </div>
-
-              <!-- Item 4: Expansion 3x2 Grid -->
-              <div class="item">
-                <img
-                  src="static/images/swarm_star_expansion_3x2_comparison.png"
-                  alt="Transient Connectivity Verification under Star Expansion (3x2 Grid)"
-                  loading="lazy"
-                />
-                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
-                  <strong>Formation Expansion ($3\times 2$ Grid, $\kappa=8.0$):</strong> Left column: Certified safe design ($m=30.0$) maintains $\ell_x < R_c$ across all backbone links. Right column: Uncoupled baseline ($m=0.0$) experiences an outward lag exceeding operational communication range ($\ell_x > R_c$).
-                </h4>
-              </div>
-
-              <!-- Item 5: Corridor Maneuver 1x3 Panel -->
-              <div class="item">
-                <img
-                  src="static/images/corridor_maneuver_1x3.png"
-                  alt="Arbitrary Formation Morphing and Constrained Corridor Traversal (1x3 Panel)"
-                  loading="lazy"
-                />
-                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
-                  <strong>Constrained Corridor Traversal ($1\times 3$ Panel):</strong> Snapshots at $t=1.2$ s (ring approach), $t=8.0$ s (slender chevron morphing to clear $y_{\rm wall}=2.0$ m), and $t=16.2$ s (post-exit ring recovery) under certified safety ($d_{x,\min} \ge 1.32$ m) and backbone connectivity ($\ell_{x,\max} \le 2.22$ m).
+                  <strong>Transient Safety (Compression):</strong> Minimum pairwise separation and geometric margin clearance under certified versus uncertified tracking, demonstrating collision avoidance.
                 </h4>
               </div>
             </div>
@@ -677,7 +606,7 @@
                     <span class="tag is-success is-medium mb-2">Certified Safe ($m=30.0$)</span>
                     <h4 class="title is-5 mb-2" style="font-weight: 700;">Certified Safe Formation Maneuver</h4>
                     <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">
-                      Under the certified coupling gain ($m=30.0$, $\kappa=5.0$), cooperative coupling accelerates the dissipation of relative disagreement ($\gamma_{\mathcal{H}} = 5.6194 > \gamma_{\mathrm{req}} = 4.4882$). The geometric margin remains strictly positive ($\Delta_{\min} = 0.0338$ m), guaranteeing collision avoidance ($d_{x,\min} = 1.0326\text{ m} > d_{\mathrm{safe}}$) throughout the aggressive contraction.
+                      Cooperative coupling accelerates disagreement dissipation to preserve a positive geometric clearance margin, ensuring collision avoidance throughout aggressive star contraction.
                     </p>
                   </div>
                 </div>
@@ -694,7 +623,7 @@
                     <span class="tag is-danger is-medium mb-2">Uncoupled Baseline ($m=0.0$)</span>
                     <h4 class="title is-5 mb-2" style="font-weight: 700;">Uncertified Baseline with Collision</h4>
                     <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">
-                      Without cooperative coupling ($m=0.0$, $\kappa=5.0$), agents execute individual tracking independently. The resulting tracking lag causes relative distortion to breach the nominal clearance margin ($s < \rho_{\mathcal{H}}$), resulting in an inter-agent collision ($d_{x,\min} = 0.8605\text{ m} < d_{\mathrm{safe}} = 1.0\text{ m}$) despite collision-free nominal stations.
+                      Without cooperative coupling, independent tracking lag distorts the formation and breaches the nominal clearance margin, resulting in an inter-agent collision.
                     </p>
                   </div>
                 </div>
