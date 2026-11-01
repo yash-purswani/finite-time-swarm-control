@@ -46,6 +46,7 @@ from .plotting.figures import (
     plot_morphing_snapshots,
     plot_gain_evaluation,
     plot_transient_2x3_grid,
+    plot_transient_3x2_grid,
     plot_parameter_map_and_control,
 )
 from .utils.io import (

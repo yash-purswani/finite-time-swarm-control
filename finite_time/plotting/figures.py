@@ -193,6 +193,108 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
 # =============================================================================
 # Figure 3: Transient 2x3 Grid (Exp 3)
 # =============================================================================
+def plot_transient_3x2_grid(
+    case_safe: Dict[str, Any],
+    case_unsafe: Dict[str, Any],
+    folder: Path,
+    extra_paths: Optional[List[Path]] = None,
+    transient_end: float = 2.5,
+    d_safe: float = 1.0,
+    r_c: float = 6.0,
+    ylim_d: Tuple[float, float] = (0.7, 1.8),
+    ylim_ell: Tuple[float, float] = (1.0, 6.5),
+    ylim_margin: Tuple[float, float] = (-0.05, 1.60),
+    filename: str = 'swarm_star_3x2_comparison',
+    figsize: Tuple[float, float] = (COL_W, 4.6)
+) -> None:
+    """Plot 3x2 grid comparing certified safe (Col 0) vs uncertified collision/breach (Col 1).
+
+    Rows:
+      Row 0: Minimum pairwise distance d_x(t)
+      Row 1: Maximum backbone edge length ell_x(t)
+      Row 2: Geometric margin s(t) vs. disagreement tube rho_H(t)
+    """
+    use_paper_style()
+    fig, axes = plt.subplots(3, 2, figsize=figsize, sharex=True, sharey='row', layout='none')
+
+    cases = [case_safe, case_unsafe]
+    m_safe = case_safe.get('m', 30.0)
+    m_unsafe = case_unsafe.get('m', 0.0)
+    col_titles = [f"Certified Safe ($m={m_safe:g}$)", f"Uncoupled ($m={m_unsafe:g}$)"]
+    col_colors = ['#009E73', '#e74c3c']
+
+    for col, (case, color) in enumerate(zip(cases, col_colors)):
+        t = case['t']
+        mask = t <= transient_end
+        tz = t[mask]
+        dx = case['d_x'][mask]
+        ellx = case['ell_x'][mask]
+        dq = case['d_q'][mask]
+        ellq = case['ell_H'][mask]
+        s = case['s'][mask]
+        rho = case['rho_H'][mask]
+        certified = bool(case.get('certified', False))
+
+        # Row 0: Minimum pair separation d_x(t)
+        ax0 = axes[0, col]
+        ax0.plot(tz, dx, color=color, lw=1.0, label=r'$d_x(t)$ (obs.)')
+        ax0.plot(tz, dq - rho, color='k', ls='--', lw=0.8, label=r'$d_q - \rho_{\mathcal{H}}$')
+        ax0.axhline(d_safe, color='#cc0000', ls=':', lw=0.9, label=r'$d_{\mathrm{safe}}$')
+        if col == 1:
+            collision_mask = dx < d_safe
+            if np.any(collision_mask):
+                ax0.fill_between(tz, dx, d_safe, where=collision_mask, color='#e74c3c', alpha=0.35, label='breach')
+        ax0.set_ylim(*ylim_d)
+        ax0.legend(loc='upper right', fontsize=5.0, framealpha=0.8)
+        ax0.set_title(col_titles[col], fontsize=7.5, fontweight='bold', pad=4)
+
+        # Row 1: Maximum pair separation ell_x(t)
+        ax1 = axes[1, col]
+        ax1.plot(tz, ellx, color=color, lw=1.0, label=r'$\ell_x(t)$ (obs.)')
+        ax1.plot(tz, ellq + rho, color='k', ls='--', lw=0.8, label=r'$\ell_{\mathcal{H}} + \rho_{\mathcal{H}}$')
+        ax1.axhline(r_c, color='#cc0000', ls=':', lw=0.9, label=r'$R_c$')
+        if col == 1:
+            conn_mask = ellx > r_c
+            if np.any(conn_mask):
+                ax1.fill_between(tz, ellx, r_c, where=conn_mask, color='#e74c3c', alpha=0.35, label='breach')
+        ax1.set_ylim(*ylim_ell)
+        ax1.legend(loc='upper right', fontsize=5.0, framealpha=0.8)
+
+        # Row 2: Margin s(t) vs Distortion rho_H(t)
+        ax2 = axes[2, col]
+        ax2.plot(tz, s, color='#0072B2', lw=1.0, label=r'$s(t)$')
+        ax2.plot(tz, rho, color=color, ls='--', lw=0.8, label=r'$\rho_{\mathcal{H}}(t)$')
+        if certified or np.all(s >= rho):
+            ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.25, label=r'$s \geq \rho_{\mathcal{H}}$')
+        else:
+            ax2.fill_between(tz, s, rho, where=(rho > s), color='#f39c12', alpha=0.35, label=r'$s < \rho_{\mathcal{H}}$')
+            ax2.fill_between(tz, rho, s, where=(s >= rho), color='#2ecc71', alpha=0.15)
+        ax2.set_ylim(*ylim_margin)
+        ax2.legend(loc='upper right', fontsize=5.0, framealpha=0.8)
+        ax2.set_xlabel(r'Time $t$ [s]')
+
+        for r in range(3):
+            axes[r, col].set_xlim(0, transient_end)
+            t_bar = case.get('T_bar_univ', case.get('T_bar', None))
+            if t_bar is not None and t_bar <= transient_end:
+                axes[r, col].axvline(t_bar, color='#888888', ls=':', lw=0.7)
+
+    axes[0, 0].set_ylabel(r'$d_x$ [m]')
+    axes[1, 0].set_ylabel(r'$\ell_x$ [m]')
+    axes[2, 0].set_ylabel(r'Margin [m]')
+
+    fig.subplots_adjust(left=0.14, right=0.98, bottom=0.08, top=0.94, hspace=0.16, wspace=0.18)
+    save_figure(fig, folder, filename)
+
+    if extra_paths:
+        for p in extra_paths:
+            p = Path(p)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            fig.savefig(p / f'{filename}.pdf', bbox_inches='tight')
+            fig.savefig(p / f'{filename}.png', bbox_inches='tight', dpi=300)
+    plt.close(fig)
+
+
 def plot_transient_2x3_grid(
     case_safe: Dict[str, Any],
     case_unsafe: Dict[str, Any],
@@ -299,6 +401,7 @@ def plot_transient_2x3_grid(
             p.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(p / f'{filename}.pdf', bbox_inches='tight')
             fig.savefig(p / f'{filename}.png', bbox_inches='tight', dpi=300)
+    plt.close(fig)
 
 
 # =============================================================================

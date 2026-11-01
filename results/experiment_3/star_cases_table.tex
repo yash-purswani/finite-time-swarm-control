@@ -1,5 +1,6 @@
 \begin{tabular}{@{}lrrrrrrrrrl@{}}\toprule
-Case & $m$ & $\kappa$ & $\gamma$ & $\gamma_{\mathrm{req}}$ & $t_{\mathrm{set}}$ [s] & $d_{x,\min}$ & $\ell_{x,\max}$ & Peak $\|u\|$ & $J_u$ & Outcome \\\midrule
-Safe & 30.0 & 5.0 & 5.6194 & 4.4882 & 0.3800 & 1.0326 & 4.0338 & 88.2953 & 513.97 & Certified; Safe, Connected \\
-Unsafe & 0.0 & 5.0 & 1.0000 & 4.4882 & 1.1517 & 0.8605 & 4.0338 & 35.0544 & 480.66 & Uncertified; Safety Violation \\
+Maneuver & Case & $m$ & $\kappa$ & $\gamH$ & $\gamreq$ & $t_{10^{-6}}$ (s) & $d_{x,\min}$ (m) & $\ell_{x,\max}$ (m) & $\Delta_{\min}$ (m) & Observed outcome\\
+\midrule
+Compression & Certified & 30.0 & 5.0 & 5.6194 & 4.4882 & 0.3800 & 1.0326 & 4.0338 & 0.0338 & Safe and connected \\
+            & Uncertified & 0.0 & 5.0 & 1.0000 & 4.4882 & 1.1517 & 0.8605 & 4.0338 & $\leq 0$ & Collision observed \\
 \bottomrule\end{tabular}

@@ -10,10 +10,10 @@ featuring:
   - Tracking displacement vectors (x_i to q_i)
   - Centroid reference path r(t)
   - On-screen Heads-Up Display (HUD) showing time, separation, diameter, error, and collision warnings.
-  - Configurable agent spawning: random ring around stations (r in [0.3, 0.7] m)
+  - Configurable agent spawning: random ring around stations (r in [0.05, 0.25] m)
 
 Usage:
-    python3 animate_swarm.py --m 2.5 --kappa 4.0 --t-end 5.0 --output results/safe_star.mp4
+    python3 animate_swarm.py --m 30.0 --kappa 5.0 --t-end 5.0 --output results/safe_star.mp4
 """
 import argparse
 import sys

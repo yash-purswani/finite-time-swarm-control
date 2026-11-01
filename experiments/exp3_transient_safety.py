@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 r"""Experiment 3: Certified Safe vs. Mid-Transient Collision ($2 \times 3$ Grid).
 
-Simulates rapid star compression (\kappa = 4.0) over t in [0, 2.5] s, comparing:
-- Row 1: Certified Safe Case (m = 2.5, \gamma > \gamma_req)
-- Row 2: Unsafe Mid-Transient Collision (m = 0.0, \gamma < \gamma_req)
+Simulates rapid star compression (\kappa = 5.0) over t in [0, 2.5] s, comparing:
+- Row 1: Certified Safe Case (m = 30.0, \gamma > \gamma_req, backbone links strictly preserved < R_c = 6.0 m)
+- Row 2: Unsafe Mid-Transient Connectivity Breach (m = 0.0, \gamma < \gamma_req, link drop \ell_x > R_c = 6.0 m)
 
 Outputs:
 - Figure 3 (2x3 grid): results/experiment_3/swarm_star_2x3_comparison.pdf/png
 - Table 2: results/star_cases_table.tex
 
 Can be run standalone:
-    python3 experiments/exp3_transient_safety.py --m-safe 25.0 --m-unsafe 0.0 --kappa 5.0 --rerun
+    python3 experiments/exp3_transient_safety.py --m-safe 30.0 --m-unsafe 0.0 --kappa 5.0 --rerun
 """
 import argparse
 import sys
@@ -23,13 +23,13 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from finite_time.core.simulation import simulate_star_maneuver
-from finite_time.plotting import plot_transient_2x3_grid
+from finite_time.plotting import plot_transient_2x3_grid, plot_transient_3x2_grid
 from finite_time.utils import save_simulation_run, write_star_cases_table
 
 # =============================================================================
 # DEFAULT PARAMETERS (Easily modified for custom runs)
 # =============================================================================
-DEFAULT_SAFE_M = 25.0
+DEFAULT_SAFE_M = 30.0
 DEFAULT_UNSAFE_M = 0.0
 DEFAULT_KAPPA = 5.0
 DEFAULT_TRANSIENT_END = 2.5
@@ -120,7 +120,18 @@ def run_experiment_3(
 
     print("=" * 135)
 
-    # Generate Figure 3 (2x3 grid)
+    # Generate Figure 3 (3x2 grid and 2x3 grid)
+    plot_transient_3x2_grid(
+        sim_results[0], sim_results[1], folder,
+        extra_paths=[REPO_ROOT / 'ECC_paper' / 'figures'],
+        transient_end=transient_end,
+        d_safe=d_safe,
+        r_c=r_c,
+        ylim_d=(0.5, 2.2),
+        ylim_ell=(1.0, 6.5),
+        ylim_margin=(-0.05, 1.60),
+        filename='swarm_star_3x2_comparison'
+    )
     plot_transient_2x3_grid(
         sim_results[0], sim_results[1], folder,
         extra_paths=[REPO_ROOT / 'ECC_paper' / 'figures'],
@@ -132,7 +143,7 @@ def run_experiment_3(
         ylim_margin=(-0.05, 1.60),
         filename='swarm_star_2x3_comparison'
     )
-    print(f"Saved Figure 3 to {folder / 'swarm_star_2x3_comparison.pdf'}")
+    print(f"Saved Figure 3 (3x2 grid) to {folder / 'swarm_star_3x2_comparison.pdf'}")
 
     # Generate Table 2 in results/ and results/experiment_3/
     write_star_cases_table(case_rows_data, Path(output_dir) / 'star_cases_table.tex')
