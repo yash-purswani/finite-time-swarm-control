@@ -48,7 +48,7 @@ function copyBibTeX() {
       .then(function () {
         // Success feedback
         button.classList.add("copied");
-        copyText.textContent = "Cop";
+        copyText.textContent = "Copied!";
 
         setTimeout(function () {
           button.classList.remove("copied");
@@ -66,7 +66,7 @@ function copyBibTeX() {
         document.body.removeChild(textArea);
 
         button.classList.add("copied");
-        copyText.textContent = "Cop";
+        copyText.textContent = "Copied!";
         setTimeout(function () {
           button.classList.remove("copied");
           copyText.textContent = "Copy";
