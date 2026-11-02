@@ -12,7 +12,10 @@ from finite_time.core.stations import (
     _BACKBONE_ELL_H0,
     _BACKBONE_LAMBDA2,
 )
-from finite_time.core.spawn import generate_random_ring_perturbation, verify_initial_conditions
+from finite_time.core.spawn import (
+    generate_swarm_perturbation,
+    verify_initial_conditions,
+)
 from finite_time.core.theory import (
     effective_decay_rate,
     compute_required_rate,
@@ -57,9 +60,9 @@ def test_initial_clearance_guarantee():
     """Verify strict prerequisite rho0 < s(0) = min{s_sep(0), s_conn(0)}."""
     p0 = build_star_template(10)
     q0, _ = star_stations(0.0, kappa=4.0, p0=p0, a0=1.70, a_inf=0.72)
-    delta0, min_dx, max_ell_H = generate_random_ring_perturbation(
+    delta0, min_dx, max_ell_H = generate_swarm_perturbation(
         q0, r_min=0.05, r_max=0.25, d_safe=1.0, r_c=6.0, seed=123,
-        close_pair=(1, 3), close_push=0.55
+        inward_pair=(1, 3), inward_push=0.55
     )
     eta0 = disagreement_vector(delta0)
     rho0 = float(np.sqrt(2.0) * np.linalg.norm(eta0))
@@ -96,9 +99,9 @@ def test_simulation_certification_outcomes():
     """Verify Experiment 3 safe case (m=18) is Certified Safe, and unsafe case (m=0) is Unsafe."""
     p0 = build_star_template(10)
     q0, _ = star_stations(0.0, kappa=4.0, p0=p0, a0=1.70, a_inf=0.72)
-    delta0, _, _ = generate_random_ring_perturbation(
+    delta0, _, _ = generate_swarm_perturbation(
         q0, r_min=0.05, r_max=0.25, d_safe=1.0, r_c=6.0, seed=123,
-        close_pair=(1, 3), close_push=0.55
+        inward_pair=(1, 3), inward_push=0.55
     )
 
     # Safe run
@@ -122,12 +125,12 @@ def test_simulation_certification_outcomes():
 
 def test_expansion_simulation_outcomes():
     """Verify Experiment 4 rapid expansion outcomes: m=25 is Certified Safe & Connected, m=0 has connectivity breach."""
-    from experiments.exp4_expanding_safety import generate_expansion_initial_perturbation
-
     p0 = build_star_template(10)
     a0, a_inf, kappa = 1.70, 3.02, 8.0
     q0, _ = star_stations(0.0, kappa, p0, a0=a0, a_inf=a_inf)
-    delta0 = generate_expansion_initial_perturbation(q0, seed=123)
+    delta0, _, _ = generate_swarm_perturbation(
+        q0, r_min=0.02, r_max=0.05, outward_pair=(0, 1), outward_push=0.58, seed=123
+    )
 
     # Safe expansion run (m=25.0)
     res_safe = simulate_star_maneuver(
@@ -145,3 +148,31 @@ def test_expansion_simulation_outcomes():
     assert res_unsafe.metrics['certified'] is False
     assert res_unsafe.metrics['observed_connected'] is False
     assert res_unsafe.metrics['max_backbone_edge'] > 6.0
+
+
+def test_unified_swarm_perturbation():
+    """Verify generate_swarm_perturbation handles both inward and outward directed pushes."""
+    p0 = build_star_template(10)
+    q0, _ = star_stations(0.0, 5.0, p0, a0=1.70, a_inf=0.72)
+
+    # Inward push test on pair (1, 3)
+    delta_in, min_dx_in, max_ell_in = generate_swarm_perturbation(
+        q0, r_min=0.02, r_max=0.05, inward_pair=(1, 3), inward_push=0.55, seed=42
+    )
+    assert min_dx_in > 1.0
+    assert max_ell_in < 6.0
+    # Physical distance between (1, 3) must be smaller than station distance
+    dx13 = np.linalg.norm((q0[1] + delta_in[1]) - (q0[3] + delta_in[3]))
+    dq13 = np.linalg.norm(q0[1] - q0[3])
+    assert dx13 < dq13
+
+    # Outward push test on edge (0, 1)
+    delta_out, min_dx_out, max_ell_out = generate_swarm_perturbation(
+        q0, r_min=0.02, r_max=0.05, outward_pair=(0, 1), outward_push=0.60, seed=42
+    )
+    assert min_dx_out > 1.0
+    assert max_ell_out < 6.0
+    # Physical distance along edge (0, 1) must be larger than station distance
+    dx01 = np.linalg.norm((q0[0] + delta_out[0]) - (q0[1] + delta_out[1]))
+    dq01 = np.linalg.norm(q0[0] - q0[1])
+    assert dx01 > dq01

@@ -22,7 +22,7 @@ from .stations import (
     build_morphing_schedule,
 )
 from .spawn import (
-    generate_random_ring_perturbation,
+    generate_swarm_perturbation,
     verify_initial_conditions,
 )
 from .theory import (
@@ -71,7 +71,7 @@ __all__ = [
     'star_stations',
     'star_stations_batch',
     'build_morphing_schedule',
-    'generate_random_ring_perturbation',
+    'generate_swarm_perturbation',
     'verify_initial_conditions',
     'disagreement_vector',
     'disagreement_norm',

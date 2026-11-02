@@ -69,7 +69,7 @@ Indian Institute of Technology Madras, Chennai 600036, India.
 \maketitle
 
 \begin{abstract}
-Certifying finite arrival times and convergence rates is essential for coordinating multi-agent systems in time-critical missions. However, convergence to a desired formation does not, by itself, guarantee collision avoidance or communication connectivity during transients. Existing swarm models can achieve finite-time tracking of collective variables, but may not provide independent settling guarantees for agents at arbitrarily prescribed stations. This paper proposes a first-order control framework for tracking arbitrary, time-varying formation stations relative to a moving reference. A component-wise fractional-power feedback ensures exact finite-time station tracking with an explicit settling-time bound independent of the interaction graph. To address transient safety, a graph-dependent exponential bound on relative disagreement is derived that remains valid for time-varying and switching graphs, including disconnected modes. Combining this bound with the geometry of the prescribed stations yields sufficient conditions for pairwise collision avoidance and preservation of a connected spanning communication backbone. These conditions further provide a coupling-gain design rule based on the available geometric clearance throughout the maneuver. Numerical simulations illustrate finite-time tracking, transient formation deformation, and the effectiveness and conservatism of the proposed safety and connectivity certificates.
+Certifying finite arrival times and convergence rates is essential for coordinating multi-agent systems in time-critical missions. However, convergence to a desired formation does not, by itself, guarantee collision avoidance or communication connectivity during transients. Existing swarm models can achieve finite-time tracking of collective variables, but may not provide independent settling guarantees for agents at arbitrarily prescribed stations. This paper proposes a first-order control framework for tracking arbitrary, time-varying formation stations relative to a moving reference. A component-wise fractional-power feedback ensures exact finite-time station tracking with an explicit settling-time bound independent of the interaction graph. To address transient safety, a graph-dependent exponential bound on relative disagreement is derived that remains valid for time-varying and switching graphs. Combining this bound with the geometry of the prescribed stations yields sufficient conditions for pairwise collision avoidance and preservation of a connected spanning communication backbone. These conditions further provide a coupling-gain design rule based on the available geometric clearance throughout the maneuver. Numerical simulations illustrate finite-time tracking, transient formation deformation, and the effectiveness and conservatism of the proposed safety and connectivity certificates.
 
 \end{abstract}
 
@@ -82,7 +82,7 @@ Multi-agent systems, formation control, finite-time stability, collision avoidan
 
 Multi-agent systems enable coordinated tasks in which individual robots must move collectively while maintaining a prescribed spatial arrangement \cite{oh2015survey}. In many applications, the desired formation is asymmetric or time-varying, with each agent assigned a distinct station relative to a moving reference. Such tasks arise in coordinated transportation, autonomous navigation, and distributed sensing, where formation geometry may need to change dynamically while preserving the overall coordination structure.
 
-Achieving the desired formation is not sufficient on its own. During a maneuver, agents may collide or communicating neighbors may move beyond their sensing range, even when the initial and desired formations are both feasible. These transient violations are particularly important in time-critical missions, where asymptotic convergence provides neither a finite settling deadline nor a guarantee that safety and communication constraints are maintained along the way. The challenge is therefore to achieve exact finite-time tracking of individually assigned stations while ensuring that the transient motion remains compatible with physical separation and communication requirements.
+Achieving the desired formation is not sufficient on its own. During a maneuver, agents may collide or  neighbors may move beyond their communicating range even when the initial and desired formations are both feasible. These transient violations are particularly important in time-critical missions, where asymptotic convergence provides neither a finite settling time for each agent to a desired position, nor a guarantee that safety and communication constraints are maintained along the way. The challenge is therefore to achieve exact finite-time tracking of individually assigned stations while ensuring that the transient motion remains compatible with physical separation and communication requirements.
 
 These objectives are closely coupled but need not be addressed through a single constrained control law. In particular, tracking errors affect relative agent positions, while their collective disagreement determines how far the actual inter-agent distances can deviate from those prescribed by the station trajectories. This observation motivates a complementary approach: retain a nominal finite-time tracking controller and use an analytical bound on relative tracking disagreement to certify collision avoidance and communication connectivity. Such a separation between convergence and transient certification can provide explicit design conditions without embedding safety constraints directly into the tracking feedback.
 
@@ -103,24 +103,24 @@ Finite-time consensus and formation-control protocols establish convergence of n
 
 \vspace{1em}
 \noindent \textbf{Problem statement:} 
-Consider $n$ agents with positions $x_i\in\mathbb R^d$ and prescribed $C^1$ station trajectories $q_i(t)$. Define the tracking errors $\delta_i=x_i-q_i$. Given a minimum pairwise separation $d_{\mathrm{safe}}$, an operational communication range $R_c$, and a designer-selected connected spanning backbone $\mathcal H$, the objective is to formulate a distributed kinematic model that (i) generates velocity commands driving every $\delta_i$ exactly to zero by an explicit deadline independent of the communication graph; (ii) provides verifiable sufficient conditions for $|x_i-x_j|>d_{\mathrm{safe}}$ for all pairs while every edge of $\mathcal H$ remains within $R_c$; and (iii) admits an offline coupling-gain selection rule based on the planned station geometry and initial disagreement.
+Consider $n$ agents with positions $x_i\in\mathbb R^d$ and prescribed $C^1$ station trajectories $x_{d,i}(t)$. Define the tracking errors $\delta_i=x_i-x_{d,i}$. Given a minimum pairwise separation $d_{\mathrm{safe}}$, an operational communication range $R_c$, and a designer-selected connected spanning backbone $\mathcal H$, the objective is to formulate a distributed kinematic model that (i) generates velocity commands driving every $\delta_i$ exactly to zero by an explicit deadline independent of the communication graph; (ii) provides verifiable sufficient conditions for $|x_i-x_j|>d_{\mathrm{safe}}$ for all pairs while every edge of $\mathcal H$ remains within $R_c$; and (iii) admits an offline coupling-gain selection rule based on the planned station geometry and initial disagreement.
 
 \section{Kinematic Model}
 \label{sec:model}
 
-Consider $n\geq 2$ agents with positions $x_i\in\mathbb{R}^d$. The desired station trajectories are defined as
+Consider $n\geq 2$ agents with positions $x_i\in\mathbb{R}^d$. The desired station trajectory $x_{d,i}$ for each agent $i$ is defined as
 \begin{equation}
-q_i(t)=r(t)+p_i(t),\qquad
-\delta_i(t)=x_i(t)-q_i(t),
+x_{d,i}(t)=r(t)+p_i(t),\qquad
+\delta_i(t)=x_i(t)-x_{d,i}(t),
 \label{eq:station}
 \end{equation}
-where $r(t)\in\mathbb{R}^d$ is a reference trajectory and $p_i(t)\in\mathbb{R}^d$ is the desired offset of agent $i$. Unless stated otherwise, the station trajectories $q_i$ are continuously differentiable with locally bounded derivatives. This formulation allows the desired formation to translate and change shape over time.
+where $r(t)\in\mathbb{R}^d$ is a reference trajectory and $p_i(t)\in\mathbb{R}^d$ is the desired offset of agent $i$. Unless stated otherwise, the station trajectories $x_{d,i}$ are continuously differentiable with locally bounded derivatives. This formulation allows the desired formation to translate and change shape over time.
 
 The distributed kinematic guidance law is given by
 \begin{equation}
-    \dot{x}_i - \dot q_i =
-    -(x_i + q_i)-\Phi_\beta(x_i - q_i)
-    -\sum_{j=1}^{n}w_{ij}M(x_i-x_j),
+    \dot{x}_i =
+    -(x_i - x_{d,i})-\Phi_\beta(x_i - x_{d,i})
+    +\dot x_{d,i} -\sum_{j=1}^{n}w_{ij}M(x_i-x_j),
     \label{eq:kinematic-model}
 \end{equation}
 where $\dot{x}_i$ is the commanded agent velocity, $\Phi_\beta$ is a component-wise fractional-power feedback, $w_{ij}$ are non-negative interaction weights, and $M\in\mathbb{R}^{d\times d}$ is a symmetric positive semi-definite coupling matrix. For $0<\beta<1$, the component-wise fractional-power feedback is defined by
@@ -155,7 +155,7 @@ Thus, the active communication graph is the range graph induced by the current a
 
 From \eqref{eq:station}, the relative tracking errors satisfy
 \begin{equation}
-    \delta_i-\delta_j=(x_i-x_j)-(q_i-q_j),
+    \delta_i-\delta_j=(x_i-x_j)-(x_{d,i}-x_{d,j}),
     \label{eq:distributed-error}
 \end{equation}
 so the coupling term can be computed using relative agent positions and desired relative station assignments.
@@ -173,7 +173,7 @@ where $\Phi_\beta(\delta)$ denotes the stacked component-wise fractional-power f
 
 \begin{assumption}
 \label{ass:graph}
-The range-induced weights are locally bounded between topology switches. The range graph is undirected, its switching rule is well posed, and it has finitely many switches on every bounded time interval; agent states remain continuous at switching times. Each agent knows its own state, reference and station trajectory (including $\dot q_i$), and exchanges its state and station information with currently active neighbors. Hence, each agent can compute $\delta_i$ and the relative errors $\delta_i-\delta_j$ for its active neighbors. The selected backbone $\mathcal H$ is specified by the designer and is a connected spanning subgraph of the planned communication network.
+Each agent knows its own state, reference and station trajectory (including $\dot x_{d,i}$), and exchanges its state and station information with currently active neighbors. Hence, each agent can compute $\delta_i$ and the relative errors $\delta_i-\delta_j$ for its active neighbors. The selected backbone $\mathcal H$ is specified by the designer and is a connected spanning subgraph of the planned communication network.
 \end{assumption}
 
 \section{Finite-Time Station Tracking and Reference Convergence}
@@ -199,7 +199,7 @@ Under \cref{ass:graph}, with $M=M\trans\succeq0$ and $0<\beta<1$, every solution
   \norm{\delta(t)}\leq\mathcal R(t),\qquad t\geq t_0,
   \label{eq:station-envelope}
 \end{equation}
-and $\delta(t)=0$ for all $t\geq T$. Thus, $x_i(t)=q_i(t)$ for all agents and all $t\geq T$. The deadline is independent of the interaction graph, its connectivity, and $M$.
+and $\delta(t)=0$ for all $t\geq T$. Thus, $x_i(t)=x_{d,i}(t)$ for all agents and all $t\geq T$. The deadline is independent of the interaction graph, its connectivity, and $M$.
 \end{theorem}
 
 \begin{proof}
@@ -234,7 +234,7 @@ Assume the station offsets are centered:
   \sum_{i=1}^{n}p_i(t)=0,\qquad \forall t\geq t_0.
   \label{eq:centered}
 \end{equation}
-Let $c(t)=\frac1n\sum_i x_i(t)$ be the swarm centroid. Since $q_i=r+p_i$, the mean desired station is $r$.
+Let $c(t)=\frac1n\sum_i x_i(t)$ be the swarm centroid. Since $x_{d,i}=r+p_i$, the mean desired station is $r$.
 
 \begin{corollary}[Reference tracking]
 \label{cor:reference}
@@ -248,9 +248,9 @@ Consequently, $c(t)=r(t)$ for all $t\geq T$.
 \end{corollary}
 
 \begin{proof}
-Since $q_i=r+p_i$ and $\sum_{i=1}^n p_i=0$, the centroid error satisfies
+Since $x_{d,i}=r+p_i$ and $\sum_{i=1}^n p_i=0$, the centroid error satisfies
 \[
-c-r=\frac{1}{n}\sum_{i=1}^n(x_i-q_i)
+c-r=\frac{1}{n}\sum_{i=1}^n(x_i-x_{d,i})
 =\frac{1}{n}\sum_{i=1}^n\delta_i.
 \]
 By the Cauchy--Schwarz inequality,
@@ -323,7 +323,7 @@ Applying the comparison lemma and integrating yields \eqref{eq:eta-bound}.
 \end{proof}
 
 \subsection{Pairwise Distance Bounds}
-Let $d_{ij}^q(t)=\norm{q_i(t)-q_j(t)}$ and $d_{ij}^x(t)=\norm{x_i(t)-x_j(t)}$.
+Let $d_{ij}^q(t)=\norm{x_{d,i}(t)-x_{d,j}(t)}$ and $d_{ij}^x(t)=\norm{x_i(t)-x_j(t)}$.
 
 \begin{lemma}[Relative-distance envelope]
 \label{lem:distance-tube}
@@ -335,15 +335,15 @@ For every pair $i,j$,
 \end{equation}
 \end{lemma}
 \begin{proof}
-Since $x_i-x_j=(q_i-q_j)+(\eta_i-\eta_j)$, the triangle inequality gives
+Since $x_i-x_j=(x_{d,i}-x_{d,j})+(\eta_i-\eta_j)$, the triangle inequality gives
 \[
 \|x_i-x_j\|
-\leq \|q_i-q_j\|+\|\eta_i-\eta_j\|,
+\leq \|x_{d,i}-x_{d,j}\|+\|\eta_i-\eta_j\|,
 \]
 while the reverse-triangle inequality yields
 \[
 \|x_i-x_j\|
-\geq \|q_i-q_j\|-\|\eta_i-\eta_j\|.
+\geq \|x_{d,i}-x_{d,j}\|-\|\eta_i-\eta_j\|.
 \]
 Moreover,
 \[
@@ -358,8 +358,8 @@ establishes the claimed bounds.
 A connected spanning backbone $\mathcal H=(\mathcal V,\mathcal E_{\mathcal H})$ is specified by the designer to preserve communication links essential for coordination during formation maneuvers. Let $L_{\mathcal H}$ denote its unweighted Laplacian. The station-edge length envelope and the minimum pairwise station distance are defined as
 \begin{equation}
 \begin{aligned}
-  \ellH(t)&=\max_{(i,j)\in\mathcal E_\mathcal H}\norm{q_i(t)-q_j(t)},\\
-  d_q(t)&=\min_{i<j}\norm{q_i(t)-q_j(t)}.
+  \ellH(t)&=\max_{(i,j)\in\mathcal E_\mathcal H}\norm{x_{d,i}(t)-x_{d,j}(t)},\\
+  d_q(t)&=\min_{i<j}\norm{x_{d,i}(t)-x_{d,j}(t)}.
 \end{aligned}
 \label{eq:station-geometry}
 \end{equation}
@@ -507,75 +507,45 @@ $m$ & $t_{10^{-6}}$ (s) & $T$ (s) & Peak $\norm{u}_2$ & $J_u$\\
 \end{tabular}
 \end{table}
 
-% \begin{figure*}[t]
-% \centering
-% \includegraphics[width=0.9\linewidth]{figures/error_disagreement_control.pdf}
-% \caption{Finite-time tracking, disagreement decay, and control effort across coupling gains $m$ ($\kappa=2.0$): (a) $\|\delta(t)\|_2$ and theoretical bound $\overline{\mathcal R}(t)$ with deadline $T$; (b) $\|\eta(t)\|_2$ and analytical envelope bounds; (c) $\|u(t)\|_2$ over the initial $0.15$~s.}
-% \label{fig:convergence}
-% \end{figure*}
-
 \subsection{Transient Safety and Connectivity}
-Rapid star compression ($\kappa=5.0$) and expansion ($\kappa=8.0$) are evaluated. The geometric margins, disagreement envelopes, and observed pairwise distances are shown in \cref{fig:transient-safety-connectivity}; quantitative outcomes and minimum certificate margins are reported in \cref{tab:safety-comparison}. The certified cases satisfy $\Delta_{\min}>0$ and remain safe and connected. The uncoupled cases do not satisfy the certificate and exhibit, respectively, a collision and a communication-range violation. Failure to satisfy the certificate is generally inconclusive and does not imply that a constraint must be violated.
+Rapid star compression and expansion are evaluated under identical maneuver rates ($\kappa=12.0$) and coupling gains ($m=60.0$ for the safe and $m=1.0$ for the unsafe cases), differing only in their scaling targets: contraction from $a_0=1.70$ to $a_\infty=0.72$ and expansion to $a_\infty=3.02$. As shown in \cref{fig:transient-safety-connectivity,tab:safety-comparison}, the selected gain satisfies the offline certificate for both maneuvers, preserving collision avoidance and connectivity. In contrast, the weakly coupled cases ($m=1.0$) exhibit a collision during compression and a communication-range violation during expansion.
 
 \begin{figure*}[t]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/swarm_star_3x2_comparison.pdf}
-        \caption{Formation compression ($\kappa=5.0$).}
+        \caption{Formation compression ($a_0 = 1.70 \to a_\infty = 0.72$).}
         \label{fig:safety-transient-compression}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/swarm_star_expansion_3x2_comparison.pdf}
-        \caption{Formation Expansion ($\kappa=8.0$).}
+        \caption{Formation expansion ($a_0 = 1.70 \to a_\infty = 3.02$).}
         \label{fig:safety-transient-expansion}
     \end{subfigure}
 
-    \caption{Transient safety and connectivity verification over $t\in[0,2.5]$~s. In both panels, columns show the minimum pairwise separation $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ versus disagreement tube $\rho_H(t)$ (right).
-    \textbf{Left:} Star compression ($\kappa=5.0$); top row: certificate satisfied ($m=30.0$), bottom row: certificate not satisfied ($m=0.0$), with a collision observed in the latter simulation. 
-    \textbf{Right:} Star expansion ($\kappa=8.0$); top row: certificate satisfied ($m=25.0$), bottom row: certificate not satisfied ($m=0.0$), with a transient communication-range violation observed in the latter simulation. A failed certificate alone does not imply a violation. 
+    \caption{Transient safety and connectivity verification across aggressive compression and expansion maneuvers ($\kappa=12.0$, $t\in[0,2.5]$~s). In both panels, columns show the minimum pairwise separation $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ versus disagreement tube $\rho_H(t)$ (right).
+    \textbf{Left:} Star compression ($a_0 = 1.70 \to a_\infty = 0.72$); safe case ($m=60.0$, certified collision-free), unsafe case ($m=1.0$, collision breach observed). 
+    \textbf{Right:} Star expansion ($a_0 = 1.70 \to a_\infty = 3.02$); safe case ($m=60.0$, certified connected), unsafe case ($m=1.0$, transient connectivity violation observed).
     }
     \label{fig:transient-safety-connectivity}
 \end{figure*}
 
-% \begin{figure*}[t]
-%     \centering
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=\linewidth]{figures/swarm_star_2x3_comparison.pdf}
-%         \caption{Formation compression ($\kappa=5.0$).}
-%         \label{fig:safety-transient-compression}
-%     \end{subfigure}
-%     \hfill
-%     \begin{subfigure}[t]{0.49\textwidth}
-%         \centering
-%         \includegraphics[width=\linewidth]{figures/swarm_star_expansion_2x3_comparison.pdf}
-%         \caption{Formation Expansion ($\kappa=8.0$).}
-%         \label{fig:safety-transient-expansion}
-%     \end{subfigure}
-
-%     \caption{Transient safety and connectivity verification over $t\in[0,2.5]$~s. In both panels, columns show the minimum pairwise separation $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ versus disagreement tube $\rho_H(t)$ (right).
-%     \textbf{Left:} Star compression ($\kappa=5.0$); top row: certificate satisfied ($m=30.0$), bottom row: certificate not satisfied ($m=0.0$), with a collision observed in the latter simulation. 
-%     \textbf{Right:} Star expansion ($\kappa=8.0$); top row: certificate satisfied ($m=25.0$), bottom row: certificate not satisfied ($m=0.0$), with a transient communication-range violation observed in the latter simulation. A failed certificate alone does not imply a violation. 
-%     }
-%     \label{fig:transient-safety-connectivity}
-% \end{figure*}
-
 \begin{table*}[t]
 \centering
-\caption{Certificate and observed transient-geometry outcomes for aggressive star maneuvers ($t\in[0,2.5]$~s).}
+\caption{Certificate and observed transient-geometry outcomes for aggressive star maneuvers ($\kappa=12.0$, $t\in[0,2.5]$~s).}
 \label{tab:safety-comparison}
 \begin{tabular}{llrrrrrrrrl}
 \toprule
 Maneuver & Case & $m$ & $\kappa$ & $\gamH$ & $\gamreq$ & $t_{10^{-6}}$ (s) & $d_{x,\min}$ (m) & $\ell_{x,\max}$ (m) & $\Delta_{\min}$ (m) & Observed outcome\\
 \midrule
-Compression & Certified & 30.0 & 5.0 & 5.6194 & 4.4882 & 0.3800 & 1.0326 & 4.0338 & 0.0338 & Safe and connected \\
-            & Uncertified & 0.0 & 5.0 & 1.0000 & 4.4882 & 1.1517 & 0.8605 & 4.0338 & $\leq 0$ & Collision observed \\
+Compression & Safe       & 60.0 & 12.0 & 10.2388 & 9.9879 & 0.1767 & 1.0326 & 3.9437 & 0.0084 & Safe and connected \\
+            & Unsafe     &  1.0 & 12.0 &  1.1540 & 9.9879 & 0.5450 & 0.8923 & 3.9437 & $\leq 0$ & Collision observed \\
 \midrule
-Expansion   & Certified & 30.0 & 8.0 & 5.6194 & 4.1367 & 0.3767 & 1.8550 & 5.8880 & 0.0909 & Safe and connected \\
-            & Uncertified & 0.0 & 8.0 & 1.0000 & 4.1367 & 1.1333 & 1.8550 & 6.1424 & $\leq 0$ & Range violation observed \\
+Expansion   & Safe       & 60.0 & 12.0 & 10.2388 & 6.3408 & 0.2417 & 1.8351 & 5.8880 & 0.1113 & Safe and connected \\
+            & Unsafe     &  1.0 & 12.0 &  1.1540 & 6.3408 & 1.0433 & 1.8351 & 6.2417 & $\leq 0$ & Range violation observed \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -586,7 +556,7 @@ The final scenario combines time-varying station tracking, geometric feasibility
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.98\linewidth]{figures/corridor_maneuver_1x3.pdf}
-\caption{Arbitrary formation morphing and constrained corridor traversal ($n=10$, $m=10.0$). Snapshots depict: (a) approach and finite-time convergence in ring geometry ($t=1.2$~s), (b) morphing into a slender chevron to navigate the narrow corridor ($t=8.0$~s), and (c) exit and ring recovery ($t=16.2$~s). Target stations $q_i$ (circles), agent positions $x_i$ (colored dots), continuous trajectories, reference centroid $r(t)$ (dashed line), and the 10-cycle backbone $\mathcal{H}$ (solid blue edges) remain strictly collision-free ($d_{x,\min} \ge 1.32$~m) and connected ($\ell_{x,\max} \le 2.22$~m).}
+\caption{Arbitrary formation morphing and constrained corridor traversal ($n=10$, $m=10.0$). Snapshots depict: (a) approach and finite-time convergence in ring geometry ($t=1.2$~s), (b) morphing into a slender chevron to navigate the narrow corridor ($t=8.0$~s), and (c) exit and ring recovery ($t=16.2$~s). Target stations $x_{d,i}$ (circles), agent positions $x_i$ (colored dots), continuous trajectories, reference centroid $r(t)$ (dashed line), and the 10-cycle backbone $\mathcal{H}$ (solid blue edges) remain strictly collision-free ($d_{x,\min} \ge 1.32$~m) and connected ($\ell_{x,\max} \le 2.22$~m).}
 \label{fig:reconfiguration}
 \end{figure*}
 

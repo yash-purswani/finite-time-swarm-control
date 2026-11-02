@@ -31,7 +31,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from finite_time.core.stations import build_star_template, template_geometry_metrics, backbone_geometry_metrics, star_stations
-from finite_time.core.spawn import generate_random_ring_perturbation
+from finite_time.core.spawn import generate_swarm_perturbation
 from finite_time.core.theory import (
     universal_settling_deadline,
     compute_required_rate,
@@ -190,7 +190,9 @@ def run_experiment_5(
     dq0, _, _, _ = template_geometry_metrics(p0)
     ell_h0, lambda2_lh = backbone_geometry_metrics(p0)   # 15-edge backbone metrics
     q0_b, _ = star_stations(0.0, kappa=k_arr[0], p0=p0, a0=DEFAULT_A0, a_inf=DEFAULT_A_INF, omega=DEFAULT_OMEGA)
-    delta0, _, _ = generate_random_ring_perturbation(q0_b, d_safe=DEFAULT_D_SAFE, r_c=DEFAULT_R_C)
+    delta0, _, _ = generate_swarm_perturbation(
+        q0_b, r_min=0.05, r_max=0.25, inward_pair=(1, 3), inward_push=0.55, d_safe=DEFAULT_D_SAFE, r_c=DEFAULT_R_C
+    )
     delta0_norm = float(np.linalg.norm(delta0))
     eta0 = delta0 - np.mean(delta0, axis=0, keepdims=True)
     rho0 = np.sqrt(2.0) * float(np.linalg.norm(eta0))

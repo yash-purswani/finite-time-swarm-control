@@ -18,7 +18,7 @@ Usage:
 import argparse
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Tuple
 
 import matplotlib
 matplotlib.use("Agg")
@@ -32,15 +32,15 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from finite_time.core.stations import build_star_template, star_stations
-from finite_time.core.spawn import generate_random_ring_perturbation
+from finite_time.core.spawn import generate_swarm_perturbation
 from finite_time.core.simulation import simulate_star_maneuver
 
 
 # =============================================================================
 # DEFAULT CONFIGURATION (Can be edited directly here or via CLI)
 # =============================================================================
-DEFAULT_M = 2.5
-DEFAULT_KAPPA = 4.0
+DEFAULT_M = 50.0
+DEFAULT_KAPPA = 10.0
 DEFAULT_T_END = 5.0
 DEFAULT_A0 = 1.70
 DEFAULT_A_INF = 0.72
@@ -49,9 +49,11 @@ DEFAULT_FPS = 30
 DEFAULT_DPI = 120
 DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
-DEFAULT_R_MIN = 0.05
-DEFAULT_R_MAX = 0.25
-DEFAULT_SEED = 42
+DEFAULT_R_MIN = 0.02
+DEFAULT_R_MAX = 0.05
+DEFAULT_INWARD_PAIR = (1, 3)
+DEFAULT_INWARD_PUSH = 0.58
+DEFAULT_SEED = 123
 DEFAULT_OUTPUT = REPO_ROOT / "results" / "swarm_arena_animation.mp4"
 
 
@@ -66,6 +68,10 @@ def generate_animation(
     r_c: float = DEFAULT_R_C,
     r_min: float = DEFAULT_R_MIN,
     r_max: float = DEFAULT_R_MAX,
+    inward_pair: Optional[Tuple[int, int]] = DEFAULT_INWARD_PAIR,
+    inward_push: float = DEFAULT_INWARD_PUSH,
+    outward_pair: Optional[Tuple[int, int]] = None,
+    outward_push: float = 0.0,
     seed: int = DEFAULT_SEED,
     output_path: Optional[Path] = None,
     fps: int = DEFAULT_FPS,
@@ -82,9 +88,23 @@ def generate_animation(
     q0, _ = star_stations(0.0, kappa=kappa, p0=p0, a0=a0, a_inf=a_inf, omega=omega)
 
     # 1. Determine Initial Perturbation delta0
-    print(f"Spawning agents randomly in annular ring r in [{r_min:.2f}, {r_max:.2f}] m around stations (seed={seed})...")
-    delta0, min_dx0, max_ell0 = generate_random_ring_perturbation(
-        q0, r_min=r_min, r_max=r_max, d_safe=d_safe, r_c=r_c, seed=seed
+    push_desc = ""
+    if inward_pair is not None and inward_push > 0:
+        push_desc = f", inward push {inward_push:.2f} on pair {inward_pair}"
+    elif outward_pair is not None and outward_push > 0:
+        push_desc = f", outward push {outward_push:.2f} on pair {outward_pair}"
+    print(f"Spawning agents randomly in annular ring r in [{r_min:.2f}, {r_max:.2f}] m around stations (seed={seed}{push_desc})...")
+    delta0, min_dx0, max_ell0 = generate_swarm_perturbation(
+        q0,
+        r_min=r_min,
+        r_max=r_max,
+        inward_pair=inward_pair,
+        inward_push=inward_push,
+        outward_pair=outward_pair,
+        outward_push=outward_push,
+        d_safe=d_safe,
+        r_c=r_c,
+        seed=seed,
     )
     print(f"Verified initial swarm state: min separation d_x(0) = {min_dx0:.4f} m > {d_safe} m, "
             f"diameter ell_x(0) = {max_ell0:.4f} m < {r_c} m.")
@@ -175,10 +195,17 @@ def generate_animation(
         visible=False, zorder=10
     )
 
-    spawn_label = f"Random Ring [{r_min:.2f}, {r_max:.2f}] m"
+    spawn_label = f"r in [{r_min:.2f}, {r_max:.2f}] m"
+    if inward_pair is not None and inward_push > 0:
+        spawn_label += f" + inward push {inward_push:.2f} on {inward_pair}"
+    elif outward_pair is not None and outward_push > 0:
+        spawn_label += f" + outward push {outward_push:.2f} on {outward_pair}"
+    outcome_str = "Safe" if res.metrics['observed_safe'] else "Collision"
+    if not res.metrics['observed_connected']:
+        outcome_str += ", Disconnected"
     ax_arena.set_title(
         f"Rotating-Compressing Star Formation Tracking ($m={m:.1f}$, $\\kappa={kappa:.1f}$)\n"
-        f"Spawn: {spawn_label} | Outcome: {res.metrics['classification']} ({'Safe' if res.metrics['observed_safe'] else 'Collision'})",
+        f"Spawn: {spawn_label} | Outcome: {res.metrics['classification']} ({outcome_str})",
         fontsize=11.5, fontweight="bold"
     )
     ax_arena.legend(loc="lower right", fontsize=8.5, framealpha=0.92)
@@ -275,6 +302,10 @@ def main():
     parser.add_argument("--a-inf", type=float, default=DEFAULT_A_INF, help="Asymptotic scale a_inf")
     parser.add_argument("--r-min", type=float, default=DEFAULT_R_MIN, help="Min radial offset for random spawn (m)")
     parser.add_argument("--r-max", type=float, default=DEFAULT_R_MAX, help="Max radial offset for random spawn (m)")
+    parser.add_argument("--inward-pair", type=int, nargs=2, default=list(DEFAULT_INWARD_PAIR) if DEFAULT_INWARD_PAIR else None, help="Agent pair for inward compression push (e.g. 1 3)")
+    parser.add_argument("--inward-push", type=float, default=DEFAULT_INWARD_PUSH, help="Magnitude of inward compression push")
+    parser.add_argument("--outward-pair", type=int, nargs=2, default=None, help="Agent pair for outward stretch push (e.g. 0 1)")
+    parser.add_argument("--outward-push", type=float, default=0.0, help="Magnitude of outward stretch push")
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Random seed for spawn reproducibility")
     parser.add_argument("--d-safe", type=float, default=DEFAULT_D_SAFE, help="Safety separation threshold (meters)")
     parser.add_argument("--r-c", type=float, default=DEFAULT_R_C, help="Communication radius threshold (meters)")
@@ -282,6 +313,9 @@ def main():
     parser.add_argument("--dpi", type=int, default=DEFAULT_DPI, help="Render DPI")
     parser.add_argument("--output", type=Path, default=None, help="Output file path (.mp4 or .gif)")
     args = parser.parse_args()
+
+    inward_pair = tuple(args.inward_pair) if args.inward_pair else None
+    outward_pair = tuple(args.outward_pair) if args.outward_pair else None
 
     generate_animation(
         m=args.m,
@@ -293,6 +327,10 @@ def main():
         r_c=args.r_c,
         r_min=args.r_min,
         r_max=args.r_max,
+        inward_pair=inward_pair,
+        inward_push=args.inward_push,
+        outward_pair=outward_pair,
+        outward_push=args.outward_push,
         seed=args.seed,
         output_path=args.output,
         fps=args.fps,

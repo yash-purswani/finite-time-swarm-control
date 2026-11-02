@@ -11,7 +11,7 @@ Outputs:
 - Table: results/experiment_4/star_expansion_cases_table.tex
 
 Can be run standalone:
-    python3 experiments/exp4_expanding_safety.py --m-safe 30.0 --m-unsafe 0.0 --kappa 8.0 --rerun
+    python3 experiments/exp4_expanding_safety.py --m-safe 50.0 --m-unsafe 0.0 --kappa 12.0 --rerun
 """
 import argparse
 import sys
@@ -25,7 +25,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from finite_time.core.stations import build_star_template, star_stations, template_geometry_metrics, backbone_geometry_metrics
-from finite_time.core.spawn import verify_initial_conditions
+from finite_time.core.spawn import generate_swarm_perturbation, verify_initial_conditions
 from finite_time.core.simulation import simulate_star_maneuver
 from finite_time.core.theory import compute_required_rate, effective_decay_rate
 from finite_time.plotting import plot_transient_2x3_grid, plot_transient_3x2_grid
@@ -35,7 +35,7 @@ from finite_time.utils import save_simulation_run, write_star_cases_table
 # DEFAULT EXPANSION PARAMETERS
 # =============================================================================
 DEFAULT_SAFE_M = 30.0
-DEFAULT_UNSAFE_M = 0.0
+DEFAULT_UNSAFE_M = 1.0
 DEFAULT_KAPPA = 8.0
 DEFAULT_A0 = 1.70
 DEFAULT_A_INF = 3.02
@@ -45,34 +45,6 @@ DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
 DEFAULT_OMEGA = 0.7853981633974483  # pi / 4
 DEFAULT_SOLVER = dict(method='DOP853', rtol=1e-6, atol=1e-8, max_step=0.02)
-
-
-def generate_expansion_initial_perturbation(
-    q0: np.ndarray,
-    seed: int = 123,
-    r_min: float = 0.02,
-    r_max: float = 0.05,
-    outward_edge: Tuple[int, int] = (0, 1),
-    outward_push: float = 0.58
-) -> np.ndarray:
-    """Generate initial perturbation for rapid expansion test.
-
-    Applies small annular ring noise around stations plus an outward stretch
-    along the specified backbone edge to challenge network connectivity under rapid expansion.
-    """
-    rng = np.random.default_rng(seed)
-    n = len(q0)
-    r = rng.uniform(r_min, r_max, size=n)
-    theta = rng.uniform(0.0, 2.0 * np.pi, size=n)
-    delta0 = np.column_stack([r * np.cos(theta), r * np.sin(theta)])
-
-    i, j = outward_edge
-    diff_ij = q0[j] - q0[i]
-    uij = diff_ij / np.linalg.norm(diff_ij)
-    # Pull agents i and j apart along edge (i, j)
-    delta0[i] -= outward_push * uij
-    delta0[j] += outward_push * uij
-    return delta0
 
 
 def run_experiment_4(
@@ -104,7 +76,9 @@ def run_experiment_4(
     ell_h0, lambda2_backbone = backbone_geometry_metrics(p0)
 
     q0, _ = star_stations(0.0, kappa, p0, a0=a0, a_inf=a_inf, omega=DEFAULT_OMEGA)
-    delta0 = generate_expansion_initial_perturbation(q0, seed=123)
+    delta0, min_dx0, max_ell0 = generate_swarm_perturbation(
+        q0, r_min=0.02, r_max=0.05, outward_pair=(0, 1), outward_push=0.60, seed=123, d_safe=d_safe, r_c=r_c
+    )
 
     min_dx0, max_ell0, is_valid0 = verify_initial_conditions(q0 + delta0, d_safe=d_safe, r_c=r_c)
     eta0 = delta0 - np.mean(delta0, axis=0)

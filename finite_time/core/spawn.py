@@ -42,24 +42,26 @@ def verify_initial_conditions(
     return min_dx, max_ell_H, is_valid
 
 
-def generate_random_ring_perturbation(
+def generate_swarm_perturbation(
     q0: np.ndarray,
-    r_min: float = 0.05,
-    r_max: float = 0.25,
+    r_min: float = 0.02,
+    r_max: float = 0.05,
+    inward_pair: Optional[Tuple[int, int]] = None,
+    inward_push: float = 0.0,
+    outward_pair: Optional[Tuple[int, int]] = None,
+    outward_push: float = 0.0,
     d_safe: float = 1.0,
     r_c: float = 6.0,
     seed: int = 123,
     max_attempts: int = 2000,
     backbone_edges: Optional[List[Tuple[int, int]]] = None,
-    close_pair: Optional[Tuple[int, int]] = (1, 3),
-    close_push: float = 0.55
 ) -> Tuple[np.ndarray, float, float]:
-    r"""Spawn agents randomly in an annular ring r ∈ [r_min, r_max] around each station q_i(0).
+    r"""Generate valid initial swarm perturbations with optional directed inward or outward edge pushes.
 
-    For benchmark transient evaluations, closest station pair `close_pair` has an
-    inward push component `close_push`, demonstrating that without inter-agent coupling
-    (m = 0), rapid compression causes transient collision, whereas sufficient coupling
-    (m >= m_req) provably guarantees safety.
+    1. Spawns agents randomly in an annular ring r ∈ [r_min, r_max] around each station q_i(0).
+    2. If inward_pair is specified, pushes agents i and j towards each other along edge (i, j).
+    3. If outward_pair is specified, pulls agents i and j apart along edge (i, j).
+    4. Verifies physical clearance d_x(0) > d_safe and backbone connectivity ell_H(0) < r_c.
 
     Guarantees (checked on generated sample):
       1. Initial physical separation  d_x(0) > d_safe.
@@ -78,12 +80,19 @@ def generate_random_ring_perturbation(
         theta = rng.uniform(0.0, 2.0 * np.pi, size=n)
         delta0 = np.column_stack([r * np.cos(theta), r * np.sin(theta)])
 
-        if close_pair is not None and close_push > 0.0:
-            i, j = close_pair
+        if inward_pair is not None and inward_push > 0.0:
+            i, j = inward_pair
             diff_ij = q0[j] - q0[i]
             uij = diff_ij / np.linalg.norm(diff_ij)
-            delta0[i] += +close_push * uij
-            delta0[j] += -close_push * uij
+            delta0[i] += +inward_push * uij
+            delta0[j] += -inward_push * uij
+
+        if outward_pair is not None and outward_push > 0.0:
+            i, j = outward_pair
+            diff_ij = q0[j] - q0[i]
+            uij = diff_ij / np.linalg.norm(diff_ij)
+            delta0[i] -= outward_push * uij
+            delta0[j] += outward_push * uij
 
         x0 = q0 + delta0
         min_dx, max_ell_H, is_valid = verify_initial_conditions(

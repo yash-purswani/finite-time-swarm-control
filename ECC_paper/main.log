@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.5)  30 OCT 2026 01:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.5)  2 NOV 2026 02:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -659,51 +659,59 @@ LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 70
  (/home/yash/.TinyTeX/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Underfull \hbox (badness 1354) in paragraph at lines 87--88
-\OT1/ptm/m/n/10 finite-time cen-troid track-ing and finite-time ag-gre-ga-tion
- []
+
+LaTeX Warning: Citation `xiao2009finite' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `wang2010finite' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `chen2015connectivity' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `filotheou2020robust' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `huang2024prescribed' on page 1 undefined on input line 102.
+
+
+LaTeX Warning: Citation `ren2005consensus' on page 1 undefined on input line 102.
 
 [1{/home/yash/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/home/yash/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 1546) in paragraph at lines 125--127
+\OT1/ptm/m/n/10 where $[]$ is the com-manded agent ve-loc-ity, $\OT1/cmr/m/n/10 ^^H[]$ \OT1/ptm/m/n/10 is a
+ []
 
- [2] [3]
-Underfull \hbox (badness 10000) in paragraph at lines 327--328
+[2]
+Underfull \hbox (badness 5637) in paragraph at lines 326--327
 []\OT1/ptm/m/n/10 Let $\OML/cmm/m/it/10 d[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 t\OT1/cmr/m/n/10 ) = []$ \OT1/ptm/m/n/10 and $\OML/cmm/m/it/10 d[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 t\OT1/cmr/m/n/10 ) =
  []
 
-
-Underfull \hbox (badness 2165) in paragraph at lines 359--360
-\OT1/ptm/m/n/10 co-or-di-na-tion dur-ing for-ma-tion ma-neu-vers, we con-sider
- []
-
-[4]
-Underfull \hbox (badness 1946) in paragraph at lines 479--479
-[]|\OT1/ptm/m/n/8 Distance ex-po-nent in the in-ter-ac-tion
- []
-
-<figures/error_disagreement_control.pdf, id=185, 511.36342pt x 177.54282pt>
+[3]
+<figures/error_disagreement_control.pdf, id=161, 511.36342pt x 177.54282pt>
 File: figures/error_disagreement_control.pdf Graphic file (type pdf)
 <use figures/error_disagreement_control.pdf>
-Package pdftex.def Info: figures/error_disagreement_control.pdf  used on input line 506.
+Package pdftex.def Info: figures/error_disagreement_control.pdf  used on input line 449.
 (pdftex.def)             Requested size: 455.2979pt x 158.08032pt.
-[5]
-<figures/swarm_star_3x2_comparison.pdf, id=207, 243.57097pt x 325.69443pt>
+ [4]
+<figures/swarm_star_3x2_comparison.pdf, id=189, 243.57097pt x 325.39644pt>
 File: figures/swarm_star_3x2_comparison.pdf Graphic file (type pdf)
 <use figures/swarm_star_3x2_comparison.pdf>
-Package pdftex.def Info: figures/swarm_star_3x2_comparison.pdf  used on input line 522.
-(pdftex.def)             Requested size: 242.82503pt x 324.70464pt.
-<figures/swarm_star_expansion_3x2_comparison.pdf, id=208, 242.31628pt x 325.69443pt>
+Package pdftex.def Info: figures/swarm_star_3x2_comparison.pdf  used on input line 524.
+(pdftex.def)             Requested size: 242.82503pt x 324.40756pt.
+<figures/swarm_star_expansion_3x2_comparison.pdf, id=190, 242.31628pt x 325.39644pt>
 File: figures/swarm_star_expansion_3x2_comparison.pdf Graphic file (type pdf)
 <use figures/swarm_star_expansion_3x2_comparison.pdf>
-Package pdftex.def Info: figures/swarm_star_expansion_3x2_comparison.pdf  used on input line 529.
-(pdftex.def)             Requested size: 242.82503pt x 326.37943pt.
-<figures/corridor_maneuver_1x3.pdf, id=210, 991.40327pt x 294.81288pt>
+Package pdftex.def Info: figures/swarm_star_expansion_3x2_comparison.pdf  used on input line 531.
+(pdftex.def)             Requested size: 242.82503pt x 326.08081pt.
+ [5 <./figures/error_disagreement_control.pdf>]
+<figures/corridor_maneuver_1x3.pdf, id=230, 991.40327pt x 294.81288pt>
 File: figures/corridor_maneuver_1x3.pdf Graphic file (type pdf)
 <use figures/corridor_maneuver_1x3.pdf>
-Package pdftex.def Info: figures/corridor_maneuver_1x3.pdf  used on input line 564.
+Package pdftex.def Info: figures/corridor_maneuver_1x3.pdf  used on input line 565.
 (pdftex.def)             Requested size: 495.77003pt x 147.42856pt.
  (./main.bbl)
 
@@ -717,27 +725,36 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the US letter (8.5in X 11in) paper size.
 
-[6 <./figures/error_disagreement_control.pdf>] [7 <./figures/swarm_star_3x2_comparison.pdf> <./figures/swarm_star_expansion_3x2_comparison.pdf>] [8 <./figures/corridor_maneuver_1x3.pdf>] (./main.aux)
+[6
+
+] [7 <./figures/swarm_star_3x2_comparison.pdf> <./figures/swarm_star_expansion_3x2_comparison.pdf>] [8 <./figures/corridor_maneuver_1x3.pdf>] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 733264294C5AB4B9FD2F260A7581BE14;3005.
+(rerunfilecheck)             Checksum: 9A360C0AD0306207D5C1F47931E3D049;2969.
  ) 
 Here is how much of TeX's memory you used:
  24698 strings out of 469157
  471353 string characters out of 5460244
  902190 words of memory out of 5000000
- 53237 multiletter control sequences out of 15000+600000
- 676086 words of font info for 148 fonts, out of 8000000 for 9000
+ 53239 multiletter control sequences out of 15000+600000
+ 675008 words of font info for 147 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 99i,13n,118p,1456b,938s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (8 pages, 567236 bytes).
+ 99i,13n,118p,1498b,938s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/yash/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on main.pdf (8 pages, 544292 bytes).
 PDF statistics:
- 558 PDF objects out of 1000 (max. 8388607)
- 360 compressed objects within 4 object streams
- 82 named destinations out of 1000 (max. 500000)
+ 551 PDF objects out of 1000 (max. 8388607)
+ 355 compressed objects within 4 object streams
+ 81 named destinations out of 1000 (max. 500000)
  145 words of extra memory for PDF output out of 10000 (max. 10000000)
 

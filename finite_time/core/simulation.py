@@ -30,7 +30,7 @@ from .stations import (
     BACKBONE_EDGES,
 )
 from .spawn import (
-    generate_random_ring_perturbation,
+    generate_swarm_perturbation,
 )
 from .theory import (
     disagreement_vector,
@@ -112,6 +112,8 @@ class SimulationResult:
             'R_bar': self.r_bar,
             'd_q': self.d_q,
             'ell_H': self.ell_q,
+            'm': self.metrics.get('m'),
+            'metrics': self.metrics,
         }
 
 
@@ -170,7 +172,9 @@ def simulate_star_maneuver(
     q0, _ = star_stations(t0, kappa, p0, a0=a0, a_inf=a_inf, omega=omega)
 
     if delta0 is None:
-        delta0, _, _ = generate_random_ring_perturbation(q0, d_safe=d_safe, r_c=r_c)
+        delta0, _, _ = generate_swarm_perturbation(
+            q0, r_min=0.02, r_max=0.05, inward_pair=(1, 3), inward_push=0.58, d_safe=d_safe, r_c=r_c
+        )
     delta0_norm = float(np.linalg.norm(delta0))
     eta0 = disagreement_vector(delta0)
     rho0 = np.sqrt(2.0) * float(np.linalg.norm(eta0))
@@ -299,6 +303,7 @@ def simulate_star_maneuver(
     dur_conn = float(np.sum(conn_viol_mask) * dt_tr)
 
     metrics = {
+        'm': m,
         'kappa': kappa,
         'min_separation': min_dx,
         'minimum_clearance': min_dx - d_safe,

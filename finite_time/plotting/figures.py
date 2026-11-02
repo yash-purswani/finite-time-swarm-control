@@ -218,9 +218,37 @@ def plot_transient_3x2_grid(
     fig, axes = plt.subplots(3, 2, figsize=figsize, sharex=True, sharey='row', layout='none')
 
     cases = [case_safe, case_unsafe]
-    m_safe = case_safe.get('m', 30.0)
-    m_unsafe = case_unsafe.get('m', 0.0)
-    col_titles = [f"Certified Safe ($m={m_safe:g}$)", f"Uncoupled ($m={m_unsafe:g}$)"]
+
+    def _extract_case_title(case: Dict[str, Any], default_label: str, default_m: float) -> str:
+        if 'title' in case:
+            return case['title']
+
+        m_val = case.get('m')
+        if m_val is None and 'metrics' in case and isinstance(case['metrics'], dict):
+            m_val = case['metrics'].get('m')
+        if m_val is None:
+            m_val = default_m
+
+        m_str = f"{m_val:g}" if isinstance(m_val, (int, float)) else str(m_val)
+
+        label = case.get('label')
+        if not label and 'metrics' in case and isinstance(case['metrics'], dict):
+            label = case['metrics'].get('parameter_case')
+        if not label:
+            certified = bool(case.get('certified', False))
+            if not certified and 'metrics' in case and isinstance(case['metrics'], dict):
+                certified = bool(case['metrics'].get('certified', False))
+            if certified:
+                label = 'Certified Safe'
+            else:
+                label = 'Unsafe' if float(m_val) > 0 else 'Uncoupled'
+
+        return rf"{label} ($m={m_str}$)"
+
+    col_titles = [
+        _extract_case_title(case_safe, 'Certified Safe', 30.0),
+        _extract_case_title(case_unsafe, 'Unsafe', 0.0),
+    ]
     col_colors = ['#009E73', '#e74c3c']
 
     for col, (case, color) in enumerate(zip(cases, col_colors)):

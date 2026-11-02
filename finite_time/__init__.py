@@ -22,7 +22,7 @@ from .core.stations import (
     build_morphing_schedule,
 )
 from .core.spawn import (
-    generate_random_ring_perturbation,
+    generate_swarm_perturbation,
     verify_initial_conditions,
 )
 from .core.theory import (

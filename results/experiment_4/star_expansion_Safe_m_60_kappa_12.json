@@ -2,12 +2,12 @@
   "metadata": {
     "M": [
       [
-        0.0,
+        60.0,
         0.0
       ],
       [
         0.0,
-        0.0
+        60.0
       ]
     ],
     "d_safe": 1.0,
@@ -236,7 +236,7 @@
       }
     }
   },
-  "data_sha256": "93a31b201c03d1a46bc48ad27b2c0051ea6d94aba2cb31622eaf7a5328337c72",
+  "data_sha256": "2302eff4ce2f59a8a56fdd17edb925d79e257a61e600f95d1074f5afed24965a",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
@@ -244,32 +244,33 @@
     "method": "DOP853"
   },
   "metrics": {
-    "kappa": 5.0,
-    "min_separation": 0.8604635767531335,
-    "minimum_clearance": -0.13953642324686655,
-    "max_backbone_edge": 4.033753131962214,
-    "minimum_connectivity_margin": 1.9662468680377856,
-    "observed_safe": false,
+    "m": 60.0,
+    "kappa": 12.0,
+    "min_separation": 1.8350908504217132,
+    "minimum_clearance": 0.8350908504217132,
+    "max_backbone_edge": 5.888002734010799,
+    "minimum_connectivity_margin": 0.11199726598920101,
+    "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 1.1333333333333333,
-      "1e-06": 1.1516666666666668,
+      "0.0001": 0.22333333333333336,
+      "1e-06": 0.24166666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 1.362084056031771,
-    "peak_control": 35.05435122195552,
-    "peak_individual_control": 35.05435122195552,
-    "J_u": 480.66220458868713,
-    "gamma": 1.0,
-    "gamma_req": 4.488158841122351,
-    "m_required": 22.65324838912302,
-    "certified": false,
-    "classification": "C",
-    "safe_viol_start": 0.10833333333333334,
-    "safe_viol_end": 0.7666666666666667,
-    "dur_safe_viol": 0.66,
+    "T_bar": 1.2947891506686484,
+    "peak_control": 148.1962970247109,
+    "peak_individual_control": 148.1962970247109,
+    "J_u": 3803.8824841097116,
+    "gamma": 10.238830867533842,
+    "gamma_req": 6.340762543364713,
+    "m_required": 34.6846648884937,
+    "certified": true,
+    "classification": "A",
+    "safe_viol_start": null,
+    "safe_viol_end": null,
+    "dur_safe_viol": 0.0,
     "dur_conn_viol": 0.0,
     "solver_settings": {
       "rtol": 1e-06,
@@ -277,14 +278,13 @@
       "max_step": 0.02,
       "method": "DOP853"
     },
-    "m": 0.0,
-    "parameter_case": "Unsafe"
+    "parameter_case": "Safe"
   },
   "certificate": {
-    "certified": false,
-    "gamma": 1.0,
-    "gamma_req": 4.488158841122351,
-    "m_required": 22.65324838912302,
-    "T_bar": 1.362084056031771
+    "certified": true,
+    "gamma": 10.238830867533842,
+    "gamma_req": 6.340762543364713,
+    "m_required": 34.6846648884937,
+    "T_bar": 1.2947891506686484
   }
 }

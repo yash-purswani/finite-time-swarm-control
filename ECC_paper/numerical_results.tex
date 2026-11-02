@@ -13,8 +13,8 @@ All quantities are normalized unless unit dimensions are specified. This report 
 \begin{itemize}
 \item \textbf{Experiment 1:} Multi-formation reconfiguring demonstration across four distinct geometric templates along a straight-line reference trajectory with Hungarian assignment.
 \item \textbf{Experiment 2:} Finite-time convergence, disagreement decay, and coupling gain evaluation under a rotating-compressing star formation ($\kappa = 2.0$).
-\item \textbf{Experiment 3:} Transient collision avoidance and safety certification under rapid star compression ($\kappa = 5.0$) comparing certified safe ($m = 30.0$) versus uncertified collision ($m = 0.0$).
-\item \textbf{Experiment 4:} Dual transient connectivity preservation under rapid star expansion ($\kappa = 8.0$) comparing certified connected ($m = 25.0$) versus uncertified link breach ($m = 0.0$).
+\item \textbf{Experiment 3:} Transient collision avoidance under rapid star compression ($\kappa = 12.0$, $a_0 = 1.70 \to a_\infty = 0.72$) comparing certified safe ($m = 60.0$) versus uncertified collision ($m = 1.0$).
+\item \textbf{Experiment 4:} Dual transient connectivity preservation under rapid star expansion ($\kappa = 12.0$, $a_0 = 1.70 \to a_\infty = 3.02$) comparing certified connected ($m = 60.0$) versus uncertified link breach ($m = 1.0$).
 \end{itemize}
 
 \section{Model and parameters}
@@ -92,14 +92,14 @@ Increasing the coupling gain $m$ accelerates disagreement decay, reducing the se
 \end{table}
 
 \section{Star formation safety and connectivity transient}
-Experiment~3 analyzes the fast compression maneuver ($\kappa = 5.0$) over $t \in [0, 2.5]$~s, comparing two regimes in a $2 \times 3$ grid format (Figure~\ref{fig:star_2x3}):
+Experiments~3 and 4 analyze aggressive maneuvers sharing identical rate $\kappa = 12.0$ and gains ($m = 60.0$ for the safe regime, $m = 1.0$ for the unsafe regime), differentiated solely by the scale limits. Experiment~3 evaluates fast compression ($a_0 = 1.70 \to a_\infty = 0.72$) over $t \in [0, 2.5]$~s, comparing two regimes in a $2 \times 3$ grid format (Figure~\ref{fig:star_2x3}):
 \begin{itemize}
-\item \textbf{Row 1 (Certified Safe Case, $m = 30.0$):} With coupling gain $m = 30.0$, the convergence rate is $\gamma = 5.6194$, strictly exceeding the theoretical certification threshold $\gamma_{\rm req} = 4.4882$. In simulation, the swarm settles within $t_{\rm set} = 0.3800$~s. Both minimum pairwise separation ($d_{x,\min} = 1.0326\text{ m} > d_{\rm safe} = 1.0\text{ m}$) and maximum backbone edge ($\ell_{x,\max} = 4.0338\text{ m} < R_c = 6.0\text{ m}$) are strictly preserved across the entire transient without violation, yielding outcome \texttt{Certified; Safe, Connected}.
-\item \textbf{Row 2 (Unsafe Mid-Transient Collision, $m = 0.0$):} With uncoupled agents ($m = 0.0$), the decay rate is only $\gamma = 1.0000 < \gamma_{\rm req} = 4.4882$. Although target stations remain strictly safe ($d_q(t) \ge 1.0326$~m), rapid maneuver compression outpaces uncoupled error convergence. As a result, the uncoupled swarm suffers a genuine physical collision mid-transient: $d_x(t) < d_{\rm safe}$ for $t \in [0.11, 0.77]$~s (duration $0.66$~s), reaching a minimum distance of $d_{x,\min} = 0.8605$~m (a collision breach of $13.95$~cm). Network connectivity along the backbone is maintained ($\ell_{x,\max} = 4.0338\text{ m} < R_c$), yielding outcome \texttt{Uncertified; Safety Violation}.
+\item \textbf{Row 1 (Certified Safe Case, $m = 60.0$):} With coupling gain $m = 60.0$, the convergence rate is $\gamma = 10.2388$, strictly exceeding the theoretical threshold $\gamma_{\rm req} = 9.9879$ ($\Delta_{\min} = 0.0084\text{ m} > 0$). In closed-loop simulation the swarm remains strictly collision-free throughout the transient ($d_{x,\min} = 1.0326\text{ m} > d_{\rm safe} = 1.0\text{ m}$) with backbone links preserved ($\ell_{x,\max} = 3.9437\text{ m} < R_c$), settling by $t_{\rm set} = 0.1767$~s and certifying outcome \texttt{Certified; Safe, Connected}.
+\item \textbf{Row 2 (Unsafe Collision Case, $m = 1.0$):} With low coupling gain ($m = 1.0$), the decay rate is only $\gamma = 1.1540 \ll \gamma_{\rm req}$. Rapid maneuver compression severely outpaces error convergence, resulting in an observed physical collision mid-transient: $d_x(t) < d_{\rm safe}$ for $t \in [0.04, 0.30]$~s (duration $0.26$~s), reaching $d_{x,\min} = 0.8923$~m (a collision penetration of $10.77$~cm), yielding outcome \texttt{Uncertified; Safety Violation}.
 \end{itemize}
 
 \begin{table}[ht]\centering\footnotesize
-\caption{Experiment 3 outcomes: Certified Safe ($m=30.0$) vs. uncertified mid-transient collision ($m=0.0$) under rapid star compression ($\kappa=5.0$, $t \in [0, 2.5]$~s).}
+\caption{Experiment 3 outcomes: Certified Safe ($m=60.0$) vs. collision violation ($m=1.0$) under rapid star compression ($a_0 = 1.70 \to a_\infty = 0.72$, $\kappa=12.0$, $t \in [0, 2.5]$~s).}
 \input{star_cases_table.tex}
 \label{tab:star_cases}
 \end{table}
@@ -108,28 +108,28 @@ Figure~\ref{fig:star_2x3} presents the $2 \times 3$ transient response compariso
 
 \begin{figure}[ht]\centering
 \includegraphics[width=.98\linewidth]{figures/swarm_star_2x3_comparison.pdf}
-\caption{Experiment 3: Safety and connectivity during fast star compression ($\kappa=5.0$, $t \in [0, 2.5]$~s). Top row: Certified Safe ($m=30.0$). Bottom row: Unsafe Mid-Transient Collision ($m=0.0$). Columns show minimum pairwise distance $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ vs. distortion tube $\rho_{\mathcal{H}}(t)$ (right).}
+\caption{Experiment 3: Safety and connectivity during fast star compression ($a_0 = 1.70 \to a_\infty = 0.72$, $\kappa=12.0$, $t \in [0, 2.5]$~s). Top row: Certified Safe ($m=60.0$). Bottom row: Unsafe Collision Violation ($m=1.0$). Columns show minimum pairwise distance $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ vs. distortion tube $\rho_{\mathcal{H}}(t)$ (right).}
 \label{fig:star_2x3}
 \end{figure}
 
 \section{Dual expansion maneuver and transient connectivity preservation}
-Complementary to rapid compression (Exp.~3), Experiment~4 tests a rapid expansion maneuver ($a_0 = 1.70 \to a_\infty = 3.02$ at $\kappa = 8.0$) to evaluate the dual physical constraint: network connectivity preservation ($\ell_x(t) \le R_c = 6.0$~m). As the star expands, nominal backbone edges stretch to $a_\infty \ell_{\mathcal{H},0} = 5.888$~m, leaving a narrow connectivity margin $s_{\rm conn}(\infty) = 0.112$~m ($11.2$~cm). The required certification rate is $\gamma_{\rm req} = 4.1367$.
+Complementary to rapid compression (Exp.~3), Experiment~4 tests a rapid expansion maneuver ($a_0 = 1.70 \to a_\infty = 3.02$ at $\kappa = 12.0$) to evaluate network connectivity preservation ($\ell_x(t) \le R_c = 6.0$~m). As the star expands, nominal backbone edges stretch to $a_\infty \ell_{\mathcal{H},0} = 5.888$~m, leaving a narrow margin $s_{\rm conn}(\infty) = 0.112$~m. The required rate is $\gamma_{\rm req} = 6.3408$.
 
 \begin{table}[ht]\centering\footnotesize
-\caption{Experiment 4 outcomes: Certified Safe \& Connected ($m=25.0$) vs. uncertified mid-transient disconnection ($m=0.0$) under rapid star expansion ($\kappa=8.0$, $t \in [0, 2.5]$~s).}
+\caption{Experiment 4 outcomes: Certified Safe \& Connected ($m=60.0$) vs. uncertified disconnection ($m=1.0$) under rapid star expansion ($a_0 = 1.70 \to a_\infty = 3.02$, $\kappa=12.0$, $t \in [0, 2.5]$~s).}
 \input{star_expansion_cases_table.tex}
 \label{tab:star_expansion_cases}
 \end{table}
 
 Figure~\ref{fig:star_expansion_2x3} presents the corresponding $2 \times 3$ grid:
 \begin{itemize}
-\item \textbf{Row 1 (Certified Safe \& Connected, $m = 25.0$):} With coupling gain $m = 25.0$, $\gamma = 4.8495 > \gamma_{\rm req} = 4.1367$. All backbone communication links remain strictly within range ($\ell_{x,\max} = 5.8880\text{ m} < R_c$), and pairwise distance grows safely ($d_{x,\min} = 1.8550$~m), yielding outcome \texttt{Certified; Safe, Connected}.
-\item \textbf{Row 2 (Unsafe Transient Disconnection, $m = 0.0$):} With uncoupled agents ($m = 0.0$, $\gamma = 1.0000 < \gamma_{\rm req}$), tracking lag under rapid expansion causes backbone edge stretch exceeding range: $\ell_x(t) > R_c = 6.0$~m during $t \in [0.19, 0.64]$~s (duration $0.45$~s, peak $\ell_{x,\max} = 6.1424$~m), suffering a genuine connectivity violation (\texttt{Uncertified; Connectivity Violation}).
+\item \textbf{Row 1 (Certified Safe \& Connected, $m = 60.0$):} With coupling gain $m = 60.0$, $\gamma = 10.2388 > \gamma_{\rm req} = 6.3408$. The certificate is satisfied ($\Delta_{\min} = 0.1113\text{ m} > 0$). All backbone communication links remain strictly within range ($\ell_{x,\max} = 5.8880\text{ m} < R_c$), settling by $t_{\rm set} = 0.2417$~s with outcome \texttt{Certified; Safe, Connected}.
+\item \textbf{Row 2 (Unsafe Transient Disconnection, $m = 1.0$):} With low coupling gain ($m = 1.0$, $\gamma = 1.1540 < \gamma_{\rm req}$), tracking lag under rapid expansion causes backbone edge stretch exceeding range: $\ell_x(t) > R_c = 6.0$~m during $t \in [0.12, 0.58]$~s (duration $0.46$~s, peak $\ell_{x,\max} = 6.2417$~m), suffering a genuine connectivity violation (\texttt{Uncertified; Connectivity Violation}).
 \end{itemize}
 
 \begin{figure}[ht]\centering
 \includegraphics[width=.98\linewidth]{figures/swarm_star_expansion_2x3_comparison.pdf}
-\caption{Experiment 4: Safety and connectivity during fast star expansion ($a_0 = 1.70 \to a_\infty = 3.02$, $\kappa=8.0$, $t \in [0, 2.5]$~s). Top row: Certified Safe \& Connected ($m=25.0$). Bottom row: Unsafe Transient Disconnection ($m=0.0$). Columns show minimum pairwise distance $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ vs. distortion tube $\rho_{\mathcal{H}}(t)$ (right).}
+\caption{Experiment 4: Safety and connectivity during fast star expansion ($a_0 = 1.70 \to a_\infty = 3.02$, $\kappa=12.0$, $t \in [0, 2.5]$~s). Top row: Certified Safe \& Connected ($m=60.0$). Bottom row: Unsafe Transient Disconnection ($m=1.0$). Columns show minimum pairwise distance $d_x(t)$ (left), maximum pairwise distance $\ell_x(t)$ (middle), and geometric margin $s(t)$ vs. distortion tube $\rho_{\mathcal{H}}(t)$ (right).}
 \label{fig:star_expansion_2x3}
 \end{figure}
 

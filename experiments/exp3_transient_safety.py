@@ -10,7 +10,7 @@ Outputs:
 - Table 2: results/star_cases_table.tex
 
 Can be run standalone:
-    python3 experiments/exp3_transient_safety.py --m-safe 30.0 --m-unsafe 0.0 --kappa 5.0 --rerun
+    python3 experiments/exp3_transient_safety.py --m-safe 50.0 --m-unsafe 0.0 --kappa 12.0 --rerun
 """
 import argparse
 import sys
@@ -22,6 +22,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from finite_time.core.stations import build_star_template, star_stations
+from finite_time.core.spawn import generate_swarm_perturbation, verify_initial_conditions
 from finite_time.core.simulation import simulate_star_maneuver
 from finite_time.plotting import plot_transient_2x3_grid, plot_transient_3x2_grid
 from finite_time.utils import save_simulation_run, write_star_cases_table
@@ -29,9 +31,9 @@ from finite_time.utils import save_simulation_run, write_star_cases_table
 # =============================================================================
 # DEFAULT PARAMETERS (Easily modified for custom runs)
 # =============================================================================
-DEFAULT_SAFE_M = 30.0
-DEFAULT_UNSAFE_M = 0.0
-DEFAULT_KAPPA = 5.0
+DEFAULT_SAFE_M = 50.0
+DEFAULT_UNSAFE_M = 1.0
+DEFAULT_KAPPA = 12.0
 DEFAULT_TRANSIENT_END = 2.5
 DEFAULT_TOTAL_T_END = 12.0
 DEFAULT_D_SAFE = 1.0
@@ -64,6 +66,12 @@ def run_experiment_3(
         {'label': 'Unsafe', 'm': m_unsafe, 'title': f'Row 2 (Unsafe Mid-Transient Collision, m = {m_unsafe})'}
     ]
 
+    p0 = build_star_template(10)
+    q0, _ = star_stations(0.0, kappa, p0, a0=DEFAULT_A0, a_inf=DEFAULT_A_INF, omega=DEFAULT_OMEGA)
+    delta0, min_dx0, max_ell0 = generate_swarm_perturbation(
+        q0, r_min=0.02, r_max=0.05, inward_pair=(1, 3), inward_push=0.58, seed=123
+    )
+
     print(f"Running Experiment 3: Rapid star compression (kappa = {kappa:.1f}, transient t in [0, {transient_end:.1f}] s)...")
     print("=" * 135)
     print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'min d_x':>7} | {'max ell':>7} | {'collision window':>18} | {'Outcome'}")
@@ -81,6 +89,8 @@ def run_experiment_3(
         res = simulate_star_maneuver(
             m=m_val,
             kappa=kappa,
+            p0=p0,
+            delta0=delta0,
             t_span=(0.0, t_end),
             d_safe=d_safe,
             r_c=r_c,
@@ -127,7 +137,7 @@ def run_experiment_3(
         transient_end=transient_end,
         d_safe=d_safe,
         r_c=r_c,
-        ylim_d=(0.5, 2.2),
+        ylim_d=(0.3, 2.0),
         ylim_ell=(1.0, 6.5),
         ylim_margin=(-0.05, 1.60),
         filename='swarm_star_3x2_comparison'
@@ -138,7 +148,7 @@ def run_experiment_3(
         transient_end=transient_end,
         d_safe=d_safe,
         r_c=r_c,
-        ylim_d=(0.5, 2.2),
+        ylim_d=(0.3, 2.0),
         ylim_ell=(1.0, 6.5),
         ylim_margin=(-0.05, 1.60),
         filename='swarm_star_2x3_comparison'

@@ -2,12 +2,12 @@
   "metadata": {
     "M": [
       [
-        25.0,
+        60.0,
         0.0
       ],
       [
         0.0,
-        25.0
+        60.0
       ]
     ],
     "d_safe": 1.0,
@@ -236,7 +236,7 @@
       }
     }
   },
-  "data_sha256": "a34655e2fb2556bf5cfb86cc4fc4c2b760f1d92f6df58e9301f99149474e562e",
+  "data_sha256": "569fc1e67675ec7ae9abf60283e1abca30a52a9bd6b3818eba1604a58fac6b52",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
@@ -244,27 +244,28 @@
     "method": "DOP853"
   },
   "metrics": {
-    "kappa": 8.0,
-    "min_separation": 1.8550194364899235,
-    "minimum_clearance": 0.8550194364899235,
-    "max_backbone_edge": 5.888000737849656,
-    "minimum_connectivity_margin": 0.11199926215034406,
+    "m": 60.0,
+    "kappa": 12.0,
+    "min_separation": 1.0326035014600239,
+    "minimum_clearance": 0.03260350146002389,
+    "max_backbone_edge": 3.9437252752992946,
+    "minimum_connectivity_margin": 2.0562747247007054,
     "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.38833333333333336,
-      "1e-06": 0.41833333333333333,
+      "0.0001": 0.16666666666666669,
+      "1e-06": 0.17666666666666667,
       "1e-08": 12.0
     },
-    "T_bar": 1.2784808251781798,
-    "peak_control": 83.56994737758039,
-    "peak_individual_control": 83.56994737758039,
-    "J_u": 3624.110560654005,
-    "gamma": 4.849512861472434,
-    "gamma_req": 4.136713909273534,
-    "m_required": 20.370849651309808,
+    "T_bar": 1.2962119119692097,
+    "peak_control": 178.61715429230048,
+    "peak_individual_control": 178.61715429230048,
+    "J_u": 678.8508167010647,
+    "gamma": 10.238830867533842,
+    "gamma_req": 9.987914957633519,
+    "m_required": 58.37046972610746,
     "certified": true,
     "classification": "A",
     "safe_viol_start": null,
@@ -277,14 +278,13 @@
       "max_step": 0.02,
       "method": "DOP853"
     },
-    "m": 25.0,
     "parameter_case": "Safe"
   },
   "certificate": {
     "certified": true,
-    "gamma": 4.849512861472434,
-    "gamma_req": 4.136713909273534,
-    "m_required": 20.370849651309808,
-    "T_bar": 1.2784808251781798
+    "gamma": 10.238830867533842,
+    "gamma_req": 9.987914957633519,
+    "m_required": 58.37046972610746,
+    "T_bar": 1.2962119119692097
   }
 }
