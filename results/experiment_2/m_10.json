@@ -236,35 +236,38 @@
       }
     }
   },
-  "data_sha256": "5cce734c57d82bab3869c219dd8113bd5fd7db483f125d1a408f63edd7492279",
+  "data_sha256": "f5189f6c2b5b72d400d6c016e99ef980b18894f3cc8c57eb06c7dea97411382b",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
     "max_step": 0.02,
-    "method": "DOP853"
+    "method": "DOP853",
+    "communication_mode": "binary",
+    "filippov_band": 0.0001
   },
   "metrics": {
+    "m": 10.0,
     "kappa": 2.0,
-    "min_separation": 1.0326145343977742,
-    "minimum_clearance": 0.032614534397774175,
-    "max_backbone_edge": 4.033753131962214,
-    "minimum_connectivity_margin": 1.9662468680377856,
+    "min_separation": 1.0326137750630433,
+    "minimum_clearance": 0.032613775063043304,
+    "max_backbone_edge": 3.9437252752992946,
+    "minimum_connectivity_margin": 2.0562747247007054,
     "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.38,
-      "1e-06": 0.39333333333333337,
+      "0.0001": 0.22333333333333336,
+      "1e-06": 0.24000000000000002,
       "1e-08": 12.0
     },
-    "T_bar": 1.362084056031771,
-    "peak_control": 32.81562339315111,
-    "peak_individual_control": 32.81562339315111,
-    "J_u": 440.73702204114045,
+    "T_bar": 1.2962119119692097,
+    "peak_control": 32.81982888929175,
+    "peak_individual_control": 32.81982888929175,
+    "J_u": 437.17721607460874,
     "gamma": 2.5398051445889736,
-    "gamma_req": 1.7952635364489409,
-    "m_required": 5.164702425132005,
+    "gamma_req": 1.6646524929389197,
+    "m_required": 4.316471439744008,
     "certified": true,
     "classification": "A",
     "safe_viol_start": null,
@@ -275,15 +278,16 @@
       "rtol": 1e-06,
       "atol": 1e-08,
       "max_step": 0.02,
-      "method": "DOP853"
-    },
-    "m": 10.0
+      "method": "DOP853",
+      "communication_mode": "binary",
+      "filippov_band": 0.0001
+    }
   },
   "certificate": {
     "certified": true,
     "gamma": 2.5398051445889736,
-    "gamma_req": 1.7952635364489409,
-    "m_required": 5.164702425132005,
-    "T_bar": 1.362084056031771
+    "gamma_req": 1.6646524929389197,
+    "m_required": 4.316471439744008,
+    "T_bar": 1.2962119119692097
   }
 }

@@ -16,6 +16,7 @@ import argparse
 import sys
 from pathlib import Path
 from typing import Optional, List, Dict, Any
+import numpy as np
 
 # Ensure repository root is on sys.path
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -39,8 +40,8 @@ DEFAULT_TOTAL_T_END = 12.0
 DEFAULT_D_SAFE = 1.0
 DEFAULT_R_C = 6.0
 DEFAULT_OMEGA = 0.7853981633974483  # pi / 4
-DEFAULT_A0 = 1.70
-DEFAULT_A_INF = 0.72
+DEFAULT_A0 = 1.80
+DEFAULT_A_INF = 0.8
 DEFAULT_SOLVER = dict(method='DOP853', rtol=1e-6, atol=1e-8, max_step=0.02)
 
 
@@ -62,8 +63,8 @@ def run_experiment_3(
     folder.mkdir(parents=True, exist_ok=True)
 
     cases_config = [
-        {'label': 'Safe', 'm': m_safe, 'title': f'Row 1 (Certified Safe Case, m = {m_safe})'},
-        {'label': 'Unsafe', 'm': m_unsafe, 'title': f'Row 2 (Unsafe Mid-Transient Collision, m = {m_unsafe})'}
+        {'label': 'Certified gain', 'm': m_safe, 'title': f'Certified gain (m = {m_safe})'},
+        {'label': 'Weak coupling', 'm': m_unsafe, 'title': f'Weak coupling (m = {m_unsafe})'}
     ]
 
     p0 = build_star_template(10)
@@ -74,7 +75,7 @@ def run_experiment_3(
 
     print(f"Running Experiment 3: Rapid star compression (kappa = {kappa:.1f}, transient t in [0, {transient_end:.1f}] s)...")
     print("=" * 135)
-    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'min d_x':>7} | {'max ell':>7} | {'collision window':>18} | {'Outcome'}")
+    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'t_1e-6':>7} | {'Delta min':>9} | {'min d_x':>7} | {'max ell':>7} | {'collision window':>18} | {'Outcome'}")
     print("-" * 135)
 
     sim_results = []
@@ -101,6 +102,8 @@ def run_experiment_3(
         )
         res.metrics['m'] = m_val
         res.metrics['parameter_case'] = lab
+        cert_mask = res.t <= res.metrics['T_bar']
+        delta_min = float(np.min(res.s[cert_mask] - res.rho_h[cert_mask]))
 
         row = save_simulation_run(folder, name, res)
         rows.append(row)
@@ -125,8 +128,9 @@ def run_experiment_3(
         g_str = f"{res.metrics['gamma']:7.4f}"
         g_req_str = f"{res.metrics['gamma_req']:9.4f}" if res.metrics['gamma_req'] is not None else f"{'--':>9}"
         cw = f"[{res.metrics['safe_viol_start']:.2f},{res.metrics['safe_viol_end']:.2f}]" if res.metrics['safe_viol_start'] is not None else "none"
-        print(f"{case['label']:<10} | {m_val:4.1f} | {kappa:5.1f} | {g_str} | {g_req_str} | {res.metrics['min_separation']:7.4f} | "
-              f"{res.metrics['max_backbone_edge']:7.4f} | {cw:>18} | {outcome}")
+        print(f"{case['label']:<14} | {m_val:4.1f} | {kappa:5.1f} | {g_str} | {g_req_str} | "
+              f"{res.metrics['settling_times']['1e-06']:7.4f} | {delta_min:9.4f} | "
+              f"{res.metrics['min_separation']:7.4f} | {res.metrics['max_backbone_edge']:7.4f} | {cw:>18} | {outcome}")
 
     print("=" * 135)
 
@@ -137,7 +141,7 @@ def run_experiment_3(
         transient_end=transient_end,
         d_safe=d_safe,
         r_c=r_c,
-        ylim_d=(0.3, 2.0),
+        ylim_d=(0.3, 2.2),
         ylim_ell=(1.0, 6.5),
         ylim_margin=(-0.05, 1.60),
         filename='swarm_star_3x2_comparison'
@@ -148,7 +152,7 @@ def run_experiment_3(
         transient_end=transient_end,
         d_safe=d_safe,
         r_c=r_c,
-        ylim_d=(0.3, 2.0),
+        ylim_d=(0.3, 2.2),
         ylim_ell=(1.0, 6.5),
         ylim_margin=(-0.05, 1.60),
         filename='swarm_star_2x3_comparison'

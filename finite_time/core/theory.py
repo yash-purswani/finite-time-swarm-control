@@ -102,10 +102,13 @@ def compute_required_rate(
     if t_bar is None:
         raise ValueError("t_bar must be provided")
 
-    # Initial margin check from Corollary 2 assumption: 0 < rho0 < s(t0)
+    # Initial margin check from the gain theorem.
     s0 = float(geometric_clearance_margin(0.0, kappa, dq0, ell_h0=ell_h0, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf))
     if s0 <= 0.0 or rho0 >= s0:
         return np.inf
+    # With zero initial disagreement, no coupling rate is required.
+    if rho0 == 0.0:
+        return 0.0
 
     t_dense = np.linspace(1e-4, t_bar, 2000)
     s_vals = geometric_clearance_margin(t_dense, kappa, dq0, ell_h0=ell_h0, d_safe=d_safe, r_c=r_c, a0=a0, a_inf=a_inf)

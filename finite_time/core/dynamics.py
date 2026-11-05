@@ -25,18 +25,35 @@ def pairwise_distance_matrix(x: np.ndarray) -> np.ndarray:
 def proximity_weights(
     dist_matrix: np.ndarray,
     r_c: float = 6.0,
-    eps_w: float = 0.05
+    eps_w: float = 0.05,
+    communication_mode: str = 'binary',
+    filippov_band: float = 1e-4
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Compute adjacency indicator matrix and distance-dependent interaction weights.
 
     Returns:
         adjacency: Boolean matrix of active edges (i != j and dist < r_c)
         weights: Continuous weight matrix w_{ij} = adjacency / (dist + eps_w)
+
+    communication_mode='filippov' uses a thin convexification layer around R_c:
+    boundary weights interpolate between the two limiting values. This is a
+    numerical regularization of the Filippov inclusion (not an exact solver).
     """
+    if communication_mode not in {'binary', 'filippov'}:
+        raise ValueError("communication_mode must be 'binary' or 'filippov'")
     n = dist_matrix.shape[0]
     diag_mask = np.eye(n, dtype=bool)
-    adjacency = (dist_matrix < r_c) & (~diag_mask)
-    weights = adjacency.astype(float) / (dist_matrix + eps_w)
+    if communication_mode == 'binary':
+        adjacency = (dist_matrix < r_c) & (~diag_mask)
+        activity = adjacency.astype(float)
+    else:
+        if filippov_band <= 0.0:
+            raise ValueError('filippov_band must be positive in Filippov mode')
+        # Convex blend of active/inactive limiting fields in a narrow layer.
+        activity = np.clip((r_c + filippov_band - dist_matrix) / (2.0 * filippov_band), 0.0, 1.0)
+        activity[diag_mask] = 0.0
+        adjacency = activity > 0.0
+    weights = activity / (dist_matrix + eps_w)
     return adjacency, weights
 
 
@@ -59,7 +76,9 @@ def evaluate_control_command(
     m: float,
     r_c: float = 6.0,
     beta: float = 0.5,
-    eps_w: float = 0.05
+    eps_w: float = 0.05,
+    communication_mode: str = 'binary',
+    filippov_band: float = 1e-4
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, float]:
     """Evaluate closed-loop control commands and interaction terms.
 
@@ -80,7 +99,10 @@ def evaluate_control_command(
     """
     delta = x - q
     dist_mat = pairwise_distance_matrix(x)
-    _, w_mat = proximity_weights(dist_mat, r_c=r_c, eps_w=eps_w)
+    _, w_mat = proximity_weights(
+        dist_mat, r_c=r_c, eps_w=eps_w,
+        communication_mode=communication_mode, filippov_band=filippov_band
+    )
     L_w = laplacian_matrix(w_mat)
     lam2 = algebraic_connectivity(L_w)
 
@@ -99,7 +121,9 @@ def closed_loop_ode_rhs(
     beta: float = 0.5,
     eps_w: float = 0.05,
     n: int = 10,
-    dim: int = 2
+    dim: int = 2,
+    communication_mode: str = 'binary',
+    filippov_band: float = 1e-4
 ) -> np.ndarray:
     """RHS vector field for ODE solver integrating [x.ravel(), J_u].
 
@@ -109,6 +133,9 @@ def closed_loop_ode_rhs(
     """
     x = y[:n * dim].reshape((n, dim))
     q, qdot = station_fn(t)
-    u, _, _, _ = evaluate_control_command(x, q, qdot, m=m, r_c=r_c, beta=beta, eps_w=eps_w)
+    u, _, _, _ = evaluate_control_command(
+        x, q, qdot, m=m, r_c=r_c, beta=beta, eps_w=eps_w,
+        communication_mode=communication_mode, filippov_band=filippov_band
+    )
     effort_rate = float(np.sum(u ** 2))
     return np.concatenate([u.ravel(), [effort_rate]])

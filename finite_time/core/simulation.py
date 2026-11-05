@@ -134,6 +134,8 @@ def simulate_star_maneuver(
     atol: float = 1e-8,
     max_step: float = 0.02,
     method: str = 'DOP853',
+    communication_mode: str = 'binary',
+    filippov_band: float = 1e-4,
     transient_samples: int = 1501,
     remainder_samples: int = 601,
     **kwargs: Any
@@ -188,12 +190,13 @@ def simulate_star_maneuver(
 
     def rhs(t_val: float, y_val: np.ndarray) -> np.ndarray:
         return closed_loop_ode_rhs(
-            t_val, y_val, station_fn, m=m, r_c=r_c, beta=beta, eps_w=eps_w, n=n, dim=dim
+            t_val, y_val, station_fn, m=m, r_c=r_c, beta=beta, eps_w=eps_w, n=n, dim=dim,
+            communication_mode=communication_mode, filippov_band=filippov_band
         )
 
-    solver_settings = dict(rtol=rtol, atol=atol, max_step=max_step, method='DOP853')
+    solver_settings = dict(rtol=rtol, atol=atol, max_step=max_step, method=method, communication_mode=communication_mode, filippov_band=filippov_band)
     sol = solve_ivp(
-        rhs, (t0, tf), y0, method='DOP853',
+        rhs, (t0, tf), y0, method=method,
         rtol=rtol, atol=atol, max_step=max_step, dense_output=True
     )
     if not sol.success:
@@ -229,8 +232,16 @@ def simulate_star_maneuver(
 
     # Weights and Laplacians
     diag_mask = np.eye(n, dtype=bool)[None, :, :]
-    adjacency = (dist_values < r_c) & (~diag_mask)
-    w_values = adjacency / (dist_values + eps_w)
+    if communication_mode == 'binary':
+        adjacency = (dist_values < r_c) & (~diag_mask)
+        activity = adjacency.astype(float)
+    elif communication_mode == 'filippov':
+        activity = np.clip((r_c + filippov_band - dist_values) / (2.0 * filippov_band), 0.0, 1.0)
+        activity[:, np.arange(n), np.arange(n)] = 0.0
+        adjacency = activity > 0.0
+    else:
+        raise ValueError("communication_mode must be 'binary' or 'filippov'")
+    w_values = activity / (dist_values + eps_w)
     L_values = -w_values
     diag_idx = np.arange(n)
     L_values[:, diag_idx, diag_idx] = np.sum(w_values, axis=2)

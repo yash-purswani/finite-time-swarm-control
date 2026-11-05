@@ -167,7 +167,7 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     axes[0].legend(loc='upper right', ncol=2, fontsize=6)
     axes[1].legend(handles=[
         Line2D([], [], color='k', label='measured'),
-        Line2D([], [], color='k', ls='--', label=r'bound: $\lambda_2(L_w)$')
+        Line2D([], [], color='k', ls='--', label='Graph-dependent bound')
     ], loc='upper right', fontsize=5.8)
 
     for ax in axes:
@@ -180,7 +180,7 @@ def plot_gain_evaluation(runs: List[Tuple[float, Dict[str, Any], Dict[str, Any]]
     axes[2].set_ylabel(r'$\|u(t)\|_2$ [m/s]')
     axes[2].set_xlim(0, 0.15)
 
-    axes[0].set_title('(a) Station tracking')
+    axes[0].set_title('(a) Formation-position tracking')
     axes[1].set_title('(b) Disagreement')
     axes[2].set_title(r'(c) Initial command $\|u\|_2$')
 

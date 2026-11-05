@@ -37,8 +37,8 @@ from finite_time.utils import save_simulation_run, write_star_cases_table
 DEFAULT_SAFE_M = 30.0
 DEFAULT_UNSAFE_M = 1.0
 DEFAULT_KAPPA = 8.0
-DEFAULT_A0 = 1.70
-DEFAULT_A_INF = 3.02
+DEFAULT_A0 = 1.80
+DEFAULT_A_INF = 3.0
 DEFAULT_TRANSIENT_END = 2.5
 DEFAULT_TOTAL_T_END = 12.0
 DEFAULT_D_SAFE = 1.0
@@ -67,8 +67,8 @@ def run_experiment_4(
     folder.mkdir(parents=True, exist_ok=True)
 
     cases_config = [
-        {'label': 'Safe', 'm': m_safe, 'title': f'Row 1 (Certified Safe & Connected, m = {m_safe})'},
-        {'label': 'Unsafe', 'm': m_unsafe, 'title': f'Row 2 (Unsafe Transient Disconnection, m = {m_unsafe})'}
+        {'label': 'Certified gain', 'm': m_safe, 'title': f'Certified gain (m = {m_safe})'},
+        {'label': 'Weak coupling', 'm': m_unsafe, 'title': f'Weak coupling (m = {m_unsafe})'}
     ]
 
     p0 = build_star_template(10)
@@ -91,7 +91,7 @@ def run_experiment_4(
     print(f"Running Experiment 4: Rapid star expansion (a0 = {a0:.2f} -> a_inf = {a_inf:.2f}, kappa = {kappa:.1f}, transient t in [0, {transient_end:.1f}] s)...")
     print(f"Initial condition: rho0 = {rho0:.4f} m < s(0) = {s0:.4f} m (margin: +{s0 - rho0:.4f} m)")
     print("=" * 140)
-    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'min d_x':>7} | {'max ell':>7} | {'breach window':>22} | {'Outcome'}")
+    print(f"{'Case':<10} | {'m':>4} | {'kappa':>5} | {'gamma':>7} | {'gamma_req':>9} | {'t_1e-6':>7} | {'Delta min':>9} | {'min d_x':>7} | {'max ell':>7} | {'breach window':>22} | {'Outcome'}")
     print("-" * 140)
 
     sim_results = []
@@ -118,6 +118,8 @@ def run_experiment_4(
         )
         res.metrics['m'] = m_val
         res.metrics['parameter_case'] = lab
+        cert_mask = res.t <= res.metrics['T_bar']
+        delta_min = float(np.min(res.s[cert_mask] - res.rho_h[cert_mask]))
 
         row = save_simulation_run(folder, name, res)
         rows.append(row)
@@ -156,8 +158,9 @@ def run_experiment_4(
 
         g_str = f"{res.metrics['gamma']:7.4f}"
         g_req_str = f"{res.metrics['gamma_req']:9.4f}" if res.metrics['gamma_req'] is not None else f"{'--':>9}"
-        print(f"{case['label']:<10} | {m_val:4.1f} | {kappa:5.1f} | {g_str} | {g_req_str} | {res.metrics['min_separation']:7.4f} | "
-              f"{res.metrics['max_backbone_edge']:7.4f} | {bw_str:>22} | {outcome}")
+        print(f"{case['label']:<14} | {m_val:4.1f} | {kappa:5.1f} | {g_str} | {g_req_str} | "
+              f"{res.metrics['settling_times']['1e-06']:7.4f} | {delta_min:9.4f} | "
+              f"{res.metrics['min_separation']:7.4f} | {res.metrics['max_backbone_edge']:7.4f} | {bw_str:>22} | {outcome}")
 
     print("=" * 140)
 

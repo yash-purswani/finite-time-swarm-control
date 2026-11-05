@@ -236,37 +236,40 @@
       }
     }
   },
-  "data_sha256": "28a4eb68636cb8e7630daba305d78887b0765a2d7e22e736364ab396a7c82797",
+  "data_sha256": "5db5e400700f5842bab87f85e53d38a7933540250d1de879c0100b5b290339bf",
   "solver": {
     "rtol": 1e-06,
     "atol": 1e-08,
     "max_step": 0.02,
-    "method": "DOP853"
+    "method": "DOP853",
+    "communication_mode": "binary",
+    "filippov_band": 0.0001
   },
   "metrics": {
+    "m": 5.0,
     "kappa": 2.0,
-    "min_separation": 1.0326146294928793,
-    "minimum_clearance": 0.0326146294928793,
-    "max_backbone_edge": 4.033753131962214,
-    "minimum_connectivity_margin": 1.9662468680377856,
+    "min_separation": 1.032616225767281,
+    "minimum_clearance": 0.03261622576728107,
+    "max_backbone_edge": 3.9437252752992946,
+    "minimum_connectivity_margin": 2.0562747247007054,
     "observed_safe": true,
     "observed_connected": true,
     "observed_backbone_preserved": true,
     "observed_graph_connected": true,
     "settling_times": {
-      "0.0001": 0.4066666666666667,
-      "1e-06": 0.4466666666666667,
+      "0.0001": 0.2916666666666667,
+      "1e-06": 0.31333333333333335,
       "1e-08": 12.0
     },
-    "T_bar": 1.362084056031771,
-    "peak_control": 22.218575109671026,
-    "peak_individual_control": 22.218575109671026,
-    "J_u": 434.9523689222709,
+    "T_bar": 1.2962119119692097,
+    "peak_control": 22.071598279787576,
+    "peak_individual_control": 22.071598279787576,
+    "J_u": 432.0547583483405,
     "gamma": 1.7699025722944868,
-    "gamma_req": 1.7952635364489409,
-    "m_required": 5.164702425132005,
-    "certified": false,
-    "classification": "B",
+    "gamma_req": 1.6646524929389197,
+    "m_required": 4.316471439744008,
+    "certified": true,
+    "classification": "A",
     "safe_viol_start": null,
     "safe_viol_end": null,
     "dur_safe_viol": 0.0,
@@ -275,15 +278,16 @@
       "rtol": 1e-06,
       "atol": 1e-08,
       "max_step": 0.02,
-      "method": "DOP853"
-    },
-    "m": 5.0
+      "method": "DOP853",
+      "communication_mode": "binary",
+      "filippov_band": 0.0001
+    }
   },
   "certificate": {
-    "certified": false,
+    "certified": true,
     "gamma": 1.7699025722944868,
-    "gamma_req": 1.7952635364489409,
-    "m_required": 5.164702425132005,
-    "T_bar": 1.362084056031771
+    "gamma_req": 1.6646524929389197,
+    "m_required": 4.316471439744008,
+    "T_bar": 1.2962119119692097
   }
 }
