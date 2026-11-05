@@ -195,10 +195,10 @@
 
                 <div class="is-size-5 publication-authors mt-4">
                   <span class="author-block">
-                    <strong>Yash Purswani</strong><sup>*</sup>,
+                    <strong>Yash Purswani</strong>,
                   </span>
                   <span class="author-block">
-                    <strong>Shivansh Agarwal</strong><sup>*</sup>,
+                    <strong>Shivansh Agarwal</strong>,
                   </span>
                   <span class="author-block">
                     <strong>Anuj Tiwari</strong>
@@ -208,9 +208,6 @@
                 <div class="is-size-6 publication-authors mt-2" style="color: var(--text-secondary);">
                   <span class="author-block">
                     Department of Mechanical Engineering, Indian Institute of Technology Madras, Chennai, India
-                  </span>
-                  <span class="eql-cntrb is-block mt-1">
-                    <small><sup>*</sup>Equal contribution and joint first authors</small>
                   </span>
                 </div>
 
@@ -287,7 +284,7 @@
               <h2 class="title is-3" style="font-weight: 700;">Abstract</h2>
               <div class="content has-text-justified" style="font-size: 1.05rem; line-height: 1.75;">
                 <p>
-                  Certifying finite arrival times and convergence rates is essential for coordinating multi-agent systems in time-critical missions. However, convergence to a desired formation does not, by itself, guarantee collision avoidance or communication connectivity during transients. Existing swarm models can achieve finite-time tracking of collective variables, but may not provide independent settling guarantees for agents at arbitrarily prescribed stations. This paper proposes a first-order control framework for tracking arbitrary, time-varying formation stations relative to a moving reference. A component-wise fractional-power feedback ensures exact finite-time station tracking with an explicit settling-time bound independent of the interaction graph. To address transient safety, a graph-dependent exponential bound on relative disagreement is derived that remains valid for time-varying and switching graphs, including disconnected modes. Combining this bound with the geometry of the prescribed stations yields sufficient conditions for pairwise collision avoidance and preservation of a connected spanning communication backbone. These conditions further provide a coupling-gain design rule based on the available geometric clearance throughout the maneuver. Numerical simulations illustrate finite-time tracking, transient formation deformation, and the effectiveness and conservatism of the proposed safety and connectivity certificates.
+                  Finite-time formation tracking is useful for coordinating multi-agent systems in time-critical missions, but convergence to a prescribed formation does not guarantee collision avoidance or communication connectivity during transients. Existing approaches address finite-time coordination and safety-constrained formation control, yet systematic connections between transient disagreement, formation geometry, and coupling-gain selection remain important for certifying safe maneuvers. This paper develops a disagreement-based framework for certifying transient safety and connectivity during finite-time tracking of arbitrary prescribed formation trajectories. Local feedback ensures exact finite-time tracking with a graph-independent deadline, while cooperative coupling accelerates disagreement contraction. The resulting graph-dependent bound provides sufficient geometric conditions for collision avoidance and connectivity preservation, together with an offline coupling-gain selection rule based on the available clearance. Numerical simulations demonstrate improved transient convergence with increased coupling, the associated control-effort trade-off, and the effectiveness and conservatism of the proposed certificates.
                 </p>
               </div>
             </div>
@@ -301,19 +298,19 @@
           <h2 class="title is-3 has-text-centered" style="font-weight: 700;">Methodology</h2>
           <div class="content has-text-justified" style="font-size: 1.05rem; line-height: 1.7;">
             <p>
-              We formulate a distributed first-order kinematic guidance framework for $n$ agents moving in $\mathbb{R}^d$ ($d \ge 2$). Rather than restricting the swarm to rigid or self-organizing flocking configurations, each agent is assigned an independent, continuously differentiable station trajectory relative to a time-varying virtual leader or reference centroid:
+              We formulate a distributed first-order kinematic protocol for $n$ agents moving in $\mathbb{R}^d$ ($d \ge 2$). Each agent tracks an independently prescribed, continuously differentiable formation position relative to a moving reference:
             </p>
 
             <div class="math-block">
-              $$q_i(t) = r(t) + p_i(t), \qquad \delta_i(t) = x_i(t) - q_i(t), \quad i \in \{1,\ldots,n\}$$
+              $$x_{d,i}(t) = r(t) + p_i(t), \qquad \delta_i(t) = x_i(t) - x_{d,i}(t), \quad i \in \{1,\ldots,n\}$$
             </div>
 
             <p>
-              where $r(t) \in \mathbb{R}^d$ represents the reference trajectory, $p_i(t) \in \mathbb{R}^d$ is the local formation offset of agent $i$, and $\delta_i(t)$ is its tracking error. The proposed distributed velocity control law is defined as:
+              where $r(t) \in \mathbb{R}^d$ is the reference trajectory, $p_i(t) \in \mathbb{R}^d$ is the prescribed formation offset, and $\delta_i(t)$ is the tracking error. The distributed kinematic protocol specifies the commanded velocity as:
             </p>
 
             <div class="math-block">
-              $$\dot{x}_i - \dot{q}_i = -(x_i - q_i) - \Phi_\beta(x_i - q_i) - \sum_{j=1}^{n} w_{ij}(t) M (x_i - x_j)$$
+              $$\dot{x}_i = -\delta_i - \Phi_\beta(\delta_i) - \sum_{j=1}^{n} w_{ij}(t) M (\delta_i - \delta_j) + \dot{x}_{d,i}$$
             </div>
 
             <p>
@@ -325,7 +322,7 @@
             <div class="claim-box">
               <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 1: Graph-Independent Exact Finite-Time Convergence</div>
               <p>
-                Every agent tracks its assigned station trajectory $\delta_i(t) \to 0$ exactly within a deterministic finite-time settling deadline:
+                Every agent tracks its desired formation position, with $\delta_i(t) \to 0$ exactly within a deterministic finite-time settling deadline:
                 $$T = \frac{1}{1-\beta} \ln\left(1 + \|\delta(0)\|_2^{1-\beta}\right)$$
                 The settling deadline $T$ is <em>strictly independent</em> of the interaction graph, edge weights, or network disconnections, providing guaranteed temporal arrival in time-critical missions.
               </p>
@@ -336,7 +333,7 @@
               <p>
                 Decomposing tracking errors into average motion $\bar{\delta}$ and relative disagreement $\eta_i = \delta_i - \bar{\delta}$, the disagreement dynamics decouple and contract exponentially:
                 $$\|\eta(t)\|_2 \le \|\eta(0)\|_2 e^{-\gamma_{\mathcal{H}} t}, \qquad \gamma_{\mathcal{H}} = 1 + \underline{w}\lambda_2(L_{\mathcal{H}})\lambda_{\min}(M)$$
-                where $L_{\mathcal{H}}$ is the graph Laplacian of a designer-selected spanning communication backbone $\mathcal{H}$.
+                where $L_{\mathcal{H}}$ is the graph Laplacian of a designer-selected connected spanning subgraph $\mathcal{H}$.
               </p>
             </div>
 
@@ -344,15 +341,15 @@
               <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 3: A Priori Transient Safety & Connectivity Certificates</div>
               <p>
                 Given physical collision threshold $d_{\mathrm{safe}}$ and sensing/communication radius $R_c$, let the nominal geometric clearance margin be:
-                $$s(t) = \min\left\{\min_{i \ne j} \left(\|q_i(t) - q_j(t)\|\right) - d_{\mathrm{safe}}, \; R_c - \max_{(i,j) \in \mathcal{E}_{\mathcal{H}}} \left(\|q_i(t) - q_j(t)\|\right)\right\}$$
-                If $s(t) > \rho_{\mathcal{H}}(t)$ for all $t \in [0, T]$, then pairwise collision avoidance ($d_{x,\min} > d_{\mathrm{safe}}$) and connected spanning backbone persistence ($\ell_{x,\max} < R_c$) are <em>strictly guaranteed</em> throughout the transient.
+                $$s(t) = \min\left\{\min_{i \ne j} \left(\|x_{d,i}(t) - x_{d,j}(t)\|\right) - d_{\mathrm{safe}}, \; R_c - \max_{(i,j) \in \mathcal{E}_{\mathcal{H}}} \left(\|x_{d,i}(t) - x_{d,j}(t)\|\right)\right\}$$
+                If $s(t) > \rho_{\mathcal{H}}(t)$ for all $t \in [0, T]$, then pairwise collision avoidance ($d_{x,\min} > d_{\mathrm{safe}}$) and preservation of $\mathcal{H}$ ($\ell_{x,\max} < R_c$) are <em>strictly guaranteed</em> throughout the transient.
               </p>
             </div>
 
             <div class="claim-box">
               <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 4: Offline Coupling-Gain Synthesis</div>
               <p>
-                The minimum required disagreement decay rate is computed offline directly from the planned maneuver: $\gamma_{\mathrm{req}} = \sup_{t \in [0, T]} \frac{1}{t}\ln(\frac{\rho_0}{s(t)})$. Choosing coupling gain:
+                The minimum required disagreement decay rate is computed offline from the planned maneuver: $\gamma_{\mathrm{req}} = \sup_{t_0 < t < T} \frac{1}{t-t_0}\ln(\frac{\rho_0}{s(t)})$. Choosing coupling gain:
                 $$m \ge \frac{\gamma_{\mathrm{req}} - 1}{\underline{w}\lambda_2(L_{\mathcal{H}})}$$
                 sufficiently certifies transient safety prior to mission deployment without modifying the nominal tracking feedback.
               </p>
@@ -380,51 +377,51 @@
             </p>
 
             <div class="table-container mb-5">
-              <table class="table is-striped is-hoverable is-fullwidth has-text-centered" style="font-size: 0.95rem;">
+              <table class="table is-striped is-hoverable is-narrow has-text-centered" style="font-size: 0.9rem; width: auto; max-width: 100%; margin-left: auto; margin-right: auto;">
                 <thead>
                   <tr>
-                    <th>Coupling Gain $m$</th>
-                    <th>Numerical Settling $t_{10^{-6}}$ (s)</th>
-                    <th>Theoretical Deadline $T$ (s)</th>
-                    <th>Peak Effort $\|u\|_2$</th>
-                    <th>Control Energy $J_u$</th>
+                    <th>$m$</th>
+                    <th>Settling $t_{10^{-6}}$ (s)</th>
+                    <th>Deadline $T$ (s)</th>
+                    <th>Peak $\|u\|_2$</th>
+                    <th>$J_u$</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>$0.0$</td>
-                    <td>$1.1517$</td>
-                    <td>$1.3621$</td>
-                    <td>$16.9828$</td>
-                    <td>$429.44$</td>
+                    <td>0.0</td>
+                    <td>1.1517</td>
+                    <td>1.3621</td>
+                    <td>16.9828</td>
+                    <td>429.44</td>
                   </tr>
                   <tr>
-                    <td>$0.5$</td>
-                    <td>$0.8117$</td>
-                    <td>$1.3621$</td>
-                    <td>$17.0860$</td>
-                    <td>$429.92$</td>
+                    <td>0.5</td>
+                    <td>0.8117</td>
+                    <td>1.3621</td>
+                    <td>17.0860</td>
+                    <td>429.92</td>
                   </tr>
                   <tr>
-                    <td>$2.0$</td>
-                    <td>$0.5250$</td>
-                    <td>$1.3621$</td>
-                    <td>$18.0322$</td>
-                    <td>$431.55$</td>
+                    <td>2.0</td>
+                    <td>0.5250</td>
+                    <td>1.3621</td>
+                    <td>18.0322</td>
+                    <td>431.55</td>
                   </tr>
                   <tr>
-                    <td>$5.0$</td>
-                    <td>$0.4467$</td>
-                    <td>$1.3621$</td>
-                    <td>$22.2186$</td>
-                    <td>$434.95$</td>
+                    <td>5.0</td>
+                    <td>0.4467</td>
+                    <td>1.3621</td>
+                    <td>22.2186</td>
+                    <td>434.95</td>
                   </tr>
                   <tr>
-                    <td>$10.0$</td>
-                    <td>$0.3933$</td>
-                    <td>$1.3621$</td>
-                    <td>$32.8156$</td>
-                    <td>$440.74$</td>
+                    <td>10.0</td>
+                    <td>0.3933</td>
+                    <td>1.3621</td>
+                    <td>32.8156</td>
+                    <td>440.74</td>
                   </tr>
                 </tbody>
               </table>
@@ -436,14 +433,14 @@
             <!-- Table 2: Safety & Connectivity Outcomes -->
             <h4 class="title is-5 mt-4" style="font-weight: 600;">Transient Safety and Connectivity Outcomes</h4>
             <p>
-              Stress-testing under aggressive star compression and expansion verifies that certified gains strictly maintain positive margin clearances $\Delta_{\min} = \min_{t\in[0,T]}[s(t)-\rho_{\mathcal{H}}(t)] > 0$, guaranteeing collision avoidance and connectivity preservation.
+              For both aggressive star compression and expansion ($\kappa=15$), we compare gains that satisfy and fail the sufficient certificate, including a weak-coupling case, to illustrate certificate performance and observed outcomes.
             </p>
 
             <div class="table-container mb-5">
-              <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.9rem;">
+              <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.85rem;">
                 <thead>
                   <tr>
-                    <th>Maneuver</th>
+                    <th class="has-text-centered">Maneuver</th>
                     <th>Case</th>
                     <th>$m$</th>
                     <th>$\kappa$</th>
@@ -458,55 +455,77 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><strong>Compression</strong></td>
-                    <td><span class="tag is-success is-light">Certified</span></td>
-                    <td>30.0</td>
-                    <td>5.0</td>
-                    <td>5.6194</td>
-                    <td>4.4882</td>
-                    <td>0.3800</td>
-                    <td>1.0326</td>
-                    <td>4.0338</td>
-                    <td><strong>0.0338</strong></td>
-                    <td>Safe and connected</td>
+                    <td rowspan="3" class="has-text-centered" style="vertical-align: middle;"><strong>Compression</strong></td>
+                    <td><span class="tag is-success is-light">Certified gain</span></td>
+                    <td>70.0</td>
+                    <td>15.0</td>
+                    <td>11.7786</td>
+                    <td>9.3136</td>
+                    <td>0.1750</td>
+                    <td>1.1473</td>
+                    <td>4.1387</td>
+                    <td><strong>0.0970</strong></td>
+                    <td>Certified; safe, connected</td>
                   </tr>
                   <tr>
-                    <td></td>
-                    <td><span class="tag is-danger is-light">Uncertified</span></td>
-                    <td>0.0</td>
-                    <td>5.0</td>
-                    <td>1.0000</td>
-                    <td>4.4882</td>
-                    <td>1.1517</td>
-                    <td>0.8605</td>
-                    <td>4.0338</td>
-                    <td>$\le 0$</td>
+                    <td><span class="tag is-warning is-light">Uncertified gain</span></td>
+                    <td>30.0</td>
+                    <td>15.0</td>
+                    <td>5.6194</td>
+                    <td>9.3136</td>
+                    <td>0.1783</td>
+                    <td>1.1473</td>
+                    <td>4.1387</td>
+                    <td>-0.2150</td>
+                    <td>Observed safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-light">Weak coupling</span></td>
+                    <td>1.0</td>
+                    <td>15.0</td>
+                    <td>1.1540</td>
+                    <td>9.3136</td>
+                    <td>0.5567</td>
+                    <td>0.8990</td>
+                    <td>4.1387</td>
+                    <td>-0.5500</td>
                     <td>Collision observed</td>
                   </tr>
                   <tr>
-                    <td><strong>Expansion</strong></td>
-                    <td><span class="tag is-success is-light">Certified</span></td>
-                    <td>30.0</td>
-                    <td>8.0</td>
-                    <td>5.6194</td>
-                    <td>4.1367</td>
-                    <td>0.3767</td>
-                    <td>1.8550</td>
-                    <td>5.8880</td>
-                    <td><strong>0.0909</strong></td>
-                    <td>Safe and connected</td>
+                    <td rowspan="3" class="has-text-centered" style="vertical-align: middle;"><strong>Expansion</strong></td>
+                    <td><span class="tag is-success is-light">Certified gain</span></td>
+                    <td>70.0</td>
+                    <td>15.0</td>
+                    <td>11.7786</td>
+                    <td>7.4220</td>
+                    <td>0.2300</td>
+                    <td>1.9785</td>
+                    <td>5.8490</td>
+                    <td><strong>0.1427</strong></td>
+                    <td>Certified; safe, connected</td>
                   </tr>
                   <tr>
-                    <td></td>
-                    <td><span class="tag is-danger is-light">Uncertified</span></td>
-                    <td>0.0</td>
-                    <td>8.0</td>
-                    <td>1.0000</td>
-                    <td>4.1367</td>
-                    <td>1.1333</td>
-                    <td>1.8550</td>
-                    <td>6.1424</td>
-                    <td>$\le 0$</td>
+                    <td><span class="tag is-warning is-light">Uncertified gain</span></td>
+                    <td>30.0</td>
+                    <td>15.0</td>
+                    <td>5.6194</td>
+                    <td>7.4220</td>
+                    <td>0.4000</td>
+                    <td>1.9785</td>
+                    <td>5.8490</td>
+                    <td>-0.1180</td>
+                    <td>Observed safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-light">Weak coupling</span></td>
+                    <td>1.0</td>
+                    <td>15.0</td>
+                    <td>1.1540</td>
+                    <td>7.4220</td>
+                    <td>1.0450</td>
+                    <td>1.9785</td>
+                    <td>6.3214</td>
+                    <td>-0.4836</td>
                     <td>Range violation observed</td>
                   </tr>
                 </tbody>
