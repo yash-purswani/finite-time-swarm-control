@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-r"""Generate and export high-resolution single-panel 2D arena animation of the swarm maneuver.
+r"""Animate the Experiment 3 compression or Experiment 4 expansion maneuver.
 
-Simulates the rotating-compressing star formation for arbitrary coupling gain m
-and maneuver compression rate kappa, then renders and exports an arena-only animation
+Simulates the configured rotating star formation for coupling gain m and
+maneuver rate kappa, then renders and exports an arena-only animation
 featuring:
   - Target stations q_i(t) and rotating-compressing star template outline
   - Physical agents x_i(t) with trajectory history trails
@@ -13,12 +13,18 @@ featuring:
   - Configurable agent spawning: random ring around stations (r in [0.05, 0.25] m)
 
 Usage:
-    python3 animate_swarm.py --m 30.0 --kappa 5.0 --t-end 5.0 --output results/safe_star.mp4
+    python3 animate_swarm.py --mode both --m-safe 70 --m-unsafe 1 --kappa 15 \
+        --t-end 2.5 --playback-speed 0.25 --output results/animations
+
+Add --use-saved to render matching saved experiment trajectories. Without it,
+the same physical simulator used by Experiments 3 and 4 runs for each video.
 """
 import argparse
+import json
 import sys
 from pathlib import Path
 from typing import Optional, Tuple
+from types import SimpleNamespace
 
 import matplotlib
 matplotlib.use("Agg")
@@ -31,9 +37,10 @@ REPO_ROOT = Path(__file__).resolve().parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from finite_time.core.stations import build_star_template, star_stations
+from finite_time.core.stations import build_star_template, star_stations, star_stations_batch, BACKBONE_EDGES
 from finite_time.core.spawn import generate_swarm_perturbation
 from finite_time.core.simulation import simulate_star_maneuver
+from experiments import exp3_transient_safety as exp3, exp4_expanding_safety as exp4
 
 
 # =============================================================================
@@ -42,8 +49,8 @@ from finite_time.core.simulation import simulate_star_maneuver
 DEFAULT_M = 50.0
 DEFAULT_KAPPA = 10.0
 DEFAULT_T_END = 5.0
-DEFAULT_A0 = 1.70
-DEFAULT_A_INF = 0.72
+DEFAULT_A0 = exp3.DEFAULT_A0
+DEFAULT_A_INF = exp3.DEFAULT_A_INF
 DEFAULT_OMEGA = np.pi / 4.0
 DEFAULT_FPS = 30
 DEFAULT_DPI = 120
@@ -55,6 +62,32 @@ DEFAULT_INWARD_PAIR = (1, 3)
 DEFAULT_INWARD_PUSH = 0.58
 DEFAULT_SEED = 123
 DEFAULT_OUTPUT = REPO_ROOT / "results" / "swarm_arena_animation.mp4"
+
+
+def load_saved_trajectory(path, *, mode, m, kappa, t_end, p0, delta0,
+                          a0, a_inf, omega, d_safe, r_c):
+    """Use saved experiment samples only when their geometry and settings match."""
+    path = Path(path)
+    metadata = json.loads(path.with_suffix('.json').read_text())
+    metrics = metadata['metrics']
+    if (not np.isclose(metrics['m'], m) or not np.isclose(metrics['kappa'], kappa)
+            or not np.isclose(metadata['metadata']['d_safe'], d_safe)
+            or not np.isclose(metadata['metadata']['R_c'], r_c)
+            or metrics['solver_settings'].get('communication_mode', 'binary') != 'binary'):
+        raise ValueError(f'{path}: saved simulation parameters do not match the requested case')
+    with np.load(path, allow_pickle=True) as data:
+        t = data['t'].copy()
+        x, q = data['X'].copy(), data['q'].copy()
+        if t_end > t[-1] or not np.isclose(t[0], 0.):
+            raise ValueError(f'{path}: requested horizon is outside the saved trajectory')
+        q_check, _ = star_stations_batch(t, kappa, p0, a0=a0, a_inf=a_inf, omega=omega)
+        if not np.allclose(q, q_check, atol=1e-10, rtol=1e-10):
+            raise ValueError(f'{path}: saved stations do not match the {mode} maneuver')
+        if not np.allclose(x[0] - q[0], delta0, atol=1e-10, rtol=1e-10):
+            raise ValueError(f'{path}: saved initial state does not match the requested spawn')
+        return SimpleNamespace(t=t, x=x, q=q, d_x=data['d_x'].copy(),
+                               ell_x=data['ell_x'].copy(),
+                               delta_norm=data['delta_norm'].copy(), metrics=metrics)
 
 
 def generate_animation(
@@ -77,6 +110,9 @@ def generate_animation(
     fps: int = DEFAULT_FPS,
     dpi: int = DEFAULT_DPI,
     trail_length: int = 45,
+    mode: str = 'compression',
+    playback_speed: float = 1.0,
+    saved_trajectory: Optional[Path] = None,
 ) -> Path:
     """Run simulation and render single-panel 2D arena animation to MP4 or GIF."""
     if output_path is None:
@@ -106,12 +142,17 @@ def generate_animation(
         r_c=r_c,
         seed=seed,
     )
-    print(f"Verified initial swarm state: min separation d_x(0) = {min_dx0:.4f} m > {d_safe} m, "
-            f"diameter ell_x(0) = {max_ell0:.4f} m < {r_c} m.")
+    print(f"Initial minimum separation = {min_dx0:.4f}; maximum backbone edge = {max_ell0:.4f}.")
 
     # 2. Simulate Trajectories
-    print(f"Simulating maneuver: m = {m:.2f}, kappa = {kappa:.2f}, t in [0, {t_end:.2f}] s...")
-    res = simulate_star_maneuver(
+    print(f"Preparing {mode}: m = {m:.2f}, kappa = {kappa:.2f}, t in [0, {t_end:.2f}] s...")
+    if saved_trajectory is not None:
+        res = load_saved_trajectory(saved_trajectory, mode=mode, m=m, kappa=kappa,
+            t_end=t_end, p0=p0, delta0=delta0, a0=a0, a_inf=a_inf, omega=omega,
+            d_safe=d_safe, r_c=r_c)
+        print(f"Using checked saved trajectory: {saved_trajectory}")
+    else:
+        res = simulate_star_maneuver(
         m=m,
         kappa=kappa,
         t_span=(0.0, t_end),
@@ -124,11 +165,17 @@ def generate_animation(
         rtol=1e-6,
         atol=1e-8,
         max_step=0.02,
-    )
+        )
 
     t_all = res.t
-    n_frames = int(t_end * fps)
-    frame_indices = np.linspace(0, len(t_all) - 1, n_frames, dtype=int)
+    n_frames = max(2, int(np.ceil(t_end * fps / playback_speed)) + 1)
+    frame_times = np.linspace(0.0, t_end, n_frames)
+    # Experiment output meshes are nonuniform. Map video time to simulation
+    # time explicitly so playback is uniform and includes the requested end.
+    frame_indices = np.searchsorted(t_all, frame_times).clip(0, len(t_all)-1)
+    previous = np.maximum(frame_indices-1, 0)
+    frame_indices = np.where(np.abs(t_all[previous]-frame_times) <
+                             np.abs(t_all[frame_indices]-frame_times), previous, frame_indices)
 
     n_agents = res.x.shape[1]
     star_closed = np.r_[np.arange(n_agents), 0]
@@ -152,7 +199,7 @@ def generate_animation(
     ax_arena.grid(True, linestyle=":", alpha=0.55)
 
     # Reference center track
-    ref_center = np.mean(res.q, axis=1)
+    ref_center = np.mean(res.q[frame_indices], axis=1)
     ax_arena.plot(ref_center[:, 0], ref_center[:, 1], "k--", lw=1.3, alpha=0.5, label="Centroid Path $r(t)$")
 
     # Initial station & agent graphics
@@ -161,15 +208,15 @@ def generate_animation(
 
     star_stations_line, = ax_arena.plot(
         q_init[star_closed, 0], q_init[star_closed, 1], "--",
-        color="#4b5563", lw=1.6, alpha=0.8, label="Station Star Contour"
+        color="#be8d18", lw=1.5, alpha=0.8, zorder=1, label="Desired star outline"
     )
     stations_scatter = ax_arena.scatter(
-        q_init[:, 0], q_init[:, 1], s=55, facecolors="none", edgecolors="#4b5563",
-        linewidths=1.3, linestyle="--", zorder=3, label="Target Stations $q_i$"
+        q_init[:, 0], q_init[:, 1], s=250, facecolors="none", edgecolors="#be8d18",
+        linewidths=1.5, zorder=4, label="Target stations $q_i$"
     )
     agent_scatter = ax_arena.scatter(
-        x_init[:, 0], x_init[:, 1], s=95, c=agent_colors, edgecolors="black",
-        linewidths=0.9, zorder=5, label="Physical Agents $x_i$"
+        x_init[:, 0], x_init[:, 1], s=175, c=agent_colors, edgecolors="black",
+        linewidths=1.0, zorder=5, label="Agents $x_i$"
     )
 
     # Trails and error lines
@@ -178,8 +225,13 @@ def generate_animation(
 
     # Dynamic proximity network edges (||x_i - x_j|| < R_c)
     pair_indices = [(i, j) for i in range(n_agents) for j in range(i + 1, n_agents)]
-    edge_lines = [ax_arena.plot([], [], color="#60a5fa", lw=1.0, alpha=0.45, zorder=2)[0]
-                  for _ in range(len(pair_indices))]
+    edge_lines = [ax_arena.plot([], [], color="#0069bf", lw=1.5, alpha=0.75, zorder=2,
+                                label="Active communication link" if k == 0 else None)[0]
+                  for k in range(len(pair_indices))]
+    lost_backbone_lines = [ax_arena.plot([], [], color="#dc2626", ls="--", lw=2.2,
+                                         alpha=0.9, zorder=3,
+                                         label="Lost backbone link" if k == 0 else None)[0]
+                           for k in range(len(BACKBONE_EDGES))]
 
     # On-screen Telemetry HUD (Heads-Up Display)
     hud_text = ax_arena.text(
@@ -189,7 +241,7 @@ def generate_animation(
 
     # Collision Warning Badge
     collision_banner = ax_arena.text(
-        0.5, 0.05, "COLLISION DETECTED! (d_x < 1.0 m)", transform=ax_arena.transAxes,
+        0.5, 0.05, f"SEPARATION VIOLATION (d_x < {d_safe:g})", transform=ax_arena.transAxes,
         ha="center", va="center", fontsize=13, fontweight="bold", color="white",
         bbox=dict(boxstyle="round,pad=0.6", facecolor="#dc2626", alpha=0.95, edgecolor="darkred", lw=1.5),
         visible=False, zorder=10
@@ -200,12 +252,9 @@ def generate_animation(
         spawn_label += f" + inward push {inward_push:.2f} on {inward_pair}"
     elif outward_pair is not None and outward_push > 0:
         spawn_label += f" + outward push {outward_push:.2f} on {outward_pair}"
-    outcome_str = "Safe" if res.metrics['observed_safe'] else "Collision"
-    if not res.metrics['observed_connected']:
-        outcome_str += ", Disconnected"
     ax_arena.set_title(
-        f"Rotating-Compressing Star Formation Tracking ($m={m:.1f}$, $\\kappa={kappa:.1f}$)\n"
-        f"Spawn: {spawn_label} | Outcome: {res.metrics['classification']} ({outcome_str})",
+        f"Rotating star: {mode} ($m={m:g}$, $\\kappa={kappa:g}$)\n"
+        f"{playback_speed:g}x simulation speed",
         fontsize=11.5, fontweight="bold"
     )
     ax_arena.legend(loc="lower right", fontsize=8.5, framealpha=0.92)
@@ -226,11 +275,9 @@ def generate_animation(
             err_lines[i].set_data([xi[i, 0], qi[i, 0]], [xi[i, 1], qi[i, 1]])
 
         # 3. Update trajectory history trails
-        step_stride = max(1, len(t_all) // len(frame_indices))
-        start_trail = max(0, idx - trail_length * step_stride)
+        trail_indices = frame_indices[max(0, frame_num-trail_length):frame_num+1]
         for i in range(n_agents):
-            trails[i].set_data(res.x[start_trail:idx + 1:step_stride, i, 0],
-                               res.x[start_trail:idx + 1:step_stride, i, 1])
+            trails[i].set_data(res.x[trail_indices, i, 0], res.x[trail_indices, i, 1])
 
         # 4. Update dynamic proximity communication graph
         cur_dists = np.linalg.norm(xi[:, None, :] - xi[None, :, :], axis=-1)
@@ -239,29 +286,43 @@ def generate_animation(
                 edge_lines[k].set_data([xi[i, 0], xi[j, 0]], [xi[i, 1], xi[j, 1]])
             else:
                 edge_lines[k].set_data([], [])
+        for k, (i, j) in enumerate(BACKBONE_EDGES):
+            if cur_dists[i, j] >= r_c:
+                lost_backbone_lines[k].set_data([xi[i, 0], xi[j, 0]], [xi[i, 1], xi[j, 1]])
+            else:
+                lost_backbone_lines[k].set_data([], [])
 
-        # 5. Telemetry & Collision status
+        # 5. Telemetry & separation/backbone status
         cur_dx = res.d_x[idx]
         cur_ell = res.ell_x[idx]
         cur_err = res.delta_norm[idx]
         is_collision = bool(cur_dx < d_safe)
+        backbone_lost = bool(cur_ell >= r_c)
 
-        collision_banner.set_visible(is_collision)
-        status_label = "COLLISION VIOLATION" if is_collision else ("SETTLED" if cur_err < 1e-4 else "CONVERGING")
+        if is_collision and backbone_lost:
+            collision_banner.set_text("SEPARATION VIOLATION & BACKBONE LINK LOST")
+        elif is_collision:
+            collision_banner.set_text(f"SEPARATION VIOLATION (d_x < {d_safe:g})")
+        elif backbone_lost:
+            collision_banner.set_text(f"BACKBONE LINK LOST (edge ≥ {r_c:g})")
+        collision_banner.set_visible(is_collision or backbone_lost)
+        status_label = "SEPARATION VIOLATION" if is_collision else ("SETTLED" if cur_err < 1e-4 else "CONVERGING")
+        if backbone_lost:
+            status_label += " | BACKBONE LINK LOST"
 
         hud_text.set_text(
             f"TELEMETRY HUD\n"
             f"---------------------------\n"
             f"Time        : {t_val:5.2f} / {t_end:.1f} s\n"
             f"Min Sep dx  : {cur_dx:5.3f} m  (safe > {d_safe:.1f})\n"
-            f"Max Diam lx : {cur_ell:5.3f} m  (conn < {r_c:.1f})\n"
+            f"Max H edge  : {cur_ell:5.3f} m  (range < {r_c:.1f})\n"
             f"Error ||d|| : {cur_err:5.4f}\n"
             f"Status      : {status_label}"
         )
 
         return (
             star_stations_line, stations_scatter, agent_scatter,
-            *err_lines, *trails, *edge_lines,
+            *err_lines, *trails, *edge_lines, *lost_backbone_lines,
             hud_text, collision_banner
         )
 
@@ -275,13 +336,15 @@ def generate_animation(
         anim.save(output_path, writer=writer)
     else:
         print(f"Exporting to MP4 via FFMpegWriter: {output_path}...")
-        writer = FFMpegWriter(fps=fps, bitrate=2400, codec="libx264", extra_args=["-pix_fmt", "yuv420p"])
+        writer = FFMpegWriter(fps=fps, bitrate=2400, codec="libx264",
+                              extra_args=["-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+                                          "-pix_fmt", "yuv420p"])
         try:
             anim.save(output_path, writer=writer)
         except Exception as e:
             print(f"FFmpeg MP4 export failed ({e}). Falling back to GIF...")
             fallback_path = output_path.with_suffix(".gif")
-            anim.save(fallback_path, writer=PillowWriter(fps=min(fps, 15)))
+            anim.save(fallback_path, writer=PillowWriter(fps=fps))
             output_path = fallback_path
 
     plt.close(fig)
@@ -295,47 +358,76 @@ def main():
         description="Simulate and animate rotating-compressing star formation tracking (Single-Panel Arena).",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--m", type=float, default=DEFAULT_M, help="Coupling gain m")
+    parser.add_argument('--mode', choices=['compression', 'expansion', 'both'], default='compression',
+                        help='Use the Experiment 3 or Experiment 4 maneuver, or render both')
+    parser.add_argument("--m", type=float, default=None, help="Render one coupling gain")
+    parser.add_argument('--m-safe', '--m_safe', type=float, default=None, help='First coupling gain')
+    parser.add_argument('--m-unsafe', '--m_unsafe', type=float, default=None, help='Second coupling gain')
     parser.add_argument("--kappa", type=float, default=DEFAULT_KAPPA, help="Compression rate kappa")
     parser.add_argument("--t-end", type=float, default=DEFAULT_T_END, help="Simulation time horizon (seconds)")
-    parser.add_argument("--a0", type=float, default=DEFAULT_A0, help="Initial scale a0")
-    parser.add_argument("--a-inf", type=float, default=DEFAULT_A_INF, help="Asymptotic scale a_inf")
+    parser.add_argument("--a0", type=float, default=None, help="Override the experiment's initial scale")
+    parser.add_argument("--a-inf", type=float, default=None, help="Override the experiment's asymptotic scale")
+    parser.add_argument('--omega', type=float, default=DEFAULT_OMEGA, help='Rotation speed')
     parser.add_argument("--r-min", type=float, default=DEFAULT_R_MIN, help="Min radial offset for random spawn (m)")
     parser.add_argument("--r-max", type=float, default=DEFAULT_R_MAX, help="Max radial offset for random spawn (m)")
-    parser.add_argument("--inward-pair", type=int, nargs=2, default=list(DEFAULT_INWARD_PAIR) if DEFAULT_INWARD_PAIR else None, help="Agent pair for inward compression push (e.g. 1 3)")
-    parser.add_argument("--inward-push", type=float, default=DEFAULT_INWARD_PUSH, help="Magnitude of inward compression push")
+    parser.add_argument("--inward-pair", type=int, nargs=2, default=None, help="Override compression inward-push pair")
+    parser.add_argument("--inward-push", type=float, default=None, help="Override compression inward push")
     parser.add_argument("--outward-pair", type=int, nargs=2, default=None, help="Agent pair for outward stretch push (e.g. 0 1)")
-    parser.add_argument("--outward-push", type=float, default=0.0, help="Magnitude of outward stretch push")
+    parser.add_argument("--outward-push", type=float, default=None, help="Override expansion outward push")
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Random seed for spawn reproducibility")
     parser.add_argument("--d-safe", type=float, default=DEFAULT_D_SAFE, help="Safety separation threshold (meters)")
     parser.add_argument("--r-c", type=float, default=DEFAULT_R_C, help="Communication radius threshold (meters)")
     parser.add_argument("--fps", type=int, default=DEFAULT_FPS, help="Frames per second")
     parser.add_argument("--dpi", type=int, default=DEFAULT_DPI, help="Render DPI")
-    parser.add_argument("--output", type=Path, default=None, help="Output file path (.mp4 or .gif)")
+    parser.add_argument('--playback-speed', type=float, default=1.0,
+                        help='Simulation seconds per video second; e.g. 0.25 shows the transient at quarter speed')
+    parser.add_argument('--use-saved', action='store_true', help='Render matching saved Experiment 3/4 trajectories')
+    parser.add_argument("--output", type=Path, default=None, help="Single .mp4/.gif file, or directory for multiple videos")
     args = parser.parse_args()
-
-    inward_pair = tuple(args.inward_pair) if args.inward_pair else None
-    outward_pair = tuple(args.outward_pair) if args.outward_pair else None
-
-    generate_animation(
-        m=args.m,
-        kappa=args.kappa,
-        t_end=args.t_end,
-        a0=args.a0,
-        a_inf=args.a_inf,
-        d_safe=args.d_safe,
-        r_c=args.r_c,
-        r_min=args.r_min,
-        r_max=args.r_max,
-        inward_pair=inward_pair,
-        inward_push=args.inward_push,
-        outward_pair=outward_pair,
-        outward_push=args.outward_push,
-        seed=args.seed,
-        output_path=args.output,
-        fps=args.fps,
-        dpi=args.dpi,
-    )
+    if args.t_end <= 0 or args.kappa < 0 or args.fps <= 0 or args.dpi <= 0 or args.playback_speed <= 0:
+        parser.error('t-end, fps, dpi and playback-speed must be positive; kappa must be nonnegative')
+    if args.m is not None and (args.m_safe is not None or args.m_unsafe is not None):
+        parser.error('--m cannot be combined with --m-safe or --m-unsafe')
+    gains = ([('single', args.m)] if args.m is not None else
+             [(label, m) for label, m in [('safe', args.m_safe), ('unsafe', args.m_unsafe)] if m is not None])
+    if not gains:
+        gains = [('single', DEFAULT_M)]
+    if any(m < 0 for _, m in gains):
+        parser.error('coupling gains must be nonnegative')
+    modes = ['compression', 'expansion'] if args.mode == 'both' else [args.mode]
+    multiple = len(gains)*len(modes) > 1
+    if multiple and args.output and args.output.suffix:
+        parser.error('--output must be a directory when rendering multiple videos')
+    for mode in modes:
+        cfg = exp3 if mode == 'compression' else exp4
+        a0 = cfg.DEFAULT_A0 if args.a0 is None else args.a0
+        a_inf = cfg.DEFAULT_A_INF if args.a_inf is None else args.a_inf
+        inward_pair = tuple(args.inward_pair) if args.inward_pair else ((1, 3) if mode == 'compression' else None)
+        outward_pair = tuple(args.outward_pair) if args.outward_pair else ((0, 1) if mode == 'expansion' else None)
+        inward_push = args.inward_push if args.inward_push is not None else (0.58 if mode == 'compression' else 0.)
+        outward_push = args.outward_push if args.outward_push is not None else (0.60 if mode == 'expansion' else 0.)
+        for label, m in gains:
+            filename = f'{mode}_{label}_m_{m:g}_kappa_{args.kappa:g}.mp4'
+            if multiple:
+                output = (args.output or REPO_ROOT / 'results' / 'animations') / filename
+            else:
+                output = args.output or REPO_ROOT / 'results' / 'animations' / filename
+                if not output.suffix:
+                    output = output / filename
+            saved = None
+            if args.use_saved:
+                if label == 'single':
+                    parser.error('--use-saved requires --m-safe or --m-unsafe to select the experiment case')
+                folder = 'experiment_3' if mode == 'compression' else 'experiment_4'
+                stem = 'star_case' if mode == 'compression' else 'star_expansion'
+                case = 'Certified gain' if label == 'safe' else 'Weak coupling'
+                saved = REPO_ROOT / 'results' / folder / f'{stem}_{case}_m_{m:g}_kappa_{args.kappa:g}.npz'
+            generate_animation(m=m, kappa=args.kappa, t_end=args.t_end, a0=a0, a_inf=a_inf,
+                omega=args.omega, d_safe=args.d_safe, r_c=args.r_c, r_min=args.r_min,
+                r_max=args.r_max, inward_pair=inward_pair, inward_push=inward_push,
+                outward_pair=outward_pair, outward_push=outward_push, seed=args.seed,
+                output_path=output, fps=args.fps, dpi=args.dpi, mode=mode,
+                playback_speed=args.playback_speed, saved_trajectory=saved)
 
 
 if __name__ == "__main__":
