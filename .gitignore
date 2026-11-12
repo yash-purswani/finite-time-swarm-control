@@ -2,6 +2,3 @@
 __pycache__/
 .pytest_cache/
 ECC_paper/
-
-.nojekyll
-.prettierrc
