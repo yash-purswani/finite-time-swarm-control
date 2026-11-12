@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Primary Meta Tags -->
+    <title>Safety and Connectivity Certificates for Finite-Time Formation Transitions</title>
+    <meta
+      name="title"
+      content="Safety and Connectivity Certificates for Finite-Time Formation Transitions - Yash Purswani, Shivansh Agarwal, Anuj Tiwari"
+    />
+    <meta
+      name="description"
+      content="Distributed first-order kinematic framework for exact finite-time tracking of arbitrary swarm formations with a priori transient safety and connectivity certificates."
+    />
+    <meta
+      name="keywords"
+      content="multi-agent systems, swarm robotics, finite-time control, collision avoidance, connectivity preservation, formation control, consensus"
+    />
+    <meta name="author" content="Yash Purswani, Shivansh Agarwal, Anuj Tiwari" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="English" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Indian Institute of Technology Madras" />
+    <meta property="og:title" content="Safety and Connectivity Certificates for Finite-Time Formation Transitions" />
+    <meta
+      property="og:description"
+      content="Distributed first-order kinematic framework for exact finite-time tracking of arbitrary swarm formations with a priori transient safety and connectivity certificates."
+    />
+    <meta property="og:url" content="https://yash-purswani.github.io/finite-time-swarm-control" />
+    <meta property="og:image" content="static/images/swarm_star_3x2_comparison.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Safety and Connectivity Certificates for Finite-Time Formation Transitions" />
+    <meta
+      name="twitter:description"
+      content="Distributed first-order kinematic framework for exact finite-time tracking of arbitrary swarm formations with a priori transient safety and connectivity certificates."
+    />
+    <meta name="twitter:image" content="static/images/swarm_star_3x2_comparison.png" />
+
+    <!-- Academic / Citation Meta -->
+    <meta name="citation_title" content="Safety and Connectivity Certificates for Finite-Time Formation Transitions" />
+    <meta name="citation_author" content="Purswani, Yash" />
+    <meta name="citation_author" content="Agarwal, Shivansh" />
+    <meta name="citation_author" content="Tiwari, Anuj" />
+    <meta name="citation_publication_date" content="2026" />
+    <meta name="citation_pdf_url" content="static/pdfs/Finite_time_swarm.pdf" />
+
+    <!-- Styling -->
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Critical CSS -->
+    <link rel="stylesheet" href="static/css/bulma.min.css" />
+    <link rel="stylesheet" href="static/css/index.css" />
+
+    <!-- Non-critical CSS -->
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css" />
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+    />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Defer Scripts -->
+    <script
+      defer
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+    ></script>
+    <script defer src="static/js/bulma-carousel.min.js"></script>
+    <script defer src="static/js/bulma-slider.min.js"></script>
+    <script defer src="static/js/index.js"></script>
+
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        options: {
+          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+      .coming-soon-btn {
+        opacity: 0.75;
+        cursor: default !important;
+      }
+      .badge-coming-soon {
+        background: #f59e0b;
+        color: #ffffff;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 6px;
+        margin-left: 6px;
+        text-transform: uppercase;
+        font-weight: 700;
+        vertical-align: middle;
+      }
+      .table th {
+        background-color: #f8fafc;
+        color: #1e293b;
+        font-weight: 600;
+      }
+      .math-block {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1rem 1.25rem;
+        margin: 1.25rem 0;
+        box-shadow: var(--shadow-sm);
+        overflow-x: auto;
+      }
+      .claim-box {
+        background: #ffffff;
+        border-left: 4px solid var(--primary-color);
+        border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+        box-shadow: var(--shadow-sm);
+      }
+      .claim-title {
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.35rem;
+      }
+      .video-card {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .video-card video {
+        width: 100%;
+        display: block;
+        background: #000;
+      }
+      .video-card .card-content {
+        padding: 1.25rem;
+        flex-grow: 1;
+      }
+      .carousel .item {
+        padding: 0 10px;
+      }
+      .carousel .item img {
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Scroll to Top Button -->
+    <button
+      class="scroll-to-top"
+      onclick="scrollToTop()"
+      title="Scroll to top"
+      aria-label="Scroll to top"
+    >
+      <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <main id="main-content">
+      <!-- Title & Header Section -->
+      <section class="hero">
+        <div class="hero-body">
+          <div class="container is-max-desktop">
+            <div class="columns is-centered">
+              <div class="column has-text-centered">
+                <h1 class="title is-2 publication-title" style="font-weight: 800; line-height: 1.25;">
+                  Safety and Connectivity Certificates for Finite-Time Formation Transitions
+                </h1>
+
+                <div class="is-size-5 publication-authors mt-4">
+                  <span class="author-block">
+                    <strong>Yash Purswani</strong>,
+                  </span>
+                  <span class="author-block">
+                    <strong>Shivansh Agarwal</strong>,
+                  </span>
+                  <span class="author-block">
+                    <strong>Anuj Tiwari</strong>
+                  </span>
+                </div>
+
+                <div class="is-size-6 publication-authors mt-2" style="color: var(--text-secondary);">
+                  <span class="author-block">
+                    Department of Mechanical Engineering, Indian Institute of Technology Madras, Chennai, India
+                  </span>
+                </div>
+
+                <div class="column has-text-centered mt-4">
+                  <div class="publication-links">
+                    <!-- Paper PDF Link -->
+                    <span class="link-block">
+                      <a
+                        href="static/pdfs/Finite_time_swarm.pdf"
+                        target="_blank"
+                        class="external-link button is-normal is-rounded is-dark"
+                      >
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                    <!-- GitHub Repository Link -->
+                    <span class="link-block">
+                      <a
+                        href="https://github.com/yash-purswani/finite-time-swarm-control"
+                        target="_blank"
+                        class="external-link button is-normal is-rounded is-dark"
+                      >
+                        <span class="icon">
+                          <i class="fab fa-github"></i>
+                        </span>
+                        <span>Code</span>
+                      </a>
+                    </span>
+
+                    <!-- arXiv Preprint Link -->
+                    <span class="link-block">
+                      <a
+                        href="https://arxiv.org/abs/2611.13927"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="external-link button is-normal is-rounded is-dark"
+                        title="Read the arXiv preprint"
+                      >
+                        <span class="icon">
+                          <i class="ai ai-arxiv"></i>
+                        </span>
+                        <span>arXiv</span>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Banner Video/GIF -->
+      <section class="hero teaser">
+        <div class="container is-max-desktop">
+          <div class="hero-body has-text-centered" style="padding-top: 0;">
+            <img
+              src="static/videos/corridor_maneuver.gif"
+              alt="Swarm formation morphing while traversing a corridor"
+              style="border-radius: var(--border-radius); box-shadow: var(--shadow-lg); max-width: 100%; height: auto;"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Abstract Section -->
+      <section class="section hero is-light">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered has-text-centered">
+            <div class="column is-four-fifths">
+              <h2 class="title is-3" style="font-weight: 700;">Abstract</h2>
+              <div class="content has-text-justified" style="font-size: 1.05rem; line-height: 1.75;">
+                <p>
+                  Finite-time formation transitions are useful for coordinating multi-agent systems in time-critical missions, but convergence to a prescribed formation in finite time does not guarantee collision avoidance or communication connectivity during the transition. Existing approaches address finite-time coordination and safety-constrained formation control, yet explicit connections between disagreement during transitions, formation geometry, and coupling-gain selection need to be developed for certifying safe maneuvers. This paper develops a disagreement-based framework for certifying transient safety and connectivity during finite-time tracking of arbitrary prescribed formation trajectories. Local feedback guarantees exact finite-time tracking with a graph-independent settling-time bound, while a graph-dependent disagreement bound is used to derive sufficient geometric conditions for collision avoidance and connectivity preservation. These conditions further yield an offline coupling-gain selection rule based on the available geometric clearance. Numerical simulations illustrate the trade-off between convergence rate and control effort as the coupling gain increases. They also demonstrate the effectiveness and conservatism of the proposed certificates.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Methodology Section -->
+      <section class="section">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3 has-text-centered" style="font-weight: 700;">Methodology</h2>
+          <div class="content has-text-justified" style="font-size: 1.05rem; line-height: 1.7;">
+            <p>
+              We formulate a distributed first-order kinematic protocol for $n$ agents moving in $\mathbb{R}^d$ ($d \ge 1$). Each agent tracks an independently prescribed, continuously differentiable formation position relative to a moving reference:
+            </p>
+
+            <div class="math-block">
+              $$x_{d,i}(t) = r(t) + p_i(t), \qquad \delta_i(t) = x_i(t) - x_{d,i}(t), \quad i \in \{1,\ldots,n\}$$
+            </div>
+
+            <p>
+              where $r(t) \in \mathbb{R}^d$ is the reference trajectory, $p_i(t) \in \mathbb{R}^d$ is the prescribed formation offset, and $\delta_i(t)$ is the tracking error. The distributed kinematic protocol specifies the commanded velocity as:
+            </p>
+
+            <div class="math-block">
+              $$\dot{x}_i = -\delta_i - \Phi_\beta(\delta_i) - \sum_{j=1}^{n} w_{ij}(t) M (\delta_i - \delta_j) + \dot{x}_{d,i}$$
+            </div>
+
+            <p>
+              where $[\Phi_\beta(z)]_k = \operatorname{sign}(z_k)|z_k|^\beta$ ($0 < \beta < 1$) is a component-wise fractional-power feedback, $M \in \mathbb{R}^{d \times d}$ is a symmetric positive semi-definite cooperative coupling matrix ($M = m I_d$ with coupling gain $m \ge 0$), and $w_{ij}(t) \ge 0$ are symmetric, distance-dependent weights with uniform lower bound $\underline{w} = (R_c^\nu + \varepsilon_w)^{-1}$ on active links.
+            </p>
+
+            <h3 class="title is-4 mt-5" style="font-weight: 700;">Core Theoretical Claims</h3>
+
+            <div class="claim-box">
+              <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 1: Graph-Independent Exact Finite-Time Convergence</div>
+              <p>
+                Every agent tracks its desired formation position, with $\delta_i(t) \to 0$ exactly within a deterministic finite-time settling deadline:
+                $$T = \frac{1}{1-\beta} \ln\left(1 + \|\delta(0)\|_2^{1-\beta}\right)$$
+                The settling deadline $T$ is <em>strictly independent</em> of the interaction graph, edge weights, or network disconnections, providing guaranteed temporal arrival in time-critical missions.
+              </p>
+            </div>
+
+            <div class="claim-box">
+              <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 2: Exponential Disagreement Dissipation Tube</div>
+              <p>
+                Decomposing tracking errors into the mean error $\bar{\delta}$ and disagreement $\eta_i = \delta_i - \bar{\delta}$, the paper bounds disagreement by an exponential envelope. While all selected backbone links remain active, the envelope satisfies:
+                $$\|\eta(t)\|_2 \le \|\eta(0)\|_2 e^{-\gamma_{\mathcal{H}} t}, \qquad \gamma_{\mathcal{H}} = 1 + \underline{w}\lambda_2(L_{\mathcal{H}})\lambda_{\min}(M)$$
+                where $L_{\mathcal{H}}$ is the Laplacian of a selected connected spanning subgraph $\mathcal{H}$. The bound using the actual weighted Laplacian also applies across graph switches. The graph-enhanced backbone bound is conditional on backbone persistence, or follows from the first-exit certificate below.
+              </p>
+            </div>
+
+            <div class="claim-box">
+              <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 3: A Priori Transient Safety & Connectivity Certificates</div>
+              <p>
+                Given physical collision threshold $d_{\mathrm{safe}}$ and sensing/communication radius $R_c$, let the nominal geometric clearance margin be:
+                $$s(t) = \min\left\{\min_{i \ne j} \left(\|x_{d,i}(t) - x_{d,j}(t)\|\right) - d_{\mathrm{safe}}, \; R_c - \max_{(i,j) \in \mathcal{E}_{\mathcal{H}}} \left(\|x_{d,i}(t) - x_{d,j}(t)\|\right)\right\}$$
+                Define $\rho_0=\sqrt{2}\|\eta(0)\|_2$ and the relative-distortion envelope $\rho_{\mathcal{H}}(t)=\min\{\sqrt{2}\mathcal{R}(t),\rho_0e^{-\gamma_{\mathcal{H}}t}\}$. If $s(t)>\rho_{\mathcal{H}}(t)$ for all $t\ge 0$, then all agent pairs remain separated by more than $d_{\mathrm{safe}}$ and the selected backbone remains within $R_c$. The proof establishes backbone preservation through a first-exit argument.
+              </p>
+            </div>
+
+            <div class="claim-box">
+              <div class="claim-title"><i class="fas fa-check-circle mr-2"></i>Claim 4: Offline Coupling-Gain Synthesis</div>
+              <p>
+                If the planned geometry satisfies $s(t)>0$ for all $t\ge t_0$ and $0&lt;\rho_0&lt;s(t_0)$, an offline sufficient rate is $\gamma_{\mathrm{req}} = \sup_{t_0 &lt; t &lt; T} \frac{1}{t-t_0}\ln(\frac{\rho_0}{s(t)})$. For $M=mI_d$ and $\gamma_{\mathrm{req}}>1$, it is sufficient to choose:
+                $$m > \frac{\gamma_{\mathrm{req}} - 1}{\underline{w}\lambda_2(L_{\mathcal{H}})}$$
+                The condition is sufficient, not necessary; failure of the certificate does not establish a violation. When $\gamma_{\mathrm{req}}&lt;1$, $m=0$ also satisfies the rate condition.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Results Section -->
+      <section class="section hero is-light">
+        <div class="container is-max-desktop">
+          <h2 class="title is-3 has-text-centered" style="font-weight: 700;">Results</h2>
+
+          <!-- Quantitative Results Sub-section -->
+          <div class="content">
+            <h3 class="title is-4" style="font-weight: 700;">Quantitative Verification</h3>
+            <p>
+              We evaluate the framework through numerical simulations with $n=10$ agents in $\mathbb{R}^2$.
+            </p>
+
+            <!-- Table 1: Coupling Gain Sweep -->
+            <h4 class="title is-5 mt-4" style="font-weight: 600;">Finite-Time Tracking & Coupling-Gain Trade-offs</h4>
+            <p>
+              For the gains tested in the paper, larger $m$ reduces the observed tracking settling time without changing the graph-independent bound $T \approx 1.3621$ s, while increasing commanded-velocity effort. The listed $J_u=\int_{t_0}^{t_f}\|u(t)\|_2^2dt$ includes station feedforward.
+            </p>
+
+            <div class="table-container mb-5">
+              <table class="table is-striped is-hoverable is-narrow has-text-centered" style="font-size: 0.9rem; width: auto; max-width: 100%; margin-left: auto; margin-right: auto;">
+                <thead>
+                  <tr>
+                    <th>$m$</th>
+                    <th>Settling $t_{10^{-6}}$ (s)</th>
+                    <th>Deadline $T$ (s)</th>
+                    <th>Peak $\|u\|_2$</th>
+                    <th>$J_u$</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>0.0</td>
+                    <td>1.1517</td>
+                    <td>1.3621</td>
+                    <td>16.9828</td>
+                    <td>429.44</td>
+                  </tr>
+                  <tr>
+                    <td>0.5</td>
+                    <td>0.8117</td>
+                    <td>1.3621</td>
+                    <td>17.0860</td>
+                    <td>429.92</td>
+                  </tr>
+                  <tr>
+                    <td>2.0</td>
+                    <td>0.5250</td>
+                    <td>1.3621</td>
+                    <td>18.0322</td>
+                    <td>431.55</td>
+                  </tr>
+                  <tr>
+                    <td>5.0</td>
+                    <td>0.4467</td>
+                    <td>1.3621</td>
+                    <td>22.2186</td>
+                    <td>434.95</td>
+                  </tr>
+                  <tr>
+                    <td>10.0</td>
+                    <td>0.3933</td>
+                    <td>1.3621</td>
+                    <td>32.8156</td>
+                    <td>440.74</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="has-text-centered is-size-7" style="color: var(--text-secondary);">
+                <strong>Table 1:</strong> Settling times and control metrics across coupling gains $m$ under rotating star formation ($\kappa=2.0$).
+              </p>
+            </div>
+
+            <!-- Table 2: Safety & Connectivity Outcomes -->
+            <h4 class="title is-5 mt-4" style="font-weight: 600;">Transient Safety and Connectivity Outcomes</h4>
+            <p>
+              For both aggressive star compression and expansion ($\kappa=15$), we compare gains that satisfy and fail the sufficient certificate, including a weak-coupling case, to illustrate certificate performance and observed outcomes.
+            </p>
+
+            <div class="table-container mb-5">
+              <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.85rem;">
+                <thead>
+                  <tr>
+                    <th class="has-text-centered">Maneuver</th>
+                    <th>Case</th>
+                    <th>$m$</th>
+                    <th>$\kappa$</th>
+                    <th>$\gamma_{\mathcal{H}}$</th>
+                    <th>$\gamma_{\mathrm{req}}$</th>
+                    <th>$t_{10^{-6}}$ (s)</th>
+                    <th>$d_{x,\min}$ (m)</th>
+                    <th>$\ell_{x,\max}$ (m)</th>
+                    <th>$\Delta_{\min}$ (m)</th>
+                    <th>Observed Outcome</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td rowspan="3" class="has-text-centered" style="vertical-align: middle;"><strong>Compression</strong></td>
+                    <td><span class="tag is-success is-light">Certified gain</span></td>
+                    <td>70.0</td>
+                    <td>15.0</td>
+                    <td>11.7786</td>
+                    <td>9.3136</td>
+                    <td>0.1750</td>
+                    <td>1.1473</td>
+                    <td>4.1387</td>
+                    <td><strong>0.0970</strong></td>
+                    <td>Certified; safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-warning is-light">Uncertified gain</span></td>
+                    <td>30.0</td>
+                    <td>15.0</td>
+                    <td>5.6194</td>
+                    <td>9.3136</td>
+                    <td>0.1783</td>
+                    <td>1.1473</td>
+                    <td>4.1387</td>
+                    <td>-0.2150</td>
+                    <td>Observed safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-light">Weak coupling</span></td>
+                    <td>1.0</td>
+                    <td>15.0</td>
+                    <td>1.1540</td>
+                    <td>9.3136</td>
+                    <td>0.5567</td>
+                    <td>0.8990</td>
+                    <td>4.1387</td>
+                    <td>-0.5500</td>
+                    <td>Separation threshold breached</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="3" class="has-text-centered" style="vertical-align: middle;"><strong>Expansion</strong></td>
+                    <td><span class="tag is-success is-light">Certified gain</span></td>
+                    <td>70.0</td>
+                    <td>15.0</td>
+                    <td>11.7786</td>
+                    <td>7.4220</td>
+                    <td>0.2300</td>
+                    <td>1.9785</td>
+                    <td>5.8490</td>
+                    <td><strong>0.1427</strong></td>
+                    <td>Certified; safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-warning is-light">Uncertified gain</span></td>
+                    <td>30.0</td>
+                    <td>15.0</td>
+                    <td>5.6194</td>
+                    <td>7.4220</td>
+                    <td>0.4000</td>
+                    <td>1.9785</td>
+                    <td>5.8490</td>
+                    <td>-0.1180</td>
+                    <td>Observed safe, connected</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tag is-light">Weak coupling</span></td>
+                    <td>1.0</td>
+                    <td>15.0</td>
+                    <td>1.1540</td>
+                    <td>7.4220</td>
+                    <td>1.0450</td>
+                    <td>1.9785</td>
+                    <td>6.3214</td>
+                    <td>-0.4836</td>
+                    <td>Range violation observed</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="has-text-centered is-size-7" style="color: var(--text-secondary);">
+                <strong>Table 2:</strong> Certificate and observed transient-geometry outcomes for aggressive star maneuvers ($t\in[0,2.5]$ s).
+              </p>
+            </div>
+          </div>
+
+          <!-- Media Carousel Sub-section -->
+          <div class="mt-6">
+            <h3 class="title is-4 has-text-centered" style="font-weight: 700;">Experimental Visualizations</h3>
+            <p class="has-text-centered mb-4" style="color: var(--text-secondary);">
+              Explore formation tracking, corridor traversal, and the paper’s compression and expansion results:
+            </p>
+
+            <div id="results-carousel" class="carousel results-carousel">
+              <!-- Formation snapshots -->
+              <div class="item">
+                <img
+                  src="static/images/formation_snapshots.png"
+                  alt="Agent trajectories and snapshots of circle, wedge, star, and arrow formations"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Swarm Formation Snapshots:</strong> Agents track a moving formation through circle, wedge, star, and arrow configurations.
+                </h4>
+              </div>
+
+              <!-- Corridor traversal -->
+              <div class="item">
+                <img
+                  src="static/images/corridor_maneuver_1x3.png"
+                  alt="Swarm formation morphing while traversing a narrow corridor"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Constrained Corridor Traversal:</strong> The formation transitions from a ring to a slender chevron for the passage and then returns to a ring.
+                </h4>
+              </div>
+
+              <!-- Slide 3: Tracking Error & Disagreement Decay -->
+              <div class="item">
+                <img
+                  src="static/images/error_disagreement_control.png"
+                  alt="Finite-Time Tracking, Disagreement Decay, and Initial Control Effort"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Tracking & Disagreement:</strong> Station tracking convergence, exponential disagreement dissipation, and transient control commands across coupling gains.
+                </h4>
+              </div>
+
+              <!-- Slide 4: Expansion (2x3 Panel) -->
+              <div class="item">
+                <img
+                  src="static/images/swarm_star_expansion_2x3_comparison.png"
+                  alt="Transient Connectivity Verification under Formation Expansion"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Transient Connectivity (Expansion):</strong> Inter-agent distances and communication range preservation across backbone links under certified versus uncertified tracking.
+                </h4>
+              </div>
+
+              <!-- Slide 5: Compression (2x3 Panel) -->
+              <div class="item">
+                <img
+                  src="static/images/swarm_star_2x3_comparison.png"
+                  alt="Transient Safety Verification under Formation Compression"
+                  loading="lazy"
+                />
+                <h4 class="subtitle has-text-centered mt-3" style="font-size: 0.95rem;">
+                  <strong>Transient Safety (Compression):</strong> Minimum pairwise separation and geometric margin for the higher- and lower-gain cases; the lower gain breaches the safety threshold.
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualitative Video Demonstrations -->
+          <div class="mt-6 pt-5" id="video-demonstrations">
+            <h3 class="title is-4 has-text-centered" style="font-weight: 700;">Video Demonstrations</h3>
+            <p class="has-text-centered mb-5" style="color: var(--text-secondary);">
+              Rotating-star compression and expansion at $\kappa=15$, comparing $m=70$ with $m=1$.
+              Each video shows the first 2.5 seconds of the simulation at quarter speed. Solid blue
+              lines show active communication links, the dashed gold line shows the desired formation,
+              and a red dashed line marks a lost selected backbone link.
+            </p>
+            <div class="columns is-multiline is-centered">
+              <div class="column is-half">
+                <article class="video-card">
+                  <video controls loop muted playsinline preload="metadata" aria-label="Compression: higher gain demonstration">
+                    <source src="static/videos/compression_safe_m_70_kappa_15.mp4" type="video/mp4" />
+                    Your browser does not support embedded video. <a href="static/videos/compression_safe_m_70_kappa_15.mp4">Download the MP4</a>.
+                  </video>
+                  <div class="card-content">
+                    <span class="tag is-success is-light is-medium mb-2">Compression · $m=70$</span>
+                    <h4 class="title is-5 mb-2" style="font-weight: 700;">Compression: higher gain</h4>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">The numerically evaluated certificate holds for this case; observed separation stays above $d_{\mathrm{safe}}$ and the selected backbone stays within $R_c$.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="column is-half">
+                <article class="video-card">
+                  <video controls loop muted playsinline preload="metadata" aria-label="Compression: weak coupling demonstration">
+                    <source src="static/videos/compression_unsafe_m_1_kappa_15.mp4" type="video/mp4" />
+                    Your browser does not support embedded video. <a href="static/videos/compression_unsafe_m_1_kappa_15.mp4">Download the MP4</a>.
+                  </video>
+                  <div class="card-content">
+                    <span class="tag is-danger is-light is-medium mb-2">Compression · $m=1$</span>
+                    <h4 class="title is-5 mb-2" style="font-weight: 700;">Compression: weak coupling</h4>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">The minimum inter-agent separation falls below $d_{\mathrm{safe}}$ during the transient. The red warning identifies this safety-threshold violation.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="column is-half">
+                <article class="video-card">
+                  <video controls loop muted playsinline preload="metadata" aria-label="Expansion: higher gain demonstration">
+                    <source src="static/videos/expansion_safe_m_70_kappa_15.mp4" type="video/mp4" />
+                    Your browser does not support embedded video. <a href="static/videos/expansion_safe_m_70_kappa_15.mp4">Download the MP4</a>.
+                  </video>
+                  <div class="card-content">
+                    <span class="tag is-success is-light is-medium mb-2">Expansion · $m=70$</span>
+                    <h4 class="title is-5 mb-2" style="font-weight: 700;">Expansion: higher gain</h4>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">The numerically evaluated certificate holds for this case; the observed selected backbone remains within the communication radius.</p>
+                  </div>
+                </article>
+              </div>
+              <div class="column is-half">
+                <article class="video-card">
+                  <video controls loop muted playsinline preload="metadata" aria-label="Expansion: weak coupling demonstration">
+                    <source src="static/videos/expansion_unsafe_m_1_kappa_15.mp4" type="video/mp4" />
+                    Your browser does not support embedded video. <a href="static/videos/expansion_unsafe_m_1_kappa_15.mp4">Download the MP4</a>.
+                  </video>
+                  <div class="card-content">
+                    <span class="tag is-danger is-light is-medium mb-2">Expansion · $m=1$</span>
+                    <h4 class="title is-5 mb-2" style="font-weight: 700;">Expansion: weak coupling</h4>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.55;">A selected backbone edge exceeds $R_c$ during the transient. The red warning and dashed red edge indicate backbone-link loss; other communication paths may remain available.</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BibTeX Citation Section -->
+      <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+          <div class="bibtex-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h2 class="title is-4" style="margin-bottom: 0; font-weight: 700;">BibTeX</h2>
+            <button
+              class="copy-bibtex-btn button is-small is-light"
+              onclick="copyBibTeX()"
+              title="Copy BibTeX to clipboard"
+            >
+              <i class="fas fa-copy mr-1"></i>
+              <span class="copy-text">Copy</span>
+            </button>
+          </div>
+          <pre id="bibtex-code" style="background: #1e293b; color: #f8fafc; border-radius: var(--border-radius); padding: 1.25rem; font-size: 0.9rem; line-height: 1.6;"><code>@article{purswani2026safety,
+  title         = {Safety and Connectivity Certificates for Finite-Time Formation Transitions},
+  author        = {Purswani, Yash and Agarwal, Shivansh and Tiwari, Anuj},
+  year          = {2026},
+  eprint        = {2611.13927},
+  archivePrefix = {arXiv},
+  primaryClass  = {eess.SY},
+  url           = {https://arxiv.org/abs/2611.13927}
+}</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" style="padding: 2.5rem 1.5rem 2.5rem; background: var(--background-secondary); border-top: 1px solid var(--border-color);">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-12 has-text-centered">
+            <div class="content" style="font-size: 0.9rem; color: var(--text-secondary);">
+              <p>
+                This webpage is based on the
+                <a
+                  href="https://github.com/tamaki-lab/Academic-research-project-page-template"
+                  target="_blank"
+                  >Academic Research Project Page Template</a
+                >.
+              </p>
+              <p>
+                Licensed under a
+                <a
+                  rel="license"
+                  href="http://creativecommons.org/licenses/by-sa/4.0/"
+                  target="_blank"
+                  >Creative Commons Attribution-ShareAlike 4.0 International License</a
+                >.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
